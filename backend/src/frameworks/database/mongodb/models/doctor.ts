@@ -1,0 +1,45 @@
+import mongoose from "mongoose";
+const doctorSchema = new mongoose.Schema({
+    doctorName: {
+        type: String,
+        required: true,
+      },
+      email: {
+        type: String,
+        required: true,
+      },
+      phone: {
+        type: String,
+      },
+      password: {
+        type: String,
+        required: true,
+      },
+      role: {
+        type: String,
+        enum: ["doctor"],
+        default: "doctor",
+      },
+      gender:{
+        type:String,    
+    },
+    profilePicture:{
+        type:String,
+    },isVerified: {
+        type: Boolean,
+        default: false,
+      },
+    isBlocked:{
+        type:Boolean,
+        default:false,
+    },
+    createdAt:{
+        type:Date,
+        default: new Date(),
+    },
+    verificationToken: String,
+},
+{timestamps:true}
+)
+
+export default mongoose.model("Doctor",doctorSchema);
