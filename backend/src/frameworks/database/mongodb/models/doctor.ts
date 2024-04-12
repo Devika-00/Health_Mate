@@ -15,15 +15,30 @@ const doctorSchema = new mongoose.Schema({
         type: String,
         required: true,
       },
+      phoneNumber:{
+        type:String,
+      },
+      department:{
+        type:String,
+      },
       role: {
         type: String,
         enum: ["doctor"],
         default: "doctor",
       },
+      education:{
+        type:String,
+      },
+      description:{
+        type:String,
+      },
+      lisenceCertificate:{
+        type:String,
+      },
       gender:{
         type:String,    
     },
-    profilePicture:{
+    profileImage:{
         type:String,
     },isVerified: {
         type: Boolean,

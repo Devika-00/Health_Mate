@@ -1,8 +1,12 @@
 import React from 'react';
 
-const Footer: React.FC = () => {
+interface FooterProps {
+  style: string
+}
+
+const Footer = ({style}: FooterProps) => {
   return (
-    <footer className="bg-blue-950 text-white py-8">
+    <footer className={`bg-blue-950 text-white py-8 ${style}`}>
       <div className="container mx-auto flex flex-col items-center">
         <p className="text-2xl font-bold mb-4">Health Mate</p>
         <p className="text-lg text-center mb-4">Leading the Way in Medical Excellence, Trusted Care.</p>

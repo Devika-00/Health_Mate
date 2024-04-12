@@ -33,6 +33,18 @@ export const userRepositoryMongodb = () =>{
 
     const updateUserInfo = async (id: string, updateData:Record<string,any>)=>await User.findByIdAndUpdate(id,updateData,{new:true});
 
+    const updateVerificationCode = async (email: string, code: string) => await User.findOneAndUpdate({ email }, { verificationCode: code });
+
+    const findVerificationCodeAndUpdate = async (
+        code: string,
+        newPassword: string
+      ) =>
+        await User.findOneAndUpdate(
+          { verificationCode: code },
+          { password: newPassword, verificationCode: null },
+          { upsert: true }
+        );
+
     return {
         getUserbyEmail,
         getUserbyId,
@@ -41,6 +53,8 @@ export const userRepositoryMongodb = () =>{
         findOtpUser,
         updateUserInfo,
         deleteOtpUser,
+        updateVerificationCode,
+        findVerificationCodeAndUpdate,
     };
 
 };

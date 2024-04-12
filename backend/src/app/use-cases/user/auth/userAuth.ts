@@ -1,12 +1,12 @@
 import createUserEntity, {userEntityType} from "../../../../entities/userEntity";
-import { CreateUserInterface,UserInterface } from "../../../../types/userInterface";
+import { CreateUserInterface } from "../../../../types/userInterface";
 import { userDbInterface } from "../../../interfaces/userDbRepository";
 import {AuthServiceInterfaceType } from "../../../service-interface/authServiceInterface";
 import CustomError from "../../../../utils/customError";
 import { HttpStatus } from "../../../../types/httpStatus";
 import sentMail from "../../../../utils/sendMail";
-import { otpEmail } from "../../../../utils/userEmail";
-import mongoose from "mongoose";
+import {forgotPasswordEmail, otpEmail } from "../../../../utils/userEmail";
+import { UserInterface } from "../../../../types/userInterface";
 
 
 export const userRegister = async (
@@ -124,3 +124,78 @@ export const login = async(
 
     return {accessToken,isEmailExist};
 }
+
+
+export const sendResetVerificationCode = async (
+  email: string,
+  userDbRepository: ReturnType<userDbInterface>,
+  authService: ReturnType<AuthServiceInterfaceType>
+) => {
+  const isEmailExist = await userDbRepository.getUserbyEmail(email);
+
+  if (!isEmailExist)
+    throw new CustomError(`${email} does not exist`, HttpStatus.BAD_REQUEST);
+
+  const verificationCode = authService.getRandomString();
+
+  const isUpdated = await userDbRepository.updateVerificationCode(
+    email,
+    verificationCode
+  );
+  console.log(isUpdated);
+  sentMail(
+    email,
+    "Reset password",
+    forgotPasswordEmail(isEmailExist.name, verificationCode)
+  );
+};
+
+export const verifyTokenAndRestPassword = async (
+  verificationCode: string,
+  password: string,
+  userDbRepository: ReturnType<userDbInterface>,
+  authService: ReturnType<AuthServiceInterfaceType>
+) => {
+  if (!verificationCode)
+    throw new CustomError(
+      "Please provide a verification code",
+      HttpStatus.BAD_REQUEST
+    );
+  const hashedPassword = await authService.encryptPassword(password);
+  const isPasswordUpdated = await userDbRepository.verifyAndResetPassword(
+    verificationCode,
+    hashedPassword
+  );
+
+  if (!isPasswordUpdated)
+    throw new CustomError(
+      "Invalid token or token expired",
+      HttpStatus.BAD_REQUEST
+    );
+};
+
+export const getUserProfile = async (
+  userID: string,
+  userRepository: ReturnType<userDbInterface>
+) => {
+  const user = await userRepository.getUserbyId(userID);
+  return  user ;
+};
+
+export const updateUser = async (
+  userID: string,
+  updateData: UserInterface,
+  userRepository: ReturnType<userDbInterface>
+) => await userRepository.updateProfile(userID, updateData);
+
+export const WalletTransactions = async (
+  userId: string,
+  userRepository: ReturnType<userDbInterface>
+) => {
+  const user = await userRepository.getUserbyId(userId);
+};
+
+export const getUserById = async (
+  id: string,
+  userRepository: ReturnType<userDbInterface>
+) => await userRepository.getUserbyId(id);

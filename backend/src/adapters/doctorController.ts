@@ -1,4 +1,5 @@
 import {Request,Response,NextFunction} from "express";
+import asynchandler from "express-async-handler";
 import { AuthServiceInterfaceType, authServiceInterface } from "../app/service-interface/authServiceInterface";
 import { AuthService } from "../frameworks/services/authService";
 import { HttpStatus } from "../types/httpStatus";
@@ -10,7 +11,8 @@ import {
     doctorLogin,
 } from "../app/use-cases/doctor/authDoctor"
 
-
+import {getDoctorProfile,
+  updateDoctor} from "../app/use-cases/doctor/read & Update/profile";
 const doctorController = (
     authServiceInterface:AuthServiceInterfaceType,
     authServiceImpl : AuthService,
@@ -68,18 +70,19 @@ const doctorController = (
       const login = async (req: Request, res: Response, next: NextFunction) => {
         try {
           const { email, password } = req.body;
-    
+      
+          // Assuming doctorLogin, dbRepositoryDoctor, and authService are defined elsewhere
           const { accessToken, isEmailExist } = await doctorLogin(
             email,
             password,
             dbRepositoryDoctor,
             authService
           );
+      
           res.cookie("access_token", accessToken, {
             httpOnly: true,
-            secure: true,
-            expires: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
           });
+      
           return res.status(HttpStatus.OK).json({
             success: true,
             message: "Login successful",
@@ -89,12 +92,58 @@ const doctorController = (
           next(error);
         }
       };
+      
+        
     
+
+    /**method get retrieve doctor profile */
+    const doctorProfile = async(
+      req:Request,
+      res:Response,
+      next:NextFunction
+    )=>{
+      try{
+        const doctorId = req.doctor;
+        const doctor = await getDoctorProfile(
+          doctorId,
+          dbRepositoryDoctor
+        );
+        res.status(200).json({success:true,doctor});
+
+      }catch(error){
+        next(error);
+      }
+
+    };
+
+    /**
+   * * METHOD :PATCH
+   * * update doctor profile
+   */
+  const updateDoctorInfo = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const doctorId = req.doctor;
+      const updateData = req.body;
+      console.log(req.body);
+      const doctor = await updateDoctor(doctorId, updateData, dbRepositoryDoctor);
+      res
+        .status(200)
+        .json({ success: true, doctor, message: "Profile updated successfully" });
+    } catch (error) {
+      next(error);
+    }
+  };
 
     return {
         signup,
         verifyToken,
         login,
+        doctorProfile,
+        updateDoctorInfo,
     }
 }
 

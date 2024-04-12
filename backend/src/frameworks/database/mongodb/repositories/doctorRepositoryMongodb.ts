@@ -30,11 +30,14 @@ export const doctorRepositoryMongodb = () =>{
       { isVerified: true, verificationToken: null }
     );
 
+    const updateDoctorInfo = async (id: string, updateData:Record<string,any>)=>await Doctor.findByIdAndUpdate(id,updateData,{new:true});  
+
   return {
     getDoctorById,
     getDoctorByemail,
     addDoctor,
     verifyDoctor,
+    updateDoctorInfo,
   }
 
 }

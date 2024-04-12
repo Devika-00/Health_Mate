@@ -78,10 +78,24 @@ export const verifyAccount = async (
     );
     if (!isPasswordMatch)
       throw new CustomError("Invalid credentials", HttpStatus.BAD_REQUEST);
-    const { accessToken } = authService.createTokens(
+    const  accessToken  = authService.createTokens(
       isEmailExist.id,
       isEmailExist.doctorName,
       isEmailExist.role
     );
+    console.log(accessToken);
     return { accessToken, isEmailExist };
   };
+
+  export const getDoctorProfile = async(
+    doctorId : string,
+    doctorRepository:ReturnType<doctorDbInterface>
+  )=>{
+    const doctor = await doctorRepository.getDoctorById(doctorId);
+    return doctor;
+  }
+
+  export const getDoctorById = async (
+    id: string,
+    doctorRepository: ReturnType<doctorDbInterface>
+  ) => await doctorRepository.getDoctorById(id);

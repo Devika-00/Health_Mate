@@ -19,6 +19,9 @@ const userSchema = new mongoose.Schema({
     age:{
         type:Number,
     },
+    phoneNumber:{
+        type:String,
+    },
     profilePicture:{
         type:String,
     },
@@ -39,6 +42,7 @@ const userSchema = new mongoose.Schema({
         type:Date,
         default: new Date(),
     },
+    verificationCode: String,
 });
 
 export default mongoose.model("User",userSchema);

@@ -9,8 +9,6 @@ import { validateSignUp } from "../../utils/validation";
 import { DOCTOR_API } from '../../constants';
 
 const Signup: React.FC = () => {
-
-
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const navigate = useNavigate();
   const formik = useFormik({
@@ -41,75 +39,74 @@ const Signup: React.FC = () => {
 
   return (
     <div className="flex items-center justify-center h-screen bg-cover bg-center" style={{ backgroundImage: `url(${DoctorImage})`, opacity: 100 }}>
-      <div className="bg-gray-200 shadow-lg rounded-lg p-10 mx-4">
+      <div className="bg-gray-200 w-96 shadow-lg rounded-lg p-10">
         <h2 className="text-3xl font-bold mb-6 text-center">Sign Up</h2>
         <form onSubmit={formik.handleSubmit}>
-          <div className="mb-6" >
+          <div className="mb-6">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
               Name
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-900 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-3 px-3 text-gray-900 leading-tight focus:outline-none"
               id="name"
               type="text"
               placeholder="Name"
               {...formik.getFieldProps("name")}
-              />
-              {formik.errors.name && formik.touched.name && (
-                <div className="text-red-500">{formik.errors.name}</div>
-              )}
+            />
+            {formik.errors.name && formik.touched.name && (
+              <div className="text-red-500">{formik.errors.name}</div>
+            )}
           </div>
           <div className="mb-6">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
               Email
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"
               id="email"
               type="email"
               placeholder="Email"
               {...formik.getFieldProps("email")}
-              />
-              {formik.errors.email && formik.touched.email && (
-                <div className="text-red-500">{formik.errors.email}</div>
-              )}
+            />
+            {formik.errors.email && formik.touched.email && (
+              <div className="text-red-500">{formik.errors.email}</div>
+            )}
           </div>
           <div className="mb-6">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
               Password
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"
               id="password"
               type="password"
               placeholder="Password"
               {...formik.getFieldProps("password")}
-              />
-              {formik.errors.password && formik.touched.password && (
-                <div className="text-red-500">{formik.errors.password}</div>
-              )}
+            />
+            {formik.errors.password && formik.touched.password && (
+              <div className="text-red-500">{formik.errors.password}</div>
+            )}
           </div>
           <div className="mb-6">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirm-password">
               Confirm Password
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"
               id="confirm-password"
               type="password"
               placeholder="Confirm Password"
               {...formik.getFieldProps("confirmPassword")}
-              />
-              {formik.errors.confirmPassword &&
-                formik.touched.confirmPassword && (
-                  <div className="text-red-500">
-                    {formik.errors.confirmPassword}
-                  </div>
-                )}
+            />
+            {formik.errors.confirmPassword && formik.touched.confirmPassword && (
+              <div className="text-red-500">
+                {formik.errors.confirmPassword}
+              </div>
+            )}
           </div>
           <div className="flex items-center justify-center">
             <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded focus:outline-none focus:shadow-outline"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded focus:outline-none"
               type="submit"
             >
               Sign Up

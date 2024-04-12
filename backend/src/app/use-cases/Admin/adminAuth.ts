@@ -12,12 +12,12 @@ export const loginAdmin = async (
       email === configKeys.ADMIN_EMAIL &&
       password === configKeys.ADMIN_PASSWORD
     ) {
-      const { accessToken} = authService.createTokens(
+      const accessToken = authService.createTokens(
         email,
         "Admin_User",
         "admin"
       );
-      return { accessToken };
+      return  accessToken ;
     }
     throw new CustomError("Invalid credentials", HttpStatus.UNAUTHORIZED);
   };

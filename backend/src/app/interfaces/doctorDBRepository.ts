@@ -17,11 +17,15 @@ export const doctorDbRepository = (
   const verifyDoctor = async (token: string) =>
     await repository.verifyDoctor(token);
 
+  const updateProfile = async (doctorID:string, doctorData : Record<string,any>)=>await repository.updateDoctorInfo(doctorID,doctorData);
+
     return{
         getDoctorById,
         getDoctorByemail,
         addDoctor,
         verifyDoctor,
+        updateProfile,
+
     }
 }
 

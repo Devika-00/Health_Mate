@@ -30,11 +30,9 @@ export const authService = () =>{
             name,
             role,
         };
-        const accessToken = jwt.sign(payload, configKeys.ACCESS_SECRET, {
-            expiresIn: "5m",
-        });
+        const accessToken = jwt.sign(payload, configKeys.ACCESS_SECRET);
         
-        return {accessToken};
+        return accessToken;
     }
 
     return{encryptPassword,generateOTP,comparePassword,createTokens,getRandomString};

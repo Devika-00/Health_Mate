@@ -10,6 +10,7 @@ export interface UserInterface {
     email: string;
     password: string,
     profilePicture?: string;
+    phoneNumber?:string;
     gender: string;
     age: number;
     role: string;

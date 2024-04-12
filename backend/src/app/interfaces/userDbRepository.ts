@@ -19,7 +19,11 @@ export const userDbRepository = (
     const deleteOtpUser = async (userId: string) =>await repository.deleteOtpUser(userId);
        
     const updateProfile = async (userID:string, userData : Record<string,any>)=>await repository.updateUserInfo(userID,userData);
+
+    const updateVerificationCode = async (email:string, verificationCode: string)=> await repository.updateVerificationCode(email,verificationCode);
     
+    const verifyAndResetPassword = async (verificationCode: string,password: string) =>await repository.findVerificationCodeAndUpdate(verificationCode, password);
+
     return {
         getUserbyEmail,
         getUserbyId,
@@ -28,6 +32,8 @@ export const userDbRepository = (
         findOtpUser,
         updateProfile,
         deleteOtpUser,
+        updateVerificationCode,
+        verifyAndResetPassword,
     };
 };
 
