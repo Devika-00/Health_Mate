@@ -4,6 +4,8 @@ import { HttpStatus } from "../types/httpStatus";
 import {loginAdmin} from "../app/use-cases/Admin/adminAuth";
 import {getUsers,
   getDoctors,
+  getSingleDoctor,
+  getDoctor,
 } from "../app/use-cases/Admin/adminRead";
 import { AuthServiceInterfaceType } from "../app/service-interface/authServiceInterface";
 import { userDbInterface } from "../app/interfaces/userDbRepository";
@@ -126,12 +128,47 @@ const getAllDoctors = async (
     }
   };
 
+  /* method get doctor details */
+  const doctorDetails = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const {id} = req.params;
+      const doctor = await getSingleDoctor(id,dbDoctorRepository);
+      return res.status(HttpStatus.OK).json({ success: true, doctor });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+
+  /* method patch updateDoctor in admin */
+  const updateDoctor = async(
+    req:Request,
+    res:Response,
+    next:NextFunction
+  )=>{
+    try {
+      const {id} = req.params;
+      const {action} = req.body;
+      const doctor = await getDoctor(id,action,dbDoctorRepository);
+      return res.status(HttpStatus.OK).json({ success: true, doctor,message:"update Successfull" });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+
         return {
             adminLogin,
             getAllUser,
             userBlock,
             getAllDoctors,
             doctorBlock,
+            doctorDetails,
+            updateDoctor,
           }
 
 }  

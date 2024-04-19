@@ -51,6 +51,10 @@ const doctorSchema = new mongoose.Schema({
       type:Boolean,
       default:false,
     },
+    status:{
+      type:String,
+      default:"pending",
+    },
     createdAt:{
         type:Date,
         default: new Date(),

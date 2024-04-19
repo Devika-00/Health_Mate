@@ -23,7 +23,7 @@ const AdminDoctorList = lazy(()=>import ("../pages/admin/doctorList"));
 const AdminDoctorDetails = lazy(()=>import ("../pages/admin/doctorDetails"));
 const ProfileUser = lazy(()=>import("../pages/user/Profile"));
 const ProfileDoctor = lazy(()=>import("../pages/doctor/Profile"));
-const DoctorList = lazy(()=>import("../pages/user/DoctorCard"))
+const DoctorList = lazy(()=>import("../pages/user/DoctorCard"));
 
 export const MainRouter = () => {
     return (
@@ -58,7 +58,9 @@ export const MainRouter = () => {
                     <Route path="/admin" element={<AdminDashboard/>}/>
                     <Route path="/admin/users" element={<AdminUserList/>}/>
                     <Route path="/admin/doctors" element={<AdminDoctorList/>}/>
-                    <Route path="/admin/doctors/list" element={<AdminDoctorDetails/>}/>
+                    <Route path="/admin/doctors/:id" element={<AdminDoctorDetails/>}/>
+
+                    
                 </Routes>
             </Suspense> 
         </>

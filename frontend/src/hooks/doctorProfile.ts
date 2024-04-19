@@ -20,6 +20,7 @@ const doctorProfile = () => {
     phoneNumber: string;
     department: string;
     education: string;
+    status: string;
     description: string;
     imageFile: File | null;
     lisenceCertificate: File | null;
@@ -32,6 +33,7 @@ const doctorProfile = () => {
     description: "",
     phoneNumber: "",
     education: "",
+    status:"pending",
     imageFile: null,
     lisenceCertificate: null,
   });
@@ -49,6 +51,7 @@ const doctorProfile = () => {
       .then(({ data }) => {
         const { doctor } = data;
         setProfile(doctor);
+        console.log(doctor);
         setFormData((prev) => ({
           ...prev,
           doctorName: doctor?.doctorName,
@@ -60,6 +63,7 @@ const doctorProfile = () => {
           email: doctor?.email,
           phoneNumber: doctor?.phoneNumber,
           lisenceCertificate: doctor?.lisenceCertificate,
+          status:doctor?.status
         }));
       })
       .catch(() => showToast("Oops! Something went wrong", "error"));

@@ -24,6 +24,9 @@ export const doctorRepositoryMongodb = () =>{
     return await newDoctor.save();
   };
 
+  const getDoctorByIdUpdate = async (id: string,action:string) =>await Doctor.findByIdAndUpdate(id,{status:action}).select("-password -isVerified -isApproved -isRejected -verificationToken");
+
+
 
   const updateDoctorBlock = async (id: string, status: boolean) =>{
     await Doctor.findByIdAndUpdate(id, { isBlocked: status });
@@ -56,6 +59,7 @@ export const doctorRepositoryMongodb = () =>{
     registerGoogleSignedDoctor,
     getAllDoctors,
     updateDoctorBlock,
+    getDoctorByIdUpdate,
 
   }
 

@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { DoctorInterface } from "../../types/DoctorInterface";
-import axiosJWT from "../../utils/axiosService";
-import { ADMIN_API } from "../../constants";
-import { Link } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { ADMIN_API } from '../../constants';
+import axiosJWT from '../../utils/axiosService';
+import { DoctorInterface } from '../../types/DoctorInterface';
 
 const DoctorData: React.FC<DoctorInterface> = ({
   _id,
@@ -39,7 +39,7 @@ const DoctorData: React.FC<DoctorInterface> = ({
         </div>
       </td>
       <td className="px-6 py-4 text-left">
-        <Link to={`/doctor/${_id}`} className="text-blue-500 hover:underline">
+        <Link to={`/admin/doctors/${_id}`} className="text-blue-500 hover:underline">
           View Details
         </Link>
       </td>

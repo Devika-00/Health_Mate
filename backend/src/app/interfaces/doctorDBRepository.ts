@@ -5,9 +5,9 @@ import { DoctorInterface } from "../../types/doctorInterface";
 export const doctorDbRepository = (
     repository:ReturnType<doctorRepositoryMongodbType>
 )=>{
-    const getDoctorById = async (id: string) =>
-    await repository.getDoctorById(id);
+    const getDoctorById = async (id: string) =>await repository.getDoctorById(id);
 
+    const getDoctorByIdUpdate = async (id: string, action:string) =>await repository.getDoctorByIdUpdate(id,action);
 
   const updateDoctorBlock = async (id: string, status: boolean) =>{
       await repository.updateDoctorBlock(id, status);
@@ -26,6 +26,7 @@ export const doctorDbRepository = (
   const updateProfile = async (doctorID:string, doctorData : Record<string,any>)=>await repository.updateDoctorInfo(doctorID,doctorData);
 
   const getAllDoctors = async () => await repository.getAllDoctors();
+ 
 
   const registerGoogleSignedDoctor = async (doctor: googleSignInUserEntityType) =>await repository.registerGoogleSignedDoctor(doctor);
     return{
@@ -36,7 +37,8 @@ export const doctorDbRepository = (
         updateProfile,
         registerGoogleSignedDoctor,
         getAllDoctors,
-        updateDoctorBlock
+        updateDoctorBlock,
+        getDoctorByIdUpdate,
 
     }
 }
