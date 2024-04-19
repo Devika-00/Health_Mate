@@ -4,30 +4,6 @@ import AdminHeader from '../../components/admin/Header&Sidebar/Header';
 import AdminSidebar from '../../components/admin/Header&Sidebar/Sidebar';
 
 const Dashboard: React.FC = () => {
-    useEffect(() => {
-        if (document.getElementById('myChart')) {
-          new Chart(document.getElementById('myChart') as HTMLCanvasElement, {
-            type: 'line',
-            data: {
-              labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-              datasets: [{
-                label: 'Appointments',
-                data: [65, 59, 80, 81, 56, 55, 40],
-                fill: false,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
-              }]
-            },
-            options: {
-              scales: {
-                y: {
-                  beginAtZero: true
-                }
-              }
-            }
-          });
-        }
-      }, []);
   return (
     <div className="flex h-screen">
       <AdminSidebar />

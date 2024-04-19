@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '../../components/user/Navbar/navbar';
 import Footer from '../../components/user/Footer/Footer';
 import { Link } from 'react-router-dom';
@@ -16,6 +16,7 @@ const Profile: React.FC = () => {
     handleInputChange,
     handleSubmit,
   } = useProfile();
+
 
 
   return (

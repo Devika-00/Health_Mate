@@ -2,7 +2,7 @@ export interface CreateDoctorInterface {
     doctorName: string;
     email: string;
     mobile: string;
-    password : string;
+    password: string;
     verificationToken: string;
 }
 

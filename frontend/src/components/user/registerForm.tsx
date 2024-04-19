@@ -26,10 +26,11 @@ const Register: React.FC = () => {
       axios
         .post(USER_API + "/register", { name, email, password })
         .then(({ data }) => {
-          console.log(data);
-          showToast(data.message, "success");
+          const { message, accessToken } = data;
+          showToast(message, "success");
+          localStorage.setItem('access_token', accessToken); // Store access token in local storage
           setTimeout(() => {
-            setItemToLocalStorage("userId", data.newUser._id);
+            setItemToLocalStorage("userId", data.newUser.id);
             navigate("/user/verify_otp");
           }, 1000);
         })

@@ -9,6 +9,8 @@ import showToast from "../../utils/toaster";
 import { useNavigate, Link} from 'react-router-dom';
 import { validateLogin } from "../../utils/validation";
 import { USER_API } from '../../constants';
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
 
 
 
@@ -26,8 +28,10 @@ const Login: React.FC = () => {
       setIsSubmitting(true);
       axios
         .post(USER_API + "/login", { email, password })
-        .then(({ data }) => {
+        .then(({ data, }) => {
+          const access_token = data.accessToken
           const { name, role, _id } = data.user;
+          localStorage.setItem('access_token', access_token);
           showToast(data.message, "success");
           dispatch(setUser({ isAuthenticated: true, name, role, id: _id }));
           navigate("/");
@@ -40,6 +44,32 @@ const Login: React.FC = () => {
       }
   });
   
+
+  const handleGooglSignIn = (user: {
+    name: string;
+    email: string;
+    picture: string;
+    email_verified: boolean;
+  }) => {
+    axios
+      .post(USER_API + "/google_signIn", { user })
+      .then(({ data }) => {
+        const { message, user,accessToken } = data;
+        console.log(data);
+        localStorage.setItem('access_token', accessToken);
+        showToast(message, "success");
+        dispatch(
+          setUser({
+            name: user.name,
+            isAuthenticated: true,
+            role: user.role,
+            id: user._id,
+          })
+        );
+        navigate("/");
+      })
+      .catch(({ response }) => showToast(response.data.message, "error"));
+  };
 
   return (
     <div className="flex items-center justify-center h-screen">
@@ -80,10 +110,22 @@ const Login: React.FC = () => {
               Create Account
             </Link>
           
-          {/* <button type="button" className="bg-white hover:bg-gray-100 text-black font-bold py-2 px-4 rounded-full mt-6 focus:outline-none focus:shadow-outline flex items-center ml-24">
-        <FcGoogle className="mr-2" /> 
-        Google
-      </button> */}
+            <div className="px-4 py-2 w-full  flex justify-center gap-2 ">
+              <GoogleLogin
+                onSuccess={(credentialResponse: any) => {
+                  const data: {
+                    name: string;
+                    email: string;
+                    picture: string;
+                    email_verified: boolean;
+                  } = jwtDecode(credentialResponse?.credential);
+                  handleGooglSignIn(data);
+                }}
+                onError={() => {
+                  showToast("Login Failed", "error");
+                }}
+              />
+            </div>
         </div>
       </div>
     </div>

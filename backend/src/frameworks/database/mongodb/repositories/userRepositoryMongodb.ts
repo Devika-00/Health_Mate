@@ -1,4 +1,4 @@
-import { userEntityType } from "../../../../entities/userEntity";
+import { userEntityType,googleSignInUserEntityType } from "../../../../entities/userEntity";
 import { UserInterface } from "../../../../types/userInterface";
 import OTPModel from "../models/OTPmodel";
 import User from "../models/user";
@@ -11,6 +11,10 @@ export const userRepositoryMongodb = () =>{
     }
 
     const getUserbyId = async (id: string) => await User.findById(id);
+
+    const updateUserBlock = async (id: string, status: boolean) =>{
+        await User.findByIdAndUpdate(id, { isBlocked: status });
+    }
 
     const addUser = async (user:userEntityType)=>{
         const newUser:any = new User({
@@ -45,6 +49,16 @@ export const userRepositoryMongodb = () =>{
           { upsert: true }
         );
 
+    const getAllUsers = async () => await User.find({ isVerified: true });
+
+    const registerGoogleSignedUser = async (user: googleSignInUserEntityType) =>
+        await User.create({
+          name: user.name(),
+          email: user.email(),
+          profilePicture: user.picture(),
+          isVerified: user.email_verified(),
+        });
+    
     return {
         getUserbyEmail,
         getUserbyId,
@@ -55,6 +69,10 @@ export const userRepositoryMongodb = () =>{
         deleteOtpUser,
         updateVerificationCode,
         findVerificationCodeAndUpdate,
+        getAllUsers,
+        registerGoogleSignedUser,
+        updateUserBlock,
+
     };
 
 };

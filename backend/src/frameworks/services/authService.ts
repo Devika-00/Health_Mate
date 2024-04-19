@@ -23,7 +23,7 @@ export const authService = () =>{
         return `${otp}`;
     }
 
-    //create access token
+    //create access token for users 
     const createTokens = (id: string, name: string, role:string)=>{
         const payload = {
             id,
@@ -35,7 +35,18 @@ export const authService = () =>{
         return accessToken;
     }
 
-    return{encryptPassword,generateOTP,comparePassword,createTokens,getRandomString};
+    const doctorCreateTokens = (id:string,name:string, role:string)=>{
+        const payload = {
+            id,
+            name,
+            role,
+        };
+        const accessToken = jwt.sign(payload,configKeys.ACCESS_SECRET);
+
+        return accessToken;
+    }
+
+    return{encryptPassword,generateOTP,comparePassword,createTokens,getRandomString,doctorCreateTokens};
 }
 
 export type AuthService = typeof authService;

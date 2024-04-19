@@ -7,11 +7,13 @@ import {
     deleteOtp,
     sendResetVerificationCode,
     verifyTokenAndRestPassword,
+    authenticateGoogleSignInUser,
   
 } from "../app/use-cases/user/auth/userAuth";
 import {getUserProfile,
         updateUser} from "../app/use-cases/user/read & update/profile";
 import { userDbInterface } from "../app/interfaces/userDbRepository";
+import { GoogleResponseType } from "../types/googleResponseType";
 import { userRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/userRepositoryMongodb";
 import { AuthService } from "../frameworks/services/authService";
 import { AuthServiceInterfaceType} from "../app/service-interface/authServiceInterface";
@@ -36,10 +38,14 @@ const userController=(
     )=>{
         try {
          const user = req.body;
-         const newUser =   await userRegister(user,dbRepositoryUser,authService);
+         const {createdUser, accessToken} =   await userRegister(user,dbRepositoryUser,authService);
+
+         
+         
          res.json({
             message: "User registration successful,please verify email",
-            newUser,
+            newUser: createdUser,
+            accessToken: accessToken,
          });
         } catch (error) {
             next(error);
@@ -83,21 +89,52 @@ const userController=(
               req.body,
               dbRepositoryUser,
               authService
-            );
-            
-            // setting access token in the cookie
-            res.cookie("access_token", accessToken, {
-              httpOnly: true,
-            });
+            );          
             
             res
               .status(HttpStatus.OK)
-              .json({ message: "login success", user: isEmailExist });
+              .json({ message: "login success", user: isEmailExist ,
+               accessToken: accessToken,
+              });
           } catch (error) {
             next(error);
           }
         }
       ); 
+
+       /**
+   ** method : POST
+   ** Google Signin with user credentials
+   */
+
+  const googleSignIn = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      // const { access_token: access, refresh_token: refresh } = req.cookies;
+      // if (access || refresh) {
+      //   res.clearCookie("access_token");
+      //   res.clearCookie("refresh_token");
+      // }
+      const userData: GoogleResponseType = req.body.user;
+      const { accessToken, isEmailExist, createdUser } =
+        await authenticateGoogleSignInUser(
+          userData,
+          dbRepositoryUser,
+          authService
+        );
+      // res.cookie("access_token", accessToken, {
+      //   httpOnly: true,
+      //   secure: true,
+      // });
+      const user = isEmailExist ? isEmailExist : createdUser;
+      res.status(HttpStatus.OK).json({ message: "login success", user , accessToken: accessToken,});
+    } catch (error) {
+      next(error);
+    }
+  };
     
 
       // forgot password method post
@@ -158,7 +195,7 @@ const userController=(
   ) => {
     try {
       const userId = req.user;
-      console.log(userId)
+      console.log(userId,'userid')
       const user  = await getUserProfile(
         userId,
         dbRepositoryUser
@@ -181,7 +218,6 @@ const userController=(
     try {
       const userId = req.user;
       const updateData = req.body;
-      console.log(req.body);
       const user = await updateUser(userId, updateData, dbRepositoryUser);
       res
         .status(200)
@@ -200,6 +236,7 @@ const userController=(
         resetPassword,
         updateUserInfo,
         userProfile,
+        googleSignIn,
     };
     };
 

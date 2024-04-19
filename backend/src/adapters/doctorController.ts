@@ -3,12 +3,14 @@ import asynchandler from "express-async-handler";
 import { AuthServiceInterfaceType, authServiceInterface } from "../app/service-interface/authServiceInterface";
 import { AuthService } from "../frameworks/services/authService";
 import { HttpStatus } from "../types/httpStatus";
+import { GoogleResponseDoctorType } from "../types/googleResponseType";
 import { doctorDbInterface } from "../app/interfaces/doctorDBRepository";
 import { doctorRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/doctorRepositoryMongodb";
 import {
     addNewDoctor,
     verifyAccount,
     doctorLogin,
+    authenticateGoogleSignInUser,
 } from "../app/use-cases/doctor/authDoctor"
 
 import {getDoctorProfile,
@@ -79,14 +81,11 @@ const doctorController = (
             authService
           );
       
-          res.cookie("access_token", accessToken, {
-            httpOnly: true,
-          });
-      
           return res.status(HttpStatus.OK).json({
             success: true,
             message: "Login successful",
             doctor: isEmailExist,
+            accessToken: accessToken,
           });
         } catch (error) {
           next(error);
@@ -94,7 +93,37 @@ const doctorController = (
       };
       
         
-    
+      const googleSignIn = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+      ) => {
+        try {
+
+          // const { access_token: access, refresh_token: refresh } = req.cookies;
+          // if (access || refresh) {
+          //   res.clearCookie("access_token");
+          //   res.clearCookie("refresh_token");
+          // }
+          const doctorData: GoogleResponseDoctorType = req.body.doctor;
+
+          const { accessToken, isEmailExist, createdUser } =
+            await authenticateGoogleSignInUser(
+              doctorData,
+              dbRepositoryDoctor,
+              authService
+            );
+          // res.cookie("access_token", accessToken, {
+          //   httpOnly: true,
+          //   secure: true,
+          // });
+          const user = isEmailExist ? isEmailExist : createdUser;
+          res.status(HttpStatus.OK).json({ message: "login success", user , accessToken: accessToken,});
+        } catch (error) {
+          next(error);
+        }
+      };
+
 
     /**method get retrieve doctor profile */
     const doctorProfile = async(
@@ -128,7 +157,6 @@ const doctorController = (
     try {
       const doctorId = req.doctor;
       const updateData = req.body;
-      console.log(req.body);
       const doctor = await updateDoctor(doctorId, updateData, dbRepositoryDoctor);
       res
         .status(200)
@@ -144,6 +172,7 @@ const doctorController = (
         login,
         doctorProfile,
         updateDoctorInfo,
+        googleSignIn,
     }
 }
 

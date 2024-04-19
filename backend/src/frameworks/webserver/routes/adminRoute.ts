@@ -23,6 +23,8 @@ export default () =>{
     );
 
     router.post("/login", controller.adminLogin);
+    router.get("/users", controller.getAllUser);
+    router.patch("/block_user/:id", controller.userBlock);
 
     return router;
 };

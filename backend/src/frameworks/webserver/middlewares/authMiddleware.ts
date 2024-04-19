@@ -18,22 +18,33 @@ export default function authenticateUser(
   res: Response,
   next: NextFunction
 ) {
-  const { access_token } = req.cookies;
-  console.log(access_token);
+  const access_token = req.headers.authorization;
   if (!access_token) {
     return res.status(HttpStatus.FORBIDDEN).json("Your are not authenticated");
   }
-  jwt.verify(access_token, configKeys.ACCESS_SECRET, (err: any, user: any) => {
+
+  // Extract the token from the header (assuming it's in the format "Bearer <token>")
+  const tokenParts = access_token.split(' ');
+  const token = tokenParts.length === 2 ? tokenParts[1] : null;
+
+
+  if (!token) {
+    return res.status(HttpStatus.FORBIDDEN).json("Invalid access token format");
+  }
+
+  jwt.verify(token, configKeys.ACCESS_SECRET, (err: any, user: any) => {
     if (err) {
       res
         .status(HttpStatus.FORBIDDEN)
         .json({ success: false, message: "Token is not valid" });
     } else {
+      
       req.user = user.id;
+      next();
     }
   });
-  next();
 }
+
 
 export async function authenticateDoctor(
   req: Request,
@@ -41,31 +52,44 @@ export async function authenticateDoctor(
   next: NextFunction
 ) {
   try {
-    const { access_token } = req.cookies;
+    const access_token = req.headers.authorization;
     if (!access_token) {
       return res
         .status(HttpStatus.FORBIDDEN)
-        .json("Your are not authenticated");
+        .json("You are not authenticated");
     }
+
+    const tokenParts = access_token.split(' ');
+    const token = tokenParts.length === 2 ? tokenParts[1] : null;
+
+    if (!token) {
+      return res
+        .status(HttpStatus.FORBIDDEN)
+        .json("Invalid access token format");
+    }
+
     const doctor = jwt.verify(
-      access_token,
+      token,
       configKeys.ACCESS_SECRET
     ) as JwtPayload;
+
     if (doctor.role === "doctor") {
       req.doctor = doctor.id;
       return next();
     }
+
     return res.status(HttpStatus.FORBIDDEN).json({
       success: false,
-      message: "Your are not allowed to access this resource",
+      message: "You are not allowed to access this resource",
       doctor,
     });
   } catch (error) {
-    res
+    return res
       .status(HttpStatus.FORBIDDEN)
       .json({ success: false, message: "Token is not valid" });
   }
 }
+
 
 // Admin authorization to get the access to routes in admin
 export function authenticateAdmin(
@@ -73,24 +97,38 @@ export function authenticateAdmin(
   res: Response,
   next: NextFunction
 ) {
-  const { access_token } = req.cookies;
-  if (!access_token)
-    return res.status(HttpStatus.FORBIDDEN).json("You are not authenticated");
+  const access_token = req.headers.authorization;
+  if (!access_token) {
+    return res
+      .status(HttpStatus.FORBIDDEN)
+      .json("You are not authenticated");
+  }
 
-  jwt.verify(access_token, configKeys.ACCESS_SECRET, (err: any, user: any) => {
+  // Extract the token from the header (assuming it's in the format "Bearer <token>")
+  const tokenParts = access_token.split(' ');
+  const token = tokenParts.length === 2 ? tokenParts[1] : null;
+
+  if (!token) {
+    return res
+      .status(HttpStatus.FORBIDDEN)
+      .json("Invalid access token format");
+  }
+
+  jwt.verify(token, configKeys.ACCESS_SECRET, (err: any, decodedToken: any) => {
     if (err) {
-      res
+      return res
         .status(HttpStatus.FORBIDDEN)
         .json({ success: false, message: "Token is not valid" });
-    } else {
-      if (user.role === "admin") {
-        return next();
-      }
-      return res.status(HttpStatus.FORBIDDEN).json({
-        success: false,
-        message: "Your are not allowed to access this resource",
-        user,
-      });
     }
+
+    if (decodedToken.role === "admin") {
+      return next();
+    }
+
+    return res.status(HttpStatus.FORBIDDEN).json({
+      success: false,
+      message: "You are not allowed to access this resource",
+      user: decodedToken,
+    });
   });
 }

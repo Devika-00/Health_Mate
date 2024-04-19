@@ -9,8 +9,17 @@ axiosJWT.defaults.withCredentials = true;
 
 const getAccessToken = async () => {
   try {
-    const { data } = await axios.get(TOKEN_API + "/accessToken");
-    const token = data?.access_token;
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      // Handle case when token doesn't exist in local storage
+      console.error('Access token not found in local storage');
+      return null;
+    }
+    const headers = {
+      Authorization: `Bearer ${token}`
+    };
+    const { data } = await axios.get(`${TOKEN_API}/accessToken`, { headers });
+    
     const decodedToken: Payload = await jwtDecode(token);
     const { role } = decodedToken;
     if (role === "doctor" || role === "user") {

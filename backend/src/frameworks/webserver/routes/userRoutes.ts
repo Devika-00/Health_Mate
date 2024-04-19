@@ -27,6 +27,7 @@ router.post("/register",controller.registerUser);
 router.post("/verify_otp",controller.verifyOtp);
 router.post("/resend_otp", controller.resendOtp);
 router.post("/login",controller.userLogin);
+router.post("/google_signIn", controller.googleSignIn);
 router.post("/forgot_password",controller.forgotPassword);
 router.post("/reset_password/:token",controller.resetPassword);
 

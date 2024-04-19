@@ -31,30 +31,53 @@ const tokenContoller = (
    */
 
   const returnAccessToClient = async (req: Request, res: Response) => {
-    const { access_token } = req.cookies;
-    if (!access_token)
-      return res
-        .status(HttpStatus.BAD_REQUEST)
-        .json({ success: false, message: "Access token is required" });
+    try {
+      const access_token = req.headers.authorization;
+      if (!access_token) {
+        return res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ success: false, message: "Access token is required" });
+      }
 
-    const token: JwtPayload = jwt.decode(access_token) as JwtPayload;
-    if (token?.role === "user") {
-      const user = await getUserById(token.id, dbRepositoryUser);
+      // Parse authorization header to extract token
+      const token = access_token.split(" ")[1];
+
+      // Decode the token
+      const decodedToken = jwt.decode(token) as JwtPayload;
+
+      if (!decodedToken || !decodedToken.role) {
+        return res
+          .status(HttpStatus.UNAUTHORIZED)
+          .json({ success: false, message: "Invalid access token" });
+      }
+
+      if (decodedToken.role === "user") {
+        const user = await getUserById(decodedToken.id, dbRepositoryUser);
+        return res
+          .status(HttpStatus.OK)
+          .json({ success: true, access_token, user });
+      } else if (decodedToken.role === "seller") {
+        const restaurant = await getDoctorById(
+          decodedToken.id,
+          dbRepositoryRestaurant
+        );
+        return res
+          .status(HttpStatus.OK)
+          .json({ success: true, access_token, user: restaurant });
+      }
+
       return res
         .status(HttpStatus.OK)
-        .json({ success: true, access_token, user });
-    } else if (token?.role === "seller") {
-      const restaurant = await getDoctorById(
-        token.id,
-        dbRepositoryRestaurant
-      );
+        .json({ success: true, access_token });
+    } catch (error) {
+      console.error("Error in token controller:", error);
       return res
-        .status(HttpStatus.OK)
-        .json({ success: true, access_token, user: restaurant });
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ success: false, message: "Internal server error" });
     }
-    return res.status(HttpStatus.OK).json({ success: true, access_token });
   };
 
-  return {  returnAccessToClient };
+  return { returnAccessToClient };
 };
+
 export default tokenContoller;

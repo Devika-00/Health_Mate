@@ -1,4 +1,4 @@
-import createUserEntity, {userEntityType} from "../../../../entities/userEntity";
+import createUserEntity, {userEntityType,googleSignInUserEntity,googleSignInUserEntityType} from "../../../../entities/userEntity";
 import { CreateUserInterface } from "../../../../types/userInterface";
 import { userDbInterface } from "../../../interfaces/userDbRepository";
 import {AuthServiceInterfaceType } from "../../../service-interface/authServiceInterface";
@@ -7,6 +7,7 @@ import { HttpStatus } from "../../../../types/httpStatus";
 import sentMail from "../../../../utils/sendMail";
 import {forgotPasswordEmail, otpEmail } from "../../../../utils/userEmail";
 import { UserInterface } from "../../../../types/userInterface";
+import { GoogleResponseType } from "../../../../types/googleResponseType";
 
 
 export const userRegister = async (
@@ -38,7 +39,13 @@ export const userRegister = async (
     await userRepository.addOTP(OTP, createdUser.id);
     sentMail(createdUser.email,emailSubject,otpEmail(OTP, createdUser.name)); //send otp
 
-    return createdUser;
+    const accessToken = authService.createTokens(
+      createdUser.id,
+      createdUser.name,
+      createdUser.role
+  );
+
+    return {createdUser, accessToken};
 
 };
 
@@ -93,6 +100,7 @@ export const login = async(
 )=>{
     const {email,password} = user;
     const isEmailExist = await userDbRepository.getUserbyEmail(email);
+   
 
     if(!isEmailExist){
         throw new CustomError("Invalid credentials", HttpStatus.UNAUTHORIZED);
@@ -124,6 +132,50 @@ export const login = async(
 
     return {accessToken,isEmailExist};
 }
+
+export const authenticateGoogleSignInUser = async (
+  userData: GoogleResponseType,
+  userDbRepository: ReturnType<userDbInterface>,
+  authService: ReturnType<AuthServiceInterfaceType>
+) => {
+  const { name, email, picture, email_verified } = userData;
+
+  const isEmailExist = await userDbRepository.getUserbyEmail(email);
+  if (isEmailExist?.isBlocked)
+    throw new CustomError(
+      "Your account is blocked by administrator",
+      HttpStatus.FORBIDDEN
+    );
+
+  if (isEmailExist) {
+    const  accessToken  = authService.createTokens(
+      isEmailExist.id,
+      isEmailExist.name,
+      isEmailExist.role
+    );
+
+    return { accessToken,isEmailExist };
+  } else {
+    const googleSignInUser: googleSignInUserEntityType = googleSignInUserEntity(
+      name,
+      email,
+      picture,
+      email_verified
+    );
+
+    const createdUser = await userDbRepository.registerGoogleSignedUser(
+      googleSignInUser
+    );
+    const userId = createdUser._id as unknown as string;
+
+    const  accessToken  = authService.createTokens(
+      userId,
+      createdUser.name,
+      createdUser.role
+    );
+    return { accessToken, createdUser };
+  }
+};
 
 
 export const sendResetVerificationCode = async (

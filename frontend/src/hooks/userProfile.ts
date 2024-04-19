@@ -28,8 +28,13 @@ const useProfile = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   useEffect(() => {
+    
     axios
-      .get(USER_API + "/profile")
+      .get(USER_API + "/profile", {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}` 
+        }
+      })
       .then(({ data }) => {
         const { user } = data;
         setProfile(user);
@@ -95,32 +100,35 @@ const useProfile = () => {
   };
 
   const handleSubmit = async () => {
-    if (!error) {
-      setIsSubmitting(true);
-      const url = await uploadImagesToCloudinary(formData.imageFile); 
-      console.log(url);
+  if (!error) {
+    setIsSubmitting(true);
+    const url = await uploadImagesToCloudinary(formData.imageFile); 
 
-      axiosJWT
-        .patch(USER_API + "/profile/edit", {
-          name: formData.name,
-          gender: formData.gender,
-          age: formData.age,
-          phoneNumber: formData.phoneNumber,
-          profilePicture: url || profile?.profilePicture, // Use url directly if available
-        })
-        .then(({ data }) => {
-          showToast(data.message);
-          setIsSubmitting(false);
-        })
-        .catch(() => {
-          setIsSubmitting(false);
-          showToast(
-            "Oops! Something went wrong while updating profile",
-            "error"
-          );
-        });
-    }
-  };
+
+    axiosJWT
+      .patch(USER_API + "/profile/edit", {
+        name: formData.name,
+        gender: formData.gender,
+        age: formData.age,
+        phoneNumber: formData.phoneNumber,
+        profilePicture: url || profile?.profilePicture,
+      }, { headers:{
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}` 
+      } })
+      .then(({ data }) => {
+        showToast(data.message);
+        setIsSubmitting(false);
+      })
+      .catch(() => {
+        setIsSubmitting(false);
+        showToast(
+          "Oops! Something went wrong while updating profile",
+          "error"
+        );
+      });
+  }
+};
+
 
   return {
     profile,

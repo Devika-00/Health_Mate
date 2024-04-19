@@ -1,4 +1,4 @@
-import { userEntityType } from "../../entities/userEntity";
+import { userEntityType ,googleSignInUserEntityType} from "../../entities/userEntity";
 import { userRepositoryMongodbType } from "../../frameworks/database/mongodb/repositories/userRepositoryMongodb";
 
 
@@ -7,8 +7,14 @@ export const userDbRepository = (
     repository : ReturnType<userRepositoryMongodbType>
 )=>{
     const getUserbyEmail = async (email: string)=>await repository.getUserbyEmail(email);
+    
 
     const getUserbyId = async (id: string)=> await repository.getUserbyId(id);    
+
+    const updateUserBlock = async (id: string, status: boolean) =>{
+        await repository.updateUserBlock(id, status);
+    }
+    
     
     const addUser = async (user:userEntityType)=> await repository.addUser(user);
 
@@ -24,6 +30,10 @@ export const userDbRepository = (
     
     const verifyAndResetPassword = async (verificationCode: string,password: string) =>await repository.findVerificationCodeAndUpdate(verificationCode, password);
 
+    const getAllUsers = async () => await repository.getAllUsers();
+    
+    const registerGoogleSignedUser = async (user: googleSignInUserEntityType) =>await repository.registerGoogleSignedUser(user);
+
     return {
         getUserbyEmail,
         getUserbyId,
@@ -34,6 +44,10 @@ export const userDbRepository = (
         deleteOtpUser,
         updateVerificationCode,
         verifyAndResetPassword,
+        getAllUsers,
+        registerGoogleSignedUser,
+        updateUserBlock,
+
     };
 };
 

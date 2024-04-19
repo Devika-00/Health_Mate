@@ -1,12 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 import { AuthService } from "../frameworks/services/authService";
 import { HttpStatus } from "../types/httpStatus";
-import {loginAdmin} from "../app/use-cases/Admin/adminAuth"
+import {loginAdmin} from "../app/use-cases/Admin/adminAuth";
+import {getUsers} from "../app/use-cases/Admin/adminRead";
 import { AuthServiceInterfaceType } from "../app/service-interface/authServiceInterface";
 import { userDbInterface } from "../app/interfaces/userDbRepository";
 import { userRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/userRepositoryMongodb";
 import { doctorDbInterface } from "../app/interfaces/doctorDBRepository";
 import { doctorRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/doctorRepositoryMongodb";
+import { blockUser } from "../app/use-cases/Admin/adminUpdate";
 
 // adminAuthController
 export default (
@@ -50,8 +52,45 @@ const adminLogin = async(
     }
     
 }
+
+/*
+   * METHOD:GET
+   * Retrieve all the users from db
+   */
+const getAllUser = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const users = await getUsers(dbUserRepository);
+      return res.status(HttpStatus.OK).json({ success: true, users });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /*
+   * METHOD:PATCH
+   * Block or Unblock user
+   */
+  const userBlock = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      await blockUser(id, dbUserRepository);
+      return res.status(HttpStatus.OK).json({
+        success: true,
+        message: "User block status updated successfully",
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
         return {
             adminLogin,
-        }
+            getAllUser,
+            userBlock,
+          }
 
 }  

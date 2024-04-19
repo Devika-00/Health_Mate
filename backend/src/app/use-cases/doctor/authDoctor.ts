@@ -1,4 +1,4 @@
-import DoctorEntity,{doctorEntityType,} from "../../../entities/doctorEntity";
+import DoctorEntity,{doctorEntityType,googleSignInUserEntity,googleSignInUserEntityType} from "../../../entities/doctorEntity";
 import { HttpStatus } from "../../../types/httpStatus";
 import { CreateDoctorInterface } from "../../../types/doctorInterface";
 import CustomError from "../../../utils/customError";
@@ -6,6 +6,8 @@ import sentMail from "../../../utils/sendMail";
 import { doctorDbInterface } from "../../interfaces/doctorDBRepository";
 import { AuthServiceInterfaceType } from "../../service-interface/authServiceInterface";
 import {doctorVerifyEmailPage} from "../../../utils/doctorVerifyEmailPage";
+import { GoogleResponseDoctorType } from "../../../types/googleResponseType";
+import { userDbInterface } from "../../interfaces/userDbRepository";
 
 //register new doctor       
 
@@ -78,14 +80,62 @@ export const verifyAccount = async (
     );
     if (!isPasswordMatch)
       throw new CustomError("Invalid credentials", HttpStatus.BAD_REQUEST);
-    const  accessToken  = authService.createTokens(
+    const  accessToken  = authService.doctorCreateTokens(
       isEmailExist.id,
       isEmailExist.doctorName,
       isEmailExist.role
     );
-    console.log(accessToken);
     return { accessToken, isEmailExist };
   };
+
+  export const authenticateGoogleSignInUser = async (
+    doctorData: GoogleResponseDoctorType,
+    doctorDbRepository: ReturnType<doctorDbInterface>,
+    authService: ReturnType<AuthServiceInterfaceType>
+  ) => {
+    const { name, email, picture, email_verified } = doctorData;
+
+   
+  
+    const isEmailExist = await doctorDbRepository.getDoctorByemail(email);
+    if (isEmailExist?.isBlocked)
+      throw new CustomError(
+        "Your account is blocked by administrator",
+        HttpStatus.FORBIDDEN
+      );
+
+      
+  
+    if (isEmailExist) {
+      const  accessToken  = authService.createTokens(
+        isEmailExist.id,
+        isEmailExist.doctorName,
+        isEmailExist.role
+      );
+  
+      return { accessToken,isEmailExist };
+    } else {
+      const googleSignInUser: googleSignInUserEntityType = googleSignInUserEntity(
+        name,
+        email,
+        picture,
+        email_verified,
+      );
+  
+      const createdUser = await doctorDbRepository.registerGoogleSignedDoctor(
+        googleSignInUser
+      );
+      const userId = createdUser._id as unknown as string;
+  
+      const  accessToken  = authService.createTokens(
+        userId,
+        createdUser.doctorName,
+        createdUser.role
+      );
+      return { accessToken, createdUser };
+    }
+  };
+  
 
   export const getDoctorProfile = async(
     doctorId : string,

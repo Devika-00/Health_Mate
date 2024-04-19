@@ -18,6 +18,9 @@ const Home = lazy(() => import("../pages/Home"));
 const EmailVerificationPage = lazy(() => import("../pages/doctor/emailVerification")); 
 const AdminLogin = lazy(()=>import("../pages/admin/AdminLogin"));
 const AdminDashboard = lazy(()=>import ("../pages/admin/AdminDashboard"));
+const AdminUserList = lazy(()=>import ("../pages/admin/userList"));
+const AdminDoctorList = lazy(()=>import ("../pages/admin/doctorList"));
+const AdminDoctorDetails = lazy(()=>import ("../pages/admin/doctorDetails"));
 const ProfileUser = lazy(()=>import("../pages/user/Profile"));
 const ProfileDoctor = lazy(()=>import("../pages/doctor/Profile"));
 const DoctorList = lazy(()=>import("../pages/user/DoctorCard"))
@@ -53,6 +56,9 @@ export const MainRouter = () => {
                     {/*Admin Routes*/}
                     <Route path="/admin/login" element={<AdminLogin/>}/>
                     <Route path="/admin" element={<AdminDashboard/>}/>
+                    <Route path="/admin/users" element={<AdminUserList/>}/>
+                    <Route path="/admin/doctors" element={<AdminDoctorList/>}/>
+                    <Route path="/admin/doctors/list" element={<AdminDoctorDetails/>}/>
                 </Routes>
             </Suspense> 
         </>

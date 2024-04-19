@@ -10,6 +10,8 @@ import showToast from "../../utils/toaster";
 import axios from "axios";
 import { useAppDispatch } from "../../redux/store/Store";
 import { setUser } from "../../redux/slices/UserSlice";
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
 
 const Login: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -26,7 +28,9 @@ const Login: React.FC = () => {
       axios
         .post(DOCTOR_API + "/login", { email, password })
         .then(({ data }) => {
+          const access_token = data.accessToken
           const { doctorName:name, role } = data.doctor;
+          localStorage.setItem('access_token', access_token);
           showToast(data.message, "success");
           dispatch(setUser({ isAuthenticated: true, name, role }));
           setTimeout(() => {
@@ -40,6 +44,35 @@ const Login: React.FC = () => {
         });
     },
   });
+
+  const handleGooglSignIn = (doctor: {
+    doctorName: string;
+    email: string;
+    picture: string;
+    email_verified: boolean;
+  }) => {
+    axios
+      .post(DOCTOR_API + "/google_signIn", { doctor })
+      .then(({ data }) => {
+        const { message, user,accessToken } = data;
+        localStorage.setItem('access_token', accessToken);
+        showToast(message, "success");
+        // dispatch(
+        //   setUser({
+        //     name: doctor.name,
+        //     isAuthenticated: true,
+        //     role: doctor.role,
+        //     id: doctor._id,
+        //   })
+        // );
+
+        console.log(doctor)
+
+        dispatch(setUser({ isAuthenticated: true, name: user.doctorName, role: user.role }));
+        navigate("/doctor");
+      })
+      .catch(({ response }) => showToast(response.data.message, "error"));
+  };
 
   return (
     <div className="flex items-center justify-center h-screen bg-cover bg-center" style={{ backgroundImage: `url(${DoctorImage})`, opacity: 100 }}>
@@ -91,13 +124,24 @@ const Login: React.FC = () => {
             Sign Up
           </Link>
         </p>
-        {/* <button
-          type="button"
-          className="bg-white hover:bg-gray-100 text-black font-bold py-2 px-4 rounded-full mt-6 focus:outline-none focus:shadow-outline flex items-center ml-12"
-        >
-          <FcGoogle className="mr-2" />
-          Google
-        </button> */}
+        
+        <div className="px-4 py-2 w-full  flex justify-center gap-2 ">
+              <GoogleLogin
+                onSuccess={(credentialResponse: any) => {
+                  const data: {
+                    doctorName: string;
+                    email: string;
+                    picture: string;
+                    email_verified: boolean;
+                  } = jwtDecode(credentialResponse?.credential);
+                  handleGooglSignIn(data);
+                }}
+                onError={() => {
+                  showToast("Login Failed", "error");
+                }}
+              />
+            </div>
+
       </div>
     </div>
   );

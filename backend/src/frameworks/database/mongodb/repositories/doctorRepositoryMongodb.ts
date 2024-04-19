@@ -1,4 +1,4 @@
-import { doctorEntityType } from "../../../../entities/doctorEntity";
+import { doctorEntityType, googleSignInUserEntityType } from "../../../../entities/doctorEntity";
 import { DoctorInterface } from "../../../../types/doctorInterface";
 import Doctor from "../models/doctor";
 
@@ -32,12 +32,21 @@ export const doctorRepositoryMongodb = () =>{
 
     const updateDoctorInfo = async (id: string, updateData:Record<string,any>)=>await Doctor.findByIdAndUpdate(id,updateData,{new:true});  
 
+    const registerGoogleSignedDoctor = async (doctor: googleSignInUserEntityType) =>
+      await Doctor.create({
+        doctorName: doctor.doctorName(),
+        email: doctor.email(),
+        profileImage: doctor.picture(),
+        isVerified: doctor.email_verified(),
+        
+      });
   return {
     getDoctorById,
     getDoctorByemail,
     addDoctor,
     verifyDoctor,
     updateDoctorInfo,
+    registerGoogleSignedDoctor,
   }
 
 }

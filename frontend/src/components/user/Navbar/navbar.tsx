@@ -1,16 +1,18 @@
 import React from 'react';
 import { Link,useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { setUser } from '../../../redux/slices/UserSlice';
+// import { setUser } from '../../../redux/slices/UserSlice';
 import { RootState } from '../../../redux/reducer/reducer';
+import logout from "../../../utils/logout";
 
 const Navbar: React.FC = () => {
   const user = useSelector((state: RootState) => state.UserSlice);
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    dispatch(setUser({ isAuthenticated: false, name: null, role: null, id: null }));
+    // dispatch(setUser({ isAuthenticated: false, name: null, role: null, id: null }));
+    logout("Logged out successfully");
     navigate('/user/login');
   };
 

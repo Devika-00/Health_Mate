@@ -41,7 +41,11 @@ const doctorProfile = () => {
 
   useEffect(() => {
     axios
-      .get(DOCTOR_API + "/profile")
+      .get(DOCTOR_API + "/profile", {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}` 
+        }
+      })
       .then(({ data }) => {
         const { doctor } = data;
         setProfile(doctor);
@@ -125,7 +129,9 @@ const doctorProfile = () => {
           description: formData.description,
           profileImage: imageUrl || profile?.profileImage,
           lisenceCertificate: certificateUrl || profile?.lisenceCertificate,
-        });
+        }, { headers:{
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}` 
+        } });
 
         showToast(response.data.message);
         setIsSubmitting(false);

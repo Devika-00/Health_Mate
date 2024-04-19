@@ -24,10 +24,10 @@ const AdminSidebar: React.FC = () => {
         </li>
         <li>
           <Link
-            to="/admin/patients"
+            to="/admin/users"
             className="block py-2 px-4 rounded-md hover:bg-gray-700"
           >
-            Patients
+            Users
           </Link>
         </li>
         <li>

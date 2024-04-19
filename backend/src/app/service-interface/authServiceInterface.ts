@@ -10,6 +10,9 @@ export const authServiceInterface = (service:AuthserviceReturn) =>{
     const getRandomString = () => service.getRandomString();
 
     const createTokens = (id: string, name: string, role:string)=>service.createTokens(id,name,role);
+    
+
+    const doctorCreateTokens = (id:string, name: string, role:string)=>service.doctorCreateTokens(id,name,role);
 
     return{
         encryptPassword,
@@ -17,6 +20,7 @@ export const authServiceInterface = (service:AuthserviceReturn) =>{
         comparePassword,
         createTokens,
         getRandomString,
+        doctorCreateTokens,
     };
 };
 

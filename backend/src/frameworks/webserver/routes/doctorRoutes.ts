@@ -23,6 +23,7 @@ const doctorRoute = () => {
 
     router.post("/signup", controller.signup);
     router.post("/verify_token/:token", controller.verifyToken);
+    router.post("/google_signIn", controller.googleSignIn);
     router.post("/login", controller.login);
     
     router.get("/profile",authenticateDoctor,controller.doctorProfile);
