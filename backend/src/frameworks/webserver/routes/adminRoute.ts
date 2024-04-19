@@ -24,7 +24,10 @@ export default () =>{
 
     router.post("/login", controller.adminLogin);
     router.get("/users", controller.getAllUser);
+    router.get("/doctors", controller.getAllDoctors);
     router.patch("/block_user/:id", controller.userBlock);
+    router.patch("/block_doctor/:id", controller.doctorBlock);
+    
 
     return router;
 };

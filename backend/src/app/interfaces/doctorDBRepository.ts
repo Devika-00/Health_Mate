@@ -8,6 +8,12 @@ export const doctorDbRepository = (
     const getDoctorById = async (id: string) =>
     await repository.getDoctorById(id);
 
+
+  const updateDoctorBlock = async (id: string, status: boolean) =>{
+      await repository.updateDoctorBlock(id, status);
+  }
+    
+
   const getDoctorByemail = async (email: string) =>
     await repository.getDoctorByemail(email);
 
@@ -19,6 +25,8 @@ export const doctorDbRepository = (
 
   const updateProfile = async (doctorID:string, doctorData : Record<string,any>)=>await repository.updateDoctorInfo(doctorID,doctorData);
 
+  const getAllDoctors = async () => await repository.getAllDoctors();
+
   const registerGoogleSignedDoctor = async (doctor: googleSignInUserEntityType) =>await repository.registerGoogleSignedDoctor(doctor);
     return{
         getDoctorById,
@@ -27,6 +35,8 @@ export const doctorDbRepository = (
         verifyDoctor,
         updateProfile,
         registerGoogleSignedDoctor,
+        getAllDoctors,
+        updateDoctorBlock
 
     }
 }

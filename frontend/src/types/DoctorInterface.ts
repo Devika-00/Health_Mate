@@ -12,6 +12,7 @@ export interface DoctorInterface {
     role:string;
     isVerified?: boolean;
     isApproved?: boolean;
+    isBlocked?: boolean;
     cerificateImage?:string;
 
 

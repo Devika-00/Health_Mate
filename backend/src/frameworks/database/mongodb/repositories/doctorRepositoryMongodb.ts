@@ -24,6 +24,11 @@ export const doctorRepositoryMongodb = () =>{
     return await newDoctor.save();
   };
 
+
+  const updateDoctorBlock = async (id: string, status: boolean) =>{
+    await Doctor.findByIdAndUpdate(id, { isBlocked: status });
+  }
+
   const verifyDoctor = async (token: string) =>
     await Doctor.findOneAndUpdate(
       { verificationToken: token },
@@ -31,6 +36,8 @@ export const doctorRepositoryMongodb = () =>{
     );
 
     const updateDoctorInfo = async (id: string, updateData:Record<string,any>)=>await Doctor.findByIdAndUpdate(id,updateData,{new:true});  
+
+    const getAllDoctors = async () => await Doctor.find({ isVerified: true }); 
 
     const registerGoogleSignedDoctor = async (doctor: googleSignInUserEntityType) =>
       await Doctor.create({
@@ -47,6 +54,9 @@ export const doctorRepositoryMongodb = () =>{
     verifyDoctor,
     updateDoctorInfo,
     registerGoogleSignedDoctor,
+    getAllDoctors,
+    updateDoctorBlock,
+
   }
 
 }

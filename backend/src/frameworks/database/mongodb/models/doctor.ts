@@ -47,6 +47,10 @@ const doctorSchema = new mongoose.Schema({
         type:Boolean,
         default:false,
     },
+    isApproved:{
+      type:Boolean,
+      default:false,
+    },
     createdAt:{
         type:Date,
         default: new Date(),

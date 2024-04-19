@@ -2,13 +2,15 @@ import { NextFunction, Request, Response } from "express";
 import { AuthService } from "../frameworks/services/authService";
 import { HttpStatus } from "../types/httpStatus";
 import {loginAdmin} from "../app/use-cases/Admin/adminAuth";
-import {getUsers} from "../app/use-cases/Admin/adminRead";
+import {getUsers,
+  getDoctors,
+} from "../app/use-cases/Admin/adminRead";
 import { AuthServiceInterfaceType } from "../app/service-interface/authServiceInterface";
 import { userDbInterface } from "../app/interfaces/userDbRepository";
 import { userRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/userRepositoryMongodb";
 import { doctorDbInterface } from "../app/interfaces/doctorDBRepository";
 import { doctorRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/doctorRepositoryMongodb";
-import { blockUser } from "../app/use-cases/Admin/adminUpdate";
+import { blockUser,blockDoctor } from "../app/use-cases/Admin/adminUpdate";
 
 // adminAuthController
 export default (
@@ -16,12 +18,13 @@ export default (
     authServiceImpl: AuthService,
     userDbRepository: userDbInterface,
     userDbRepositoryImpl: userRepositoryMongodbType,
-    restaurantDbRepository:doctorDbInterface,
-    restaurantDbRepositoryImpl: doctorRepositoryMongodbType,
+    doctorDbRepository: doctorDbInterface,
+    doctorDbRepositoryImpl: doctorRepositoryMongodbType,
+    
    
   ) => {
     const dbUserRepository = userDbRepository(userDbRepositoryImpl());
-    const dbResaurantRepository = restaurantDbRepository(restaurantDbRepositoryImpl());
+    const dbDoctorRepository = doctorDbRepository(doctorDbRepositoryImpl());
     const authService = authServiceInterface(authServiceImpl());
 
 
@@ -70,6 +73,25 @@ const getAllUser = async (
     }
   };
 
+/*
+   * METHOD:GET
+   * Retrieve all the doctors from db
+   */
+const getAllDoctors = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const doctors = await getDoctors(dbDoctorRepository);
+    return res.status(HttpStatus.OK).json({ success: true, doctors });
+  } catch (error) {
+    next(error);
+  }
+};
+  
+
+
   /*
    * METHOD:PATCH
    * Block or Unblock user
@@ -87,10 +109,29 @@ const getAllUser = async (
     }
   };
 
+  /*
+   * METHOD:PATCH
+   * Block or Unblock user
+   */
+  const doctorBlock = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      await blockDoctor(id, dbDoctorRepository);
+      return res.status(HttpStatus.OK).json({
+        success: true,
+        message: "User block status updated successfully",
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
         return {
             adminLogin,
             getAllUser,
             userBlock,
+            getAllDoctors,
+            doctorBlock,
           }
 
 }  
