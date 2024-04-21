@@ -18,6 +18,8 @@ const userRoutes = () =>{
         authService,
         userDbRepository,
         userRepositoryMongodb,
+        doctorDbRepository,
+        doctorRepositoryMongodb,
 
     );
 
@@ -32,6 +34,8 @@ router.post("/forgot_password",controller.forgotPassword);
 router.post("/reset_password/:token",controller.resetPassword);
 
 router.get("/profile", authenticateUser, controller.userProfile);
+router.get("/doctors", authenticateUser, controller.doctorPage);
+router.get("/doctor/:id", authenticateUser,controller.doctorDetails);
 router.patch("/profile/edit", authenticateUser, controller.updateUserInfo);
 return router;
 

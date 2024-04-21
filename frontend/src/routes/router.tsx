@@ -23,7 +23,10 @@ const AdminDoctorList = lazy(()=>import ("../pages/admin/doctorList"));
 const AdminDoctorDetails = lazy(()=>import ("../pages/admin/doctorDetails"));
 const ProfileUser = lazy(()=>import("../pages/user/Profile"));
 const ProfileDoctor = lazy(()=>import("../pages/doctor/Profile"));
-const DoctorList = lazy(()=>import("../pages/user/DoctorCard"));
+const DoctorList = lazy(()=>import("../pages/user/DoctorPage"));
+const AboutPage = lazy(()=>import("../pages/user/AboutPage"));
+const DoctorDetailsUser = lazy(()=>import("../pages/user/singleDoctorDetails"));
+const DoctorSlotPage = lazy(()=>import("../pages/doctor/SlotPage"));
 
 export const MainRouter = () => {
     return (
@@ -44,6 +47,9 @@ export const MainRouter = () => {
                      <Route path="" element={<ProtectedRoute />}/>
                      <Route path="/user/Profile" element={<ProfileUser />} />
                      <Route path="/user/doctor" element={<DoctorList />} />
+                     <Route path="/user/aboutus" element={<AboutPage />} />
+                     <Route path="/user/doctor/:id" element={<DoctorDetailsUser />} />
+
                     
 
                     {/*Doctor Routes*/ }
@@ -52,6 +58,7 @@ export const MainRouter = () => {
                     <Route path="/doctor/verify_token/:token" element ={<EmailVerificationPage/>}/>
                     <Route path="/doctor/login" element={<DoctorLogin/>}/>
                     <Route path="/doctor/Profile" element ={<ProfileDoctor/>}/>
+                    <Route path="/doctor/slot" element ={<DoctorSlotPage/>}/>
 
                     {/*Admin Routes*/}
                     <Route path="/admin/login" element={<AdminLogin/>}/>

@@ -5,6 +5,8 @@ import { AuthService } from "../frameworks/services/authService";
 import { HttpStatus } from "../types/httpStatus";
 import { GoogleResponseDoctorType } from "../types/googleResponseType";
 import { doctorDbInterface } from "../app/interfaces/doctorDBRepository";
+import { TimeSlotDbInterface } from "../app/interfaces/timeSlotDbRepository";
+import { TimeSlotRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/timeSlotRepositotyMongodb";
 import { doctorRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/doctorRepositoryMongodb";
 import {
     addNewDoctor,
@@ -12,6 +14,7 @@ import {
     doctorLogin,
     authenticateGoogleSignInUser,
 } from "../app/use-cases/doctor/authDoctor"
+import { addTimeSlot, getTimeSlotsByDoctorId, } from "../app/use-cases/doctor/timeslot";
 
 import {getDoctorProfile,
   updateDoctor} from "../app/use-cases/doctor/read & Update/profile";
@@ -20,9 +23,12 @@ const doctorController = (
     authServiceImpl : AuthService,
     doctorDbRepository :doctorDbInterface,
     doctorDbRepositoryImpl:doctorRepositoryMongodbType,
+    timeSlotDbRepository: TimeSlotDbInterface,
+    timeSlotDbRepositoryImpl: TimeSlotRepositoryMongodbType,
 ) => {
     const authService = authServiceInterface(authServiceImpl());
     const dbRepositoryDoctor = doctorDbRepository(doctorDbRepositoryImpl());
+    const dbTimeSlotRepository = timeSlotDbRepository(timeSlotDbRepositoryImpl());
 
     // doctor signup method POST
 
@@ -166,6 +172,72 @@ const doctorController = (
     }
   };
 
+  /**method get retrieve doctor status */
+  const doctorStatus = async(
+    req:Request,
+    res:Response,
+    next:NextFunction
+  )=>{
+    try{
+      const doctorId = req.doctor;
+      const doctor = await getDoctorProfile(
+        doctorId,
+        dbRepositoryDoctor
+      );
+      res.status(200).json({success:true,doctor});
+    }catch(error){
+      next(error);
+    }
+  };
+
+
+  const scheduleTime = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const doctorId = req.doctor;
+      const time = req.body;
+      const newTimeSlot = await addTimeSlot(
+        doctorId,
+        time,
+        dbTimeSlotRepository,
+      );
+  
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: "Time slot added successfully",
+        newTimeSlot,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /*
+   * * METHOD :GET
+   * return all time slot to the restaurant
+   */
+  const getTimeSlots = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const doctorId = req.doctor;
+      const timeSlots = await getTimeSlotsByDoctorId(
+        doctorId,
+        dbTimeSlotRepository
+      );
+      res.status(HttpStatus.OK).json({ success: true, timeSlots });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+
+
     return {
         signup,
         verifyToken,
@@ -173,6 +245,9 @@ const doctorController = (
         doctorProfile,
         updateDoctorInfo,
         googleSignIn,
+        doctorStatus,
+        scheduleTime,
+        getTimeSlots,
     }
 }
 

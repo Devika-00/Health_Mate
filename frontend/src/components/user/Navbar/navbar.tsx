@@ -28,9 +28,9 @@ const Navbar: React.FC = () => {
           <div className="flex items-center mr-20">
             <div className="hidden md:block">
               <Link to="/" className="text-white px-3 py-2 rounded-md text-sm font-medium">Home</Link>
-              <Link to="/about" className="text-white px-3 py-2 rounded-md text-sm font-medium">About Us</Link>
-              <Link to="/user/doctors" className="text-white px-3 py-2 rounded-md text-sm font-medium">Doctors</Link>
-              <Link to="/contact" className="text-white px-3 py-2 rounded-md text-sm font-medium">Contact Us</Link>
+              <Link to="/user/aboutus" className="text-white px-3 py-2 rounded-md text-sm font-medium">About Us</Link>
+              <Link to="/user/doctor" className="text-white px-3 py-2 rounded-md text-sm font-medium">Doctors</Link>
+              {/* <Link to="/contact" className="text-white px-3 py-2 rounded-md text-sm font-medium">Contact Us</Link> */}
             </div>
             {/* Profile and Login/Logout */}
             <div className="flex items-center">

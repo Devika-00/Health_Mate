@@ -18,16 +18,22 @@ import { userRepositoryMongodbType } from "../frameworks/database/mongodb/reposi
 import { AuthService } from "../frameworks/services/authService";
 import { AuthServiceInterfaceType} from "../app/service-interface/authServiceInterface";
 import { HttpStatus } from "../types/httpStatus";
+import { doctorDbInterface } from "../app/interfaces/doctorDBRepository";
+import { doctorRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/doctorRepositoryMongodb";
+import { getDoctors, getSingleDoctor } from "../app/use-cases/Admin/adminRead";
 
 
 const userController=(
     authServiceInterface: AuthServiceInterfaceType,
     authServiceImpl:AuthService,
     userDbRepository: userDbInterface,
-   userRepositoryImpl: userRepositoryMongodbType,
+    userRepositoryImpl: userRepositoryMongodbType,
+    doctorDbRepository: doctorDbInterface,
+    doctorDbRepositoryImpl: doctorRepositoryMongodbType,
 )=>{
     const dbRepositoryUser = userDbRepository(userRepositoryImpl());
     const authService = authServiceInterface(authServiceImpl());
+    const dbDoctorRepository = doctorDbRepository(doctorDbRepositoryImpl());
     
     // Register User POST - Method
     
@@ -227,6 +233,38 @@ const userController=(
     }
   };
 
+  /*
+   * METHOD:GET
+   * Retrieve all the doctors from db
+   */
+const doctorPage = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const doctors = await getDoctors(dbDoctorRepository);
+    return res.status(HttpStatus.OK).json({ success: true, doctors });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/* method get doctor details */
+const doctorDetails = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const {id} = req.params;
+    const doctor = await getSingleDoctor(id,dbDoctorRepository);
+    return res.status(HttpStatus.OK).json({ success: true, doctor });
+  } catch (error) {
+    next(error);
+  }
+};
+
     return {
         registerUser,
         verifyOtp,
@@ -237,6 +275,8 @@ const userController=(
         updateUserInfo,
         userProfile,
         googleSignIn,
+        doctorPage,
+        doctorDetails,
     };
     };
 

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import axiosJWT from '../../utils/axiosService';
 import { USER_API } from '../../constants';
 
-const Body: React.FC = () => {
+const DoctorListingPage: React.FC = () => {
   const [doctors, setDoctors] = useState<any[]>([]);
 
   useEffect(() => {
@@ -22,18 +22,17 @@ const Body: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-5">Our Doctors</h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <h1 className="text-3xl font-bold mb-8">Find a Doctor</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {doctors.map((doctor) => (
           <Link key={doctor._id} to={`/user/doctor/${doctor._id}`}>
-            <div className="bg-gray-100 rounded-lg shadow-lg flex flex-col justify-center items-center cursor-pointer">
-              <img src={doctor.profileImage} alt="Doctor" className="h-72 w-64 object-cover rounded-t-lg mt-7" />
-              <div className="p-4 text-center">
-                <h2 className="text-lg font-semibold mb-2">{doctor.doctorName}</h2>
-                <p className="text-gray-600 mb-2">{doctor.department}</p>
-                <p className="text-gray-600 mb-4">{doctor.description}</p>
-                <button className="bg-blue-900 text-white py-2 px-4 rounded-lg hover:bg-blue-800">Book Appointment</button>
-              </div>
+            <div className="bg-gray-100 shadow-md rounded-lg p-6 cursor-pointer flex flex-col justify-center items-center">
+              <img src={doctor.profileImage} alt="Doctor" className="w-64 h-64 mx-auto rounded mb-4" />
+              <h2 className="text-xl font-semibold text-center mb-2">{doctor.doctorName}</h2>
+              <p className="text-gray-600 text-m font-medium text-center mb-2">{doctor.department}</p>
+              <button className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded mt-3">
+                Book Appointment
+              </button>
             </div>
           </Link>
         ))}
@@ -42,4 +41,4 @@ const Body: React.FC = () => {
   );
 };
 
-export default Body;
+export default DoctorListingPage;

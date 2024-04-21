@@ -26,7 +26,7 @@ const Profile: React.FC = () => {
 
   switch (formData?.status) {
     case 'pending':
-      statusMessage = "Please update the profile with all fields for verification.";
+      statusMessage = "Please update the profile with all fields for verification and Please wait to admin to verify.";
       break;
     case 'rejected':
       statusMessage = "Verification of Doctor Rejected";
@@ -118,14 +118,14 @@ const Profile: React.FC = () => {
             </div>
 
             {/* Status message */}
-            <p className={formData?.status === 'approved' ? 'text-green-600' : formData?.status === 'rejected' ? 'text-red-600' : 'text-yellow-600'}>
+            <p className={formData?.status === 'approved' ? 'text-green-700 font-bold' : formData?.status === 'rejected' ? 'text-red-600 font-bold' : 'text-yellow-600 font-bold'}>
               {statusMessage}
             </p>
 
             {/* Verify button */}
             {/* <button onClick={handleVerify} className="bg-green-700 text-white py-2 px-4 mt-3 rounded-md hover:bg-green-800 focus:outline-none focus:ring focus:border-blue-500">Verify</button> */}
             {/* Update Profile Button */}
-            <button className="bg-blue-900 text-white py-2 px-4 mt-3 ml-5 rounded-md hover:bg-blue-800 focus:outline-none focus:ring focus:border-blue-500" onClick={handleSubmit}>Update Profile</button>
+            <button className="bg-blue-900 text-white py-2 px-4 mt-5 ml-5 rounded-md hover:bg-blue-800 focus:outline-none focus:ring focus:border-blue-500" onClick={handleSubmit}>Update Profile</button>
           </div>
         </div>
       </div>

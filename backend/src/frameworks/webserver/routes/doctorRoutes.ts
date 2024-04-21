@@ -5,6 +5,8 @@ import { doctorDbRepository } from "../../../app/interfaces/doctorDBRepository";
 import { doctorRepositoryMongodb, doctorRepositoryMongodbType } from "../../database/mongodb/repositories/doctorRepositoryMongodb";
 import {authenticateDoctor} from "../middlewares/authMiddleware";
 import doctorController from "../../../adapters/doctorController";
+import { timeSlotDbRepository } from "../../../app/interfaces/timeSlotDbRepository";
+import {  timeSlotRepositoryMongodb } from "../../database/mongodb/repositories/timeSlotRepositotyMongodb";
 
 
 
@@ -18,6 +20,8 @@ const doctorRoute = () => {
         authService,
         doctorDbRepository,
         doctorRepositoryMongodb,
+        timeSlotDbRepository,
+        timeSlotRepositoryMongodb
     );
 
 
@@ -28,6 +32,9 @@ const doctorRoute = () => {
     
     router.get("/profile",authenticateDoctor,controller.doctorProfile);
     router.patch("/profile/edit",authenticateDoctor,controller.updateDoctorInfo);
+    router.get("/status",authenticateDoctor,controller.doctorStatus);
+    router.post("/schedule",authenticateDoctor,controller.scheduleTime);
+    router.get("/timeslots",authenticateDoctor,controller.getTimeSlots)
 
     return router;
 }

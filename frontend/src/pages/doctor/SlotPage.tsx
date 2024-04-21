@@ -1,19 +1,18 @@
 import React from 'react'
 import Navbar from '../../components/doctor/Navbar/navbar'
-import Banner from '../../components/doctor/Banner'
 import Footer from '../../components/doctor/Footer/Footer'
-import Body from '../../components/doctor/Body'
+import ScheduleSlotPage from '../../components/doctor/Scheduleslot'
 
-const doctorDashboard:React.FC = () => {
+
+const SlotPage:React.FC = () => {
   return (
     <>
     <Navbar/> 
-    <Banner/>
-    <Body/>
+    <ScheduleSlotPage/>
     <Footer style={''}/>
     </>
     
   )
 }
 
-export default doctorDashboard
+export default SlotPage
