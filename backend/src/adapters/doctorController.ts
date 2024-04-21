@@ -14,7 +14,7 @@ import {
     doctorLogin,
     authenticateGoogleSignInUser,
 } from "../app/use-cases/doctor/authDoctor"
-import { addTimeSlot, getTimeSlotsByDoctorId, } from "../app/use-cases/doctor/timeslot";
+import { addTimeSlot, deleteTimeSlot, getTimeSlotsByDoctorId, } from "../app/use-cases/doctor/timeslot";
 
 import {getDoctorProfile,
   updateDoctor} from "../app/use-cases/doctor/read & Update/profile";
@@ -236,6 +236,23 @@ const doctorController = (
     }
   };
 
+  const removeTimeSlot = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      
+      const{ id } = req.params;
+      console.log(id);
+      await deleteTimeSlot(id, dbTimeSlotRepository);
+      res
+        .status(HttpStatus.OK)
+        .json({ success: true, message: "Slot deleted successfully" });
+    } catch (error) {
+      next(error);
+    }
+  };
 
 
     return {
@@ -248,6 +265,8 @@ const doctorController = (
         doctorStatus,
         scheduleTime,
         getTimeSlots,
+        removeTimeSlot,
+        
     }
 }
 

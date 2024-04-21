@@ -80,11 +80,29 @@ const ScheduleAppointmentPage = () => {
   };
   
 
-  const handleDeleteTime = () => {
-    // Implement functionality for deleting time
-    console.log('Time deleted:', selectedTime);
-    closeModal();
+  const handleDeleteTime = async () => {
+    try {
+        const selectedTimeSlot = timeSlots.find(timeSlot => timeSlot.time === selectedTime);
+        console.log(selectedTimeSlot);
+        if (!selectedTimeSlot) {
+          console.error('Selected time slot not found');
+          return;
+        }
+        const response = await axios.delete(`${DOCTOR_API}/deleteTime/${selectedTimeSlot._id}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+          }
+        });
+      closeModal();
+      // Update the time slots in the frontend after successful deletion
+      setTimeSlots(timeSlots.filter(timeSlot => timeSlot.time !== selectedTime));
+      showToast(response.data.message, "success");
+    } catch (error) {
+      console.error('Error deleting time:', error);
+    //   showToast(error.response.data.message, "error");
+    }
   };
+  
 
   const handleAddMoreClick = () => {
     if (isDoctorApproved) {

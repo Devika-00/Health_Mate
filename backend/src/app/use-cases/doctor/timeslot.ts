@@ -26,4 +26,10 @@ export const addTimeSlot = async (
     doctorId: string,
     dbTimeSlotRepository: ReturnType<TimeSlotDbInterface>
   ) => await dbTimeSlotRepository.getAllTimeSlots(doctorId);
+
+
+  export const deleteTimeSlot = async (
+    timeSlotId: string,
+    dbTimeSlotRepository: ReturnType<TimeSlotDbInterface>
+  ) => await dbTimeSlotRepository.removeTimeSlotbyId(timeSlotId);
   
