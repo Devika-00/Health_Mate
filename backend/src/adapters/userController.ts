@@ -21,6 +21,11 @@ import { HttpStatus } from "../types/httpStatus";
 import { doctorDbInterface } from "../app/interfaces/doctorDBRepository";
 import { doctorRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/doctorRepositoryMongodb";
 import { getDoctors, getSingleDoctor } from "../app/use-cases/Admin/adminRead";
+import { TimeSlotDbInterface } from "../app/interfaces/timeSlotDbRepository";
+import { TimeSlotRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/timeSlotRepositotyMongodb";
+import { getTimeSlotsByDoctorId } from "../app/use-cases/doctor/timeslot";
+import timeSlots from "../frameworks/database/mongodb/models/timeSlots";
+
 
 
 const userController=(
@@ -30,11 +35,14 @@ const userController=(
     userRepositoryImpl: userRepositoryMongodbType,
     doctorDbRepository: doctorDbInterface,
     doctorDbRepositoryImpl: doctorRepositoryMongodbType,
+    timeSlotDbRepository: TimeSlotDbInterface,
+    timeSlotDbRepositoryImpl: TimeSlotRepositoryMongodbType,
 )=>{
     const dbRepositoryUser = userDbRepository(userRepositoryImpl());
     const authService = authServiceInterface(authServiceImpl());
     const dbDoctorRepository = doctorDbRepository(doctorDbRepositoryImpl());
-    
+    const dbTimeSlotRepository = timeSlotDbRepository(timeSlotDbRepositoryImpl());
+
     // Register User POST - Method
     
     const registerUser = async(
@@ -265,6 +273,23 @@ const doctorDetails = async (
   }
 };
 
+const getTimeslots = async(
+  req:Request,
+  res:Response,
+  next:NextFunction
+)=>{
+  try{
+  const {id} = req.params;
+  const timeSlots = await getTimeSlotsByDoctorId(
+    id,
+    dbTimeSlotRepository
+  )
+  res.status(HttpStatus.OK).json({ success: true, timeSlots });
+}catch (error) {
+  next(error);
+}
+}
+
     return {
         registerUser,
         verifyOtp,
@@ -277,6 +302,7 @@ const doctorDetails = async (
         googleSignIn,
         doctorPage,
         doctorDetails,
+        getTimeslots,
     };
     };
 

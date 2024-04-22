@@ -8,6 +8,11 @@ import authenticateUser from "../middlewares/authMiddleware";
 import doctorController from "../../../adapters/doctorController";
 import { doctorDbRepository } from "../../../app/interfaces/doctorDBRepository";
 import { doctorRepositoryMongodb } from "../../database/mongodb/repositories/doctorRepositoryMongodb";
+import { timeSlotDbRepository } from "../../../app/interfaces/timeSlotDbRepository";
+import {  timeSlotRepositoryMongodb } from "../../database/mongodb/repositories/timeSlotRepositotyMongodb";
+import bookingController from "../../../adapters/bookingController";
+import { bookingDbRepository } from "../../../app/interfaces/bookingDbRepository";
+import { bookingRepositoryMongodb } from "../../database/mongodb/repositories/BookingRepositoryMongodb";
 
 
 const userRoutes = () =>{
@@ -20,8 +25,22 @@ const userRoutes = () =>{
         userRepositoryMongodb,
         doctorDbRepository,
         doctorRepositoryMongodb,
+        timeSlotDbRepository,
+        timeSlotRepositoryMongodb,
 
     );
+
+
+    const _bookingController = bookingController(
+        userDbRepository,
+        userRepositoryMongodb,
+        doctorDbRepository,
+        doctorRepositoryMongodb,
+        timeSlotDbRepository,
+        timeSlotRepositoryMongodb,
+        bookingDbRepository,
+        bookingRepositoryMongodb,
+    )
 
 //user Authentication Routes//
 
@@ -37,6 +56,14 @@ router.get("/profile", authenticateUser, controller.userProfile);
 router.get("/doctors", authenticateUser, controller.doctorPage);
 router.get("/doctor/:id", authenticateUser,controller.doctorDetails);
 router.patch("/profile/edit", authenticateUser, controller.updateUserInfo);
+router.get("/time-slots/:id",authenticateUser,controller.getTimeslots);
+
+
+/*  Booking Routes for booking Controller  */
+
+router.post("/book-appoinment",authenticateUser,_bookingController.BookAppoinment);
+
+
 return router;
 
 };

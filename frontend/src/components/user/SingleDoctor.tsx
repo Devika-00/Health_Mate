@@ -1,13 +1,13 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axiosJWT from '../../utils/axiosService';
 import { USER_API } from '../../constants';
 
 const DoctorDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [doctor, setDoctor] = useState<any>(null);
-
+  const navigate = useNavigate(); // Using useNavigate instead of useHistory
 
   useEffect(() => {
     const fetchDoctorDetails = async () => {
@@ -19,14 +19,15 @@ const DoctorDetailsPage: React.FC = () => {
       }
     };
     fetchDoctorDetails();
+  }, [id]);
 
-  }, [id]); 
-
+  const handleBookAppointment = () => {
+    navigate(`/user/appoinment/${id}`); // Using navigate instead of history.push
+  };
 
   if (!doctor) {
     return <div>Loading...</div>;
   }
-
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -43,7 +44,7 @@ const DoctorDetailsPage: React.FC = () => {
             <p className="text-lg">{doctor.doctorName}</p>
             <p className="text-lg text-green-500 font-bold">Verified</p>
             {/* Add verified symbol here if necessary */}
-            <button className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4">Book Appointment</button>
+            <button onClick={handleBookAppointment} className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4">Book Appointment</button>
           </div>
           <div className="bg-gray-100 p-4 rounded-lg mb-4">
             <h3 className="text-xl font-bold mb-4">About</h3>
@@ -56,4 +57,3 @@ const DoctorDetailsPage: React.FC = () => {
 };
 
 export default DoctorDetailsPage;
-

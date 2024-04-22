@@ -114,12 +114,16 @@ const ScheduleAppointmentPage = () => {
 
   const generateTimeOptions = () => {
     const options = [];
-    for (let hour = 0; hour < 24; hour++) {
+    for (let hour = 9; hour <= 21; hour++) {
       for (let minute = 0; minute < 60; minute += 30) {
-        const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-        const nextHour = minute === 30 ? hour + 1 : hour;
+        const period = hour < 12 ? 'AM' : 'PM';
+        const formattedHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
+        const time = `${formattedHour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} ${period}`;
+        const nextHour = minute === 30 ? (hour === 12 ? 1 : hour + 1) : hour;
         const nextMinute = minute === 30 ? '00' : '30';
-        const nextTime = `${nextHour.toString().padStart(2, '0')}:${nextMinute}`;
+        const nextPeriod = nextHour < 12 ? 'AM' : 'PM';
+        const nextFormattedHour = nextHour > 12 ? nextHour - 12 : nextHour === 0 ? 12 : nextHour;
+        const nextTime = `${nextFormattedHour.toString().padStart(2, '0')}:${nextMinute} ${nextPeriod}`;
         const label = `${time} - ${nextTime}`;
         options.push(
           <option key={time} value={time}>{label}</option>
@@ -128,7 +132,6 @@ const ScheduleAppointmentPage = () => {
     }
     return options;
   };
-
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Schedule Appointment</h1>
