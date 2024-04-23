@@ -74,14 +74,43 @@ const AppointmentBookingPage: React.FC = () => {
 
   const handleAppointmentConfirmation = async () => {
     try {
-      const {patientName, patientAge, patientNumber, patientProblem} = patientDetails
-
+      const { patientName, patientAge, patientNumber, patientProblem } = patientDetails;
+  
+      // Validation checks
+      const nameRegex = /^[A-Z][a-zA-Z]+$/; // Regex for name validation
+      const ageRegex = /^\d+$/; // Regex for age validation
+      const numberRegex = /^\d{10}$/; // Regex for phone number validation
+  
+      // Validate patient name
+      if (!patientName || !nameRegex.test(patientName)) {
+        showToast('Please enter a valid name (first letter capital, letters only).', "error");
+        return;
+      }
+  
+      // Validate patient age
+      if (!patientAge || !ageRegex.test(patientAge) || parseInt(patientAge) < 3) {
+        showToast('Please enter a valid age (numeric value, at least 3 years old).', "error");
+        return;
+      }
+  
+      // Validate patient number
+      if (!patientNumber || !numberRegex.test(patientNumber)) {
+        showToast('Please enter a valid phone number (10 digits, numbers only).', "error");
+        return;
+      }
+  
+      // Validate patient problem
+      if (!patientProblem.trim()) {
+        showToast('Please enter the patient\'s problem.', "error");
+        return;
+      }
+  
       const appointmentData = {
         doctorId: id,
         doctorName: doctor.doctorName,
         selectedPackage: selectedPackage,
         selectedTimeSlot: selectedTimeSlot,
-        selectedDate:selectedDate,
+        selectedDate: selectedDate,
         patientName: patientName,
         patientAge: patientAge,
         patientNumber: patientNumber,
