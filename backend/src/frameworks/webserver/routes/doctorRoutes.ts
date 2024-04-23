@@ -34,7 +34,7 @@ const doctorRoute = () => {
     router.patch("/profile/edit",authenticateDoctor,controller.updateDoctorInfo);
     router.get("/status",authenticateDoctor,controller.doctorStatus);
     router.post("/schedule",authenticateDoctor,controller.scheduleTime);
-    router.get("/timeslots",authenticateDoctor,controller.getTimeSlots)
+    router.get("/timeslots/:date",authenticateDoctor,controller.getTimeSlots)
     router.delete("/deleteTime/:id",authenticateDoctor,controller.removeTimeSlot)
     
     return router;

@@ -11,36 +11,44 @@ const ScheduleAppointmentPage = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDoctorApproved, setIsDoctorApproved] = useState(false);
   const [timeSlots, setTimeSlots] = useState<any[]>([]);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch doctor's status and time slots simultaneously
         const [statusResponse, timeSlotsResponse] = await Promise.all([
           axios.get(`${DOCTOR_API}/status`, {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('access_token')}`
             }
           }),
-          axios.get(`${DOCTOR_API}/timeslots`, {
-            headers: {
-              'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-            }
-          })
+          fetchTimeSlots(selectedDate)
         ]);
 
-        // Update state with doctor status
-        setIsDoctorApproved(statusResponse.data.doctor.status);
-        
-        // Update state with time slots
-        setTimeSlots(timeSlotsResponse.data.timeSlots);
+        setIsDoctorApproved(statusResponse.data.doctor.status === 'approved'); // Update here
+        setTimeSlots(timeSlotsResponse);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
 
     fetchData();
-  }, []);
+  }, [selectedDate]);
+
+  const fetchTimeSlots = async (date: Date | null) => {
+    try {
+      if (!date) return [];
+      const response = await axios.get(`${DOCTOR_API}/timeslots/${date.toISOString().split('T')[0]}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+        }
+      });
+      return response.data.timeSlots;
+    } catch (error) {
+      console.error('Error fetching time slots:', error);
+      return [];
+    }
+  };
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -51,64 +59,63 @@ const ScheduleAppointmentPage = () => {
     setIsDeleteModalOpen(false);
   };
 
-  const handleTimeInputChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
+  const handleTimeInputChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setTimeInput(e.target.value);
   };
 
-  const handleTimeClick = (time: React.SetStateAction<string>) => {
+  const handleTimeClick = (time: string) => {
     setSelectedTime(time);
-    setIsDeleteModalOpen(true); // Open the delete modal
+    setIsDeleteModalOpen(true);
   };
 
   const handleUploadButtonClick = async () => {
     try {
-      // Make a request to save the time slot
-      const response = await axios.post(DOCTOR_API + "/schedule", { time: timeInput }, {
+      const response = await axios.post(
+        `${DOCTOR_API}/schedule`,
+        {
+          time: timeInput,
+          date: selectedDate ? selectedDate.toISOString().split('T')[0] : ''
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`
+          }
+        }
+      );
+      closeModal();
+      setTimeSlots([...timeSlots, response.data.newTimeSlot]);
+      showToast(response.data.message, 'success');
+    } catch (error:any) {
+      showToast(error.response.data.message, 'error');
+      console.error('Error uploading time:', error);
+    }
+  };
+
+  const handleDeleteTime = async () => {
+    try {
+      const selectedTimeSlot = timeSlots.find(timeSlot => timeSlot.time === selectedTime);
+      if (!selectedTimeSlot) {
+        console.error('Selected time slot not found');
+        return;
+      }
+      const response = await axios.delete(`${DOCTOR_API}/deleteTime/${selectedTimeSlot._id}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('access_token')}`
         }
       });
       closeModal();
-      // Update the state with the new time slot data
-      console.log(response);
-      setTimeSlots([...timeSlots, response.data.newTimeSlot]);
-      showToast(response.data.message, "success");
-    } catch (error: any) {
-        showToast(error.response.data.message,"error" )
-      console.error('Error uploading time:', error);
-    }
-  };
-  
-
-  const handleDeleteTime = async () => {
-    try {
-        const selectedTimeSlot = timeSlots.find(timeSlot => timeSlot.time === selectedTime);
-        console.log(selectedTimeSlot);
-        if (!selectedTimeSlot) {
-          console.error('Selected time slot not found');
-          return;
-        }
-        const response = await axios.delete(`${DOCTOR_API}/deleteTime/${selectedTimeSlot._id}`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-          }
-        });
-      closeModal();
-      // Update the time slots in the frontend after successful deletion
       setTimeSlots(timeSlots.filter(timeSlot => timeSlot.time !== selectedTime));
       showToast(response.data.message, "success");
     } catch (error) {
       console.error('Error deleting time:', error);
-    //   showToast(error.response.data.message, "error");
     }
   };
-  
 
   const handleAddMoreClick = () => {
-    if (isDoctorApproved) {
+    if (isDoctorApproved && selectedDate) {
       openModal();
     } else {
-      alert('You need to be approved to add time slots.');
+      alert('You need to select a date and be approved to add time slots.');
     }
   };
 
@@ -132,16 +139,43 @@ const ScheduleAppointmentPage = () => {
     }
     return options;
   };
+
+  const handleDateChange = (date: Date | null) => {
+    setSelectedDate(date);
+  };
+
+  const handleSelectClick = async () => {
+    if (!selectedDate) return;
+    const timeSlots = await fetchTimeSlots(selectedDate);
+    setTimeSlots(timeSlots);
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Schedule Appointment</h1>
       <div className="bg-gray-100 p-4 rounded-lg">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Morning, Afternoon, and Evening Section */}
+          {/* Calendar Section */}
+          <div>
+            <h2 className="text-xl font-bold mb-4">Select Date</h2>
+            <div className="flex">
+              <input
+                type="date"
+                value={selectedDate ? selectedDate.toISOString().split('T')[0] : ''}
+                onChange={e => handleDateChange(new Date(e.target.value))}
+                className="border border-gray-300 rounded-md py-2 px-4 mb-4"
+              />
+              <button onClick={handleSelectClick} className="bg-blue-900 text-white py-1 px-4 rounded-lg ml-2">
+                Select
+              </button>
+            </div>
+          </div>
+
+          {/* Time Slots Section */}
           <div className="bg-blue-100 p-4 rounded-lg">
             <div className="flex justify-between mb-4 items-center">
               <h2 className="text-xl font-bold flex items-center">
-                Time Slot 
+                Time Slot
               </h2>
               <button onClick={handleAddMoreClick} className="bg-blue-900 text-white py-2 px-4 rounded-lg">
                 + Add More
@@ -160,8 +194,6 @@ const ScheduleAppointmentPage = () => {
               ))}
             </div>
           </div>
-          {/* Add similar sections for Afternoon and Evening */}
-          {/* You can reuse the code above and just change the background color and icons */}
         </div>
       </div>
 

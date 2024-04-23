@@ -57,6 +57,7 @@ router.get("/doctors", authenticateUser, controller.doctorPage);
 router.get("/doctor/:id", authenticateUser,controller.doctorDetails);
 router.patch("/profile/edit", authenticateUser, controller.updateUserInfo);
 router.get("/time-slots/:id",authenticateUser,controller.getTimeslots);
+router.get("/time-slots/:id/dates",authenticateUser,controller.getDateSlots);
 
 
 /*  Booking Routes for booking Controller  */

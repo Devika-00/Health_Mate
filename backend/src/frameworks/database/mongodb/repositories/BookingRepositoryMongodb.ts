@@ -11,6 +11,7 @@ export const bookingRepositoryMongodb = () => {
           doctorId: data.getDoctorId(),
           selectedPackage: data.getSelectedPackage(),
           selectedTimeSlot: data.getSelectedTimeSlot(),
+          selectedDate:data.getSelectedDate(),
           patientName:data.getPatientName(),
           patientAge:data.getPatientAge(),
           patientNumber:data.getPatientNumber(),

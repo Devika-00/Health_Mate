@@ -23,7 +23,9 @@ import { doctorRepositoryMongodbType } from "../frameworks/database/mongodb/repo
 import { getDoctors, getSingleDoctor } from "../app/use-cases/Admin/adminRead";
 import { TimeSlotDbInterface } from "../app/interfaces/timeSlotDbRepository";
 import { TimeSlotRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/timeSlotRepositotyMongodb";
-import { getTimeSlotsByDoctorId } from "../app/use-cases/doctor/timeslot";
+import { getTimeSlotsByDoctorId,
+         getDateSlotsByDoctorId,
+ } from "../app/use-cases/doctor/timeslot";
 import timeSlots from "../frameworks/database/mongodb/models/timeSlots";
 
 
@@ -272,7 +274,7 @@ const doctorDetails = async (
     next(error);
   }
 };
-
+/**get time slot by doctorId GET method*/
 const getTimeslots = async(
   req:Request,
   res:Response,
@@ -280,8 +282,11 @@ const getTimeslots = async(
 )=>{
   try{
   const {id} = req.params;
+  const {date} = req.query; 
+
   const timeSlots = await getTimeSlotsByDoctorId(
     id,
+    date,
     dbTimeSlotRepository
   )
   res.status(HttpStatus.OK).json({ success: true, timeSlots });
@@ -289,6 +294,28 @@ const getTimeslots = async(
   next(error);
 }
 }
+
+
+/**get time slot by doctorId GET method*/
+const getDateSlots = async(
+  req:Request,
+  res:Response,
+  next:NextFunction
+)=>{
+  try{
+  const {id} = req.params;
+
+  const dateSlots = await getDateSlotsByDoctorId(
+    id,
+    dbTimeSlotRepository
+  )
+  res.status(HttpStatus.OK).json({ success: true, dateSlots });
+}catch (error) {
+  next(error);
+}
+}
+
+
 
     return {
         registerUser,
@@ -303,6 +330,7 @@ const getTimeslots = async(
         doctorPage,
         doctorDetails,
         getTimeslots,
+        getDateSlots,
     };
     };
 

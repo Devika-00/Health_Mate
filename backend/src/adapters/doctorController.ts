@@ -198,11 +198,14 @@ const doctorController = (
   ) => {
     try {
       const doctorId = req.doctor;
-      const time = req.body;
+      const { time, date } = req.body; // Destructure time and date from req.body
       const newTimeSlot = await addTimeSlot(
         doctorId,
-        time,
-        dbTimeSlotRepository,
+        {
+          time, date,
+          isAvailable:true,
+        }, // Pass time and date as an object
+        dbTimeSlotRepository
       );
   
       res.status(HttpStatus.OK).json({
@@ -214,6 +217,7 @@ const doctorController = (
       next(error);
     }
   };
+  
 
   /*
    * * METHOD :GET
@@ -226,8 +230,10 @@ const doctorController = (
   ) => {
     try {
       const doctorId = req.doctor;
+      const { date } = req.params; 
       const timeSlots = await getTimeSlotsByDoctorId(
         doctorId,
+        date,
         dbTimeSlotRepository
       );
       res.status(HttpStatus.OK).json({ success: true, timeSlots });

@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 // import { setUser } from '../../../redux/slices/UserSlice';
 import { RootState } from '../../../redux/reducer/reducer';
 import logout from "../../../utils/logout";
+import { clearUser, setUser } from '../../../redux/slices/UserSlice';
 
 const Navbar: React.FC = () => {
   const user = useSelector((state: RootState) => state.UserSlice);
@@ -51,3 +52,7 @@ const Navbar: React.FC = () => {
 }
 
 export default Navbar;
+function dispatch(arg0: any) {
+  throw new Error('Function not implemented.');
+}
+

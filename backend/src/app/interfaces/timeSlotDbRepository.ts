@@ -4,19 +4,23 @@ import { TimeSlotEntityType } from "../../entities/timeSlotEntity";
 export const timeSlotDbRepository = (
   repository: ReturnType<TimeSlotRepositoryMongodbType>
 ) => {
-  const addtimeSlot = async (doctorId:string, time:string) =>
-    await repository.addTimeSlots(doctorId,time);
+  const addtimeSlot = async (doctorId:string, time:string,date:string) =>
+    await repository.addTimeSlots(doctorId,time,date);
   
 
   const isTimeSlotExist = async (
     doctorId: string,
     time: string,
-  ) => await repository.getSlotByTime(doctorId,time);
+    date:string,
+  ) => await repository.getSlotByTime(doctorId,time,date);
 
   
 
-  const getAllTimeSlots = async (doctorId: string) =>
-    await repository.getAllTimeSlots(doctorId);
+  const getAllTimeSlots = async (doctorId: string,date:string) =>
+    await repository.getAllTimeSlots(doctorId,date);
+
+  const getAllDateSlots = async (doctorId: string) =>
+    await repository.getAllDateSlots(doctorId);
 
   const removeTimeSlotbyId = async (timeSlotId: string) =>
     await repository.removeTimeSlotbyId(timeSlotId);
@@ -26,6 +30,7 @@ export const timeSlotDbRepository = (
     isTimeSlotExist,
     getAllTimeSlots,
     removeTimeSlotbyId,
+    getAllDateSlots,
   };
 };
 export type TimeSlotDbInterface = typeof timeSlotDbRepository;

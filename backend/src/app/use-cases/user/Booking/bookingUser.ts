@@ -15,7 +15,7 @@ export const appoinmentBooking = async(
     bookingDbRepository: ReturnType<BookingDbRepositoryInterface>,
     doctorDbRepository: ReturnType<doctorDbInterface>,
 )=>{
-    const {doctorId,doctorName,selectedPackage,selectedTimeSlot,patientName,patientAge,patientNumber,patientProblem} = data;
+    const {doctorId,doctorName,selectedPackage,selectedTimeSlot,patientName,patientAge,patientNumber,patientProblem,selectedDate} = data;
     const doctorDetails = await doctorDbRepository.getDoctorById(doctorId);
 
     const appoinment = bookingEntity(
@@ -23,6 +23,7 @@ export const appoinmentBooking = async(
         doctorId,
         selectedPackage,
         selectedTimeSlot,
+        selectedDate,
         patientName,
         patientAge,
         patientNumber,
