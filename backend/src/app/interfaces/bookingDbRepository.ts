@@ -7,8 +7,16 @@ export const bookingDbRepository = (
     const createBooking = async (data: BookingEntityType) =>
         await repository.createBooking(data);
 
+    
+  const getAllPatients = async () => await repository.getAllPatients();
+
+  const getSinglePatient = async (id:string) => await repository.getSinglePatient(id);
+
+
     return {
         createBooking,
+        getAllPatients,
+        getSinglePatient,
     }
   }
 

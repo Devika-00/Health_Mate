@@ -10,6 +10,7 @@ const AppointmentBookingPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [doctor, setDoctor] = useState<any>(null);
   const [selectedPackage, setSelectedPackage] = useState<string>('');
+  const [selectedPackageAmount, setSelectedPackageAmount] = useState<number>(0); // Added state for package amount
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>('');
   const [timeSlots, setTimeSlots] = useState<any[]>([]);
   const [dates, setDates] = useState<string[]>([]);
@@ -35,11 +36,11 @@ const AppointmentBookingPage: React.FC = () => {
         try {
           const datesResponse = await axiosJWT.get(`${USER_API}/time-slots/${id}/dates`);
           // Parse dates to format them as needed
-          const formattedDates = datesResponse.data.dateSlots.map((date: any) => {
+          const formattedDates: string[] = datesResponse.data.dateSlots.map((date: any) => {
             const splittedDate = date.date.split('T')[0]; // Split date and time, and take only the date part
             return splittedDate;
           });
-          const uniqueDates:string[] = Array.from(new Set(formattedDates));
+          const uniqueDates: string[] = Array.from(new Set(formattedDates));
           setDates(uniqueDates);
         } catch (error) {
           console.error('Error fetching scheduled dates:', error);
@@ -48,7 +49,7 @@ const AppointmentBookingPage: React.FC = () => {
         console.error('Error fetching doctor details:', error);
       }
     };
-  
+
     fetchDoctorDetails();
   }, [id]);
 
@@ -58,7 +59,7 @@ const AppointmentBookingPage: React.FC = () => {
       setIsModalOpen(true);
     } else {
       // Display error toast if either time slot or package is not selected
-      showToast('Please select both time slot and package.', "error");
+      showToast('Please select both time slot and package.', 'error');
     }
   };
 
@@ -75,40 +76,60 @@ const AppointmentBookingPage: React.FC = () => {
   const handleAppointmentConfirmation = async () => {
     try {
       const { patientName, patientAge, patientNumber, patientProblem } = patientDetails;
-  
+
       // Validation checks
       const nameRegex = /^[A-Z][a-zA-Z]+$/; // Regex for name validation
       const ageRegex = /^\d+$/; // Regex for age validation
       const numberRegex = /^\d{10}$/; // Regex for phone number validation
-  
+
       // Validate patient name
       if (!patientName || !nameRegex.test(patientName)) {
-        showToast('Please enter a valid name (first letter capital, letters only).', "error");
+        showToast('Please enter a valid name (first letter capital, letters only).', 'error');
         return;
       }
-  
+
       // Validate patient age
       if (!patientAge || !ageRegex.test(patientAge) || parseInt(patientAge) < 3) {
-        showToast('Please enter a valid age (numeric value, at least 3 years old).', "error");
+        showToast('Please enter a valid age (numeric value, at least 3 years old).', 'error');
         return;
       }
-  
+
       // Validate patient number
       if (!patientNumber || !numberRegex.test(patientNumber)) {
-        showToast('Please enter a valid phone number (10 digits, numbers only).', "error");
+        showToast('Please enter a valid phone number (10 digits, numbers only).', 'error');
         return;
       }
-  
+
       // Validate patient problem
       if (!patientProblem.trim()) {
-        showToast('Please enter the patient\'s problem.', "error");
+        showToast('Please enter the patient\'s problem.', 'error');
         return;
       }
+
+      let selectedPackageAmount = 0;
+      switch (selectedPackage) {
+        case 'Messaging':
+          selectedPackageAmount = 100;
+          break;
+        case 'Voice Call':
+          selectedPackageAmount = 120;
+          break;
+        case 'Video Call':
+          selectedPackageAmount = 200;
+          break;
+        case 'In Person':
+          selectedPackageAmount = 250;
+          break;
+        default:
+          break;
+      }
   
+
       const appointmentData = {
         doctorId: id,
         doctorName: doctor.doctorName,
         selectedPackage: selectedPackage,
+        selectedPackageAmount: selectedPackageAmount, // Include package amount
         selectedTimeSlot: selectedTimeSlot,
         selectedDate: selectedDate,
         patientName: patientName,
@@ -119,21 +140,22 @@ const AppointmentBookingPage: React.FC = () => {
       const response = await axiosJWT.post(`${USER_API}/book-appoinment`, appointmentData);
       console.log('Appointment booked successfully:', response.data);
       setIsModalOpen(false);
-      showToast('Appointment booked successfully.', "success");
+      showToast('Appointment booked successfully.', 'success');
     } catch (error) {
       console.error('Error booking appointment:', error);
-      showToast('Error booking appointment. Please try again later.', "error");
+      showToast('Error booking appointment. Please try again later.', 'error');
     }
   };
 
-  const handlePackageSelection = (packageName: string) => {
-    setSelectedPackage(prevPackage => prevPackage === packageName ? '' : packageName);
-    setIsPackageSelected(prevState => !prevState); // Toggle package selection state
+  const handlePackageSelection = (packageName: string, amount: number) => {
+    setSelectedPackage(packageName);
+    setSelectedPackageAmount(amount); // Set package amount
+    setIsPackageSelected(true); // Update package selection state
   };
 
   const handleTimeSlotSelection = (timeSlot: string) => {
-    setSelectedTimeSlot(prevTimeSlot => prevTimeSlot === timeSlot ? '' : timeSlot);
-    setIsTimeSlotSelected(prevState => !prevState); // Toggle time slot selection state
+    setSelectedTimeSlot(timeSlot);
+    setIsTimeSlotSelected(true); // Update time slot selection state
   };
 
   const handleDateSelection = (date: string) => {
@@ -159,7 +181,7 @@ const AppointmentBookingPage: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Book an Appointment</h1>
-      
+
       {doctor && (
         <div>
           {/* Doctor Profile */}
@@ -168,123 +190,142 @@ const AppointmentBookingPage: React.FC = () => {
             <div>
               <h2 className="text-xl font-bold">{doctor.doctorName}</h2>
               <p>{doctor.department}</p>
-              <p className='text-green-600 font-semibold'> Verified </p>
+              <p className="text-green-600 font-semibold"> Verified </p>
             </div>
           </div>
-        
+
           {/* Scheduled Dates */}
           <div className="mb-8">
             <h2 className="text-xl font-bold mb-4">Scheduled Dates</h2>
             <div className="grid grid-cols-4 gap-4">
-              {dates && dates.map((date: string, index: number) => (
-                <div key={index} className={`bg-blue-100 rounded-lg shadow-md p-4 flex items-center justify-between cursor-pointer ${selectedDate === date && 'border border-blue-500'}`} onClick={() => handleDateSelection(date)}>
-                  <div>
-                    <input type="radio" id={`dateSlot${index}`} name="dateSlot" value={date} />
-                    <label htmlFor={`dateSlot${index}`} className="text-lg font-bold">{date}</label>
+              {dates &&
+                dates.map((date: string, index: number) => (
+                  <div
+                    key={index}
+                    className={`bg-blue-100 rounded-lg shadow-md p-4 flex items-center justify-between cursor-pointer ${
+                      selectedDate === date && 'border border-blue-500'
+                    }`}
+                    onClick={() => handleDateSelection(date)}
+                  >
+                    <div>
+                      <input type="radio" id={`dateSlot${index}`} name="dateSlot" value={date} />
+                      <label htmlFor={`dateSlot${index}`} className="text-lg font-bold">
+                        {date}
+                      </label>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
 
-         {/* Time Slots */}
+          {/* Time Slots */}
           <div className="mb-8">
             <h2 className="text-xl font-bold mb-4">Available Time Slots</h2>
             <div className="grid grid-cols-9 gap-4">
-              {timeSlots && timeSlots.map((slot: any, index: number) => (
-                <div key={index} className={`bg-blue-100 rounded-lg shadow-md p-4 flex items-center justify-between cursor-pointer ${selectedTimeSlot === slot.time && 'border border-blue-500'}`} onClick={() => handleTimeSlotSelection(slot.time)}>
-                  <div>
-                    <input type="radio" id={`timeSlot${index}`} name="timeSlot" value={slot.time} />
-                    <label htmlFor={`timeSlot${index}`} className="text-lg font-bold">{slot.time}</label>
-                    <p className={slot.isAvailable ? 'text-green-700' : 'text-red-600'}>{slot.isAvailable ? 'Available' : 'Not Available'}</p>
-                    {/* Render availability status */}
+              {timeSlots &&
+                timeSlots.map((slot: any, index: number) => (
+                  <div
+                    key={index}
+                    className={`bg-blue-100 rounded-lg shadow-md p-4 flex items-center justify-between cursor-pointer ${
+                      selectedTimeSlot === slot.time && 'border border-blue-500'
+                    }`}
+                    onClick={() => handleTimeSlotSelection(slot.time)}
+                  >
+                    <div>
+                      <input type="radio" id={`timeSlot${index}`} name="timeSlot" value={slot.time} />
+                      <label htmlFor={`timeSlot${index}`} className="text-lg font-bold">
+                        {slot.time}
+                      </label>
+                      <p className={slot.isAvailable ? 'text-green-700' : 'text-red-600'}>
+                        {slot.isAvailable ? 'Available' : 'Not Available'}
+                      </p>
+                      {/* Render availability status */}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
-        
+
           {/* Select Package */}
           <div className="mb-8">
             <h2 className="text-xl font-bold mb-4">Select Package</h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {/* Messaging Package */}
-              <div 
+              <div
                 className={`bg-blue-100 rounded-lg shadow-md p-4 flex items-center justify-between cursor-pointer ${
                   selectedPackage === 'Messaging' && 'border border-blue-500'
                 }`}
-                onClick={() => handlePackageSelection('Messaging')}
+                onClick={() => handlePackageSelection('Messaging', 100)}
               >
                 <div>
                   <BsChatDots size={24} />
                   <div>
                     <h3 className="text-lg font-bold">Messaging</h3>
-                    <p className='text-blue-900'>Chat with Doctor</p>
+                    <p className="text-blue-900">Chat with Doctor</p>
                   </div>
                 </div>
-                <p className='font-bold'>$20</p>
+                <p className="font-bold">RS :100</p>
               </div>
 
               {/* Voice Call Package */}
-              <div 
+              <div
                 className={`bg-blue-100 rounded-lg shadow-md p-4 flex items-center justify-between cursor-pointer ${
                   selectedPackage === 'Voice Call' && 'border border-blue-500'
                 }`}
-                onClick={() => handlePackageSelection('Voice Call')}
+                onClick={() => handlePackageSelection('Voice Call', 120)}
               >
                 <div>
                   <BsTelephone size={24} />
                   <div>
                     <h3 className="text-lg font-bold">Voice Call</h3>
-                    <p className='text-blue-900'>Voice call with doctor</p>
+                    <p className="text-blue-900">Voice call with doctor</p>
                   </div>
                 </div>
-                <p className='font-bold'>$40</p>
+                <p className="font-bold">Rs:120</p>
               </div>
 
               {/* Video Call Package */}
-              <div 
+              <div
                 className={`bg-blue-100 rounded-lg shadow-md p-4 flex items-center justify-between cursor-pointer ${
                   selectedPackage === 'Video Call' && 'border border-blue-500'
                 }`}
-                onClick={() => handlePackageSelection('Video Call')}
+                onClick={() => handlePackageSelection('Video Call', 200)}
               >
                 <div>
                   <BsCameraVideo size={24} />
                   <div>
                     <h3 className="text-lg font-bold">Video Call</h3>
-                    <p className='text-blue-900'>Video call with doctor</p>
+                    <p className="text-blue-900">Video call with doctor</p>
                   </div>
                 </div>
-                <p className='font-bold'>$80</p>
+                <p className="font-bold">RS:200</p>
               </div>
 
               {/* In Person Package */}
-              <div 
+              <div
                 className={`bg-blue-100 rounded-lg shadow-md p-4 flex items-center justify-between cursor-pointer ${
                   selectedPackage === 'In Person' && 'border border-blue-500'
                 }`}
-                onClick={() => handlePackageSelection('In Person')}
+                onClick={() => handlePackageSelection('In Person', 250)}
               >
                 <div>
                   <BsPerson size={24} />
                   <div>
                     <h3 className="text-lg font-bold">In Person</h3>
-                    <p className='text-blue-900'>In person with doctor</p>
+                    <p className="text-blue-900">In person with doctor</p>
                   </div>
                 </div>
-                <p className='font-bold'>$120</p>
+                <p className="font-bold">RS:250</p>
               </div>
             </div>
           </div>
-        
+
           {/* Book Appointment Button */}
           <div className="flex justify-between mb-4">
             <button onClick={handleBookAppointment} className="bg-blue-950 text-white py-2 px-4 rounded-lg">
               Book an Appointment
             </button>
           </div>
-
 
           {/* Modal for entering patient details */}
           <Modal
@@ -317,20 +358,59 @@ const AppointmentBookingPage: React.FC = () => {
             <h2 className="text-xl font-bold mb-4">Patient Details</h2>
             {/* Form elements without <form> */}
             <div className="mb-6">
-              <label htmlFor="name" className="block mb-2">Name</label>
-              <input type="text" required id="name" name="patientName" value={patientDetails.patientName} onChange={handleInputChange} className="border rounded-lg px-4 py-2 w-full" />
+              <label htmlFor="name" className="block mb-2">
+                Name
+              </label>
+              <input
+                type="text"
+                required
+                id="name"
+                name="patientName"
+                value={patientDetails.patientName}
+                onChange={handleInputChange}
+                className="border rounded-lg px-4 py-2 w-full"
+              />
             </div>
             <div className="mb-6">
-              <label htmlFor="age" className="block mb-2">Age</label>
-              <input type="text" required id="age" name="patientAge" value={patientDetails.patientAge} onChange={handleInputChange} className="border rounded-lg px-4 py-2 w-full" />
+              <label htmlFor="age" className="block mb-2">
+                Age
+              </label>
+              <input
+                type="text"
+                required
+                id="age"
+                name="patientAge"
+                value={patientDetails.patientAge}
+                onChange={handleInputChange}
+                className="border rounded-lg px-4 py-2 w-full"
+              />
             </div>
             <div className="mb-6">
-              <label htmlFor="phoneNumber" className="block mb-2">Phone Number</label>
-              <input type="text" required id="phoneNumber" name="patientNumber" value={patientDetails.patientNumber} onChange={handleInputChange} className="border rounded-lg px-4 py-2 w-full" />
+              <label htmlFor="phoneNumber" className="block mb-2">
+                Phone Number
+              </label>
+              <input
+                type="text"
+                required
+                id="phoneNumber"
+                name="patientNumber"
+                value={patientDetails.patientNumber}
+                onChange={handleInputChange}
+                className="border rounded-lg px-4 py-2 w-full"
+              />
             </div>
             <div className="mb-6">
-              <label htmlFor="problem" className="block mb-2">Problem</label>
-              <input id="problem" required name="patientProblem" value={patientDetails.patientProblem} onChange={handleInputChange} className="border rounded-lg px-4 py-2 w-full" />
+              <label htmlFor="problem" className="block mb-2">
+                Problem
+              </label>
+              <input
+                id="problem"
+                required
+                name="patientProblem"
+                value={patientDetails.patientProblem}
+                onChange={handleInputChange}
+                className="border rounded-lg px-4 py-2 w-full"
+              />
             </div>
             <button onClick={handleAppointmentConfirmation} className="bg-blue-950 text-white py-2 px-4 rounded-lg">
               Book Appointment

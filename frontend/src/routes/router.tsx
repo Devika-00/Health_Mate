@@ -28,6 +28,8 @@ const AboutPage = lazy(()=>import("../pages/user/AboutPage"));
 const DoctorDetailsUser = lazy(()=>import("../pages/user/singleDoctorDetails"));
 const DoctorSlotPage = lazy(()=>import("../pages/doctor/SlotPage"));
 const AppoinmentBookingPage = lazy(()=>import("../pages/user/Appoinment"));
+const PatientListPage = lazy(()=>import("../pages/doctor/patientListPages"));
+const SinglePagePatient =lazy(()=>import("../pages/doctor/singlePagePatient"));
 
 export const MainRouter = () => {
     return (
@@ -61,6 +63,8 @@ export const MainRouter = () => {
                     <Route path="/doctor/login" element={<DoctorLogin/>}/>
                     <Route path="/doctor/Profile" element ={<ProfileDoctor/>}/>
                     <Route path="/doctor/slot" element ={<DoctorSlotPage/>}/>
+                    <Route path="/doctor/patientList" element={<PatientListPage/>}/>
+                    <Route path="/doctor/patient-details/:id" element={<SinglePagePatient/>} />
 
                     {/*Admin Routes*/}
                     <Route path="/admin/login" element={<AdminLogin/>}/>

@@ -29,6 +29,10 @@ const bookingSchema = new mongoose.Schema({
     type: Date, 
     required: true, 
   },
+  selectedPackageAmount:{
+    type:Number,
+    require:true,
+  },
   payment:{
     type:Boolean,
     required:true,

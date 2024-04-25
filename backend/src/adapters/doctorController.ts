@@ -15,9 +15,13 @@ import {
     authenticateGoogleSignInUser,
 } from "../app/use-cases/doctor/authDoctor"
 import { addTimeSlot, deleteTimeSlot, getTimeSlotsByDoctorId, } from "../app/use-cases/doctor/timeslot";
+import { BookingDbRepositoryInterface} from "../app/interfaces/bookingDbRepository";
+import { BookingRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/BookingRepositoryMongodb";
+
 
 import {getDoctorProfile,
   updateDoctor} from "../app/use-cases/doctor/read & Update/profile";
+import { getPatientFullDetails, getPatients } from "../app/use-cases/doctor/doctorRead";
 const doctorController = (
     authServiceInterface:AuthServiceInterfaceType,
     authServiceImpl : AuthService,
@@ -25,10 +29,13 @@ const doctorController = (
     doctorDbRepositoryImpl:doctorRepositoryMongodbType,
     timeSlotDbRepository: TimeSlotDbInterface,
     timeSlotDbRepositoryImpl: TimeSlotRepositoryMongodbType,
+    bookingDbRepository: BookingDbRepositoryInterface,
+    bookingDbRepositoryImpl: BookingRepositoryMongodbType,
 ) => {
     const authService = authServiceInterface(authServiceImpl());
     const dbRepositoryDoctor = doctorDbRepository(doctorDbRepositoryImpl());
     const dbTimeSlotRepository = timeSlotDbRepository(timeSlotDbRepositoryImpl());
+    const dbBookingRepository = bookingDbRepository(bookingDbRepositoryImpl());
 
     // doctor signup method POST
 
@@ -258,8 +265,36 @@ const doctorController = (
     } catch (error) {
       next(error);
     }
-  };
+  }
+    
+    const getPatientList = async (
+      req: Request,
+      res: Response,
+      next: NextFunction
+    ) => {
+      try {
+        const patients = await getPatients(dbBookingRepository);
+        return res.status(HttpStatus.OK).json({ success: true, patients });
+      } catch (error) {
+        next(error);
+      }
+    }
 
+    const getPatientDetails = async (
+      req: Request,
+      res: Response,
+      next: NextFunction
+    ) => {
+      try {
+        const {id} = req.params;
+        console.log("///////////////");
+        console.log(id);
+        const patient = await getPatientFullDetails(id,dbBookingRepository);
+        return res.status(HttpStatus.OK).json({ success: true, patient });
+      } catch (error) {
+        next(error);
+      }
+    }
 
     return {
         signup,
@@ -272,6 +307,8 @@ const doctorController = (
         scheduleTime,
         getTimeSlots,
         removeTimeSlot,
+        getPatientList,
+        getPatientDetails,
         
     }
 }

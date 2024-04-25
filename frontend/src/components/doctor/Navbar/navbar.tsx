@@ -27,7 +27,7 @@ const Navbar: React.FC = () => {
             <div className="hidden md:block">
               <Link to="/doctor" className="text-white px-3 py-2 rounded-md text-sm font-medium">Home</Link>
               <Link to="/doctor/slot" className="text-white px-3 py-2 rounded-md text-sm font-medium">Slot</Link>
-              <Link to="/doctors" className="text-white px-3 py-2 rounded-md text-sm font-medium">Patients</Link>
+              <Link to="/doctor/patientList" className="text-white px-3 py-2 rounded-md text-sm font-medium">Patients</Link>
             </div>
             {/* Profile and Login */}
             <div className=" flex items-center">

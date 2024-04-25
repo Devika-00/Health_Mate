@@ -7,7 +7,8 @@ import {authenticateDoctor} from "../middlewares/authMiddleware";
 import doctorController from "../../../adapters/doctorController";
 import { timeSlotDbRepository } from "../../../app/interfaces/timeSlotDbRepository";
 import {  timeSlotRepositoryMongodb } from "../../database/mongodb/repositories/timeSlotRepositotyMongodb";
-
+import { bookingDbRepository } from "../../../app/interfaces/bookingDbRepository";
+import { bookingRepositoryMongodb } from "../../database/mongodb/repositories/BookingRepositoryMongodb";
 
 
 
@@ -21,7 +22,9 @@ const doctorRoute = () => {
         doctorDbRepository,
         doctorRepositoryMongodb,
         timeSlotDbRepository,
-        timeSlotRepositoryMongodb
+        timeSlotRepositoryMongodb,
+        bookingDbRepository,
+        bookingRepositoryMongodb,
     );
 
 
@@ -36,7 +39,9 @@ const doctorRoute = () => {
     router.post("/schedule",authenticateDoctor,controller.scheduleTime);
     router.get("/timeslots/:date",authenticateDoctor,controller.getTimeSlots)
     router.delete("/deleteTime/:id",authenticateDoctor,controller.removeTimeSlot)
-    
+    router.get("/patients",authenticateDoctor,controller.getPatientList);
+    router.get("/patients/:id",authenticateDoctor,controller.getPatientDetails);
+
     return router;
 }
 

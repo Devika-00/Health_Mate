@@ -5,21 +5,32 @@ import { Types } from "mongoose";
 
 export const bookingRepositoryMongodb = () => {
 
-    const createBooking = async (data: BookingEntityType) =>
-        await Booking.create({
+    const createBooking = async (data: BookingEntityType) => { 
+        return await Booking.create({
           userId: data.getUserId(),
           doctorId: data.getDoctorId(),
           selectedPackage: data.getSelectedPackage(),
           selectedTimeSlot: data.getSelectedTimeSlot(),
-          selectedDate:data.getSelectedDate(),
-          patientName:data.getPatientName(),
-          patientAge:data.getPatientAge(),
-          patientNumber:data.getPatientNumber(),
-          patientProblem:data.getPatientProblem(),
+          selectedPackageAmount: data.getSelectedPackageAmount(),
+          selectedDate: data.getSelectedDate(),
+          patientName: data.getPatientName(),
+          patientAge: data.getPatientAge(),
+          patientNumber: data.getPatientNumber(),
+          patientProblem: data.getPatientProblem(),
         });
+      };
+
+
+      const getAllPatients = async () => await Booking.find();
+
+
+      const getSinglePatient = async (id:string) => await Booking.findById(id);
+      
 
     return{
         createBooking,
+        getAllPatients,
+        getSinglePatient,
     }    
 }
 
