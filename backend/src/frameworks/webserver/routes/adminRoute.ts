@@ -28,7 +28,8 @@ export default () =>{
     router.patch("/block_user/:id", controller.userBlock);
     router.patch("/block_doctor/:id", controller.doctorBlock);
     router.get("/doctors/:id", controller.doctorDetails);
-    router.patch("/update_doctor/:id", controller.updateDoctor);
+    router.patch("/verify_doctor/:id", controller.VerifyDoctor);
+    router.patch("/verify_doctor_rejection/:id",controller.rejectionDoctor);
     
 
     return router;

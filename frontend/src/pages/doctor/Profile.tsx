@@ -102,10 +102,19 @@ const Profile: React.FC = () => {
               />
             </div>
 
-            {/* Additional profile fields */}
             <div className="mb-4">
               <label htmlFor="education" className="block text-gray-700 font-semibold">Education:</label>
               <input type="text" id="education" name='education' value={formData?.education ?? ""} onChange={handleInputChange} className="border text-gray-700 border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:ring focus:border-blue-500" />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="experience" className="block text-gray-700 font-semibold">Experience:</label>
+              <input
+                id="experience"
+                name="experience"
+                value={formData?.experience ?? ""}
+                onChange={handleInputChange}
+                className="border text-gray-700 border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:ring focus:border-blue-500"
+              />
             </div>
             <div className="mb-4">
               <label htmlFor="lisenceCertificate" className="block text-gray-700 font-semibold">Doctor Lisence Certificate :</label>

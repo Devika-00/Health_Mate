@@ -5,7 +5,7 @@ import { ADMIN_API } from "../constants";
 
 const useDoctors = () => {
   const [doctors, setDoctors] = useState<DoctorInterface[]>([]);
-
+  
   useEffect(() => {
     axiosJWT
       .get(ADMIN_API + "/doctors",{
@@ -14,13 +14,12 @@ const useDoctors = () => {
         }
       })
       .then(({ data }) => {
-        console.log(data);
         setDoctors(data.doctors)
       })
       .catch((error: any) => console.log(error));
-  }, [setDoctors]);
+  }, []); 
 
-  return { doctors, setDoctors };
+  return { doctors };
 };
 
 export default useDoctors;

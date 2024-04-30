@@ -55,9 +55,6 @@ const userController=(
         try {
          const user = req.body;
          const {createdUser, accessToken} =   await userRegister(user,dbRepositoryUser,authService);
-
-         
-         
          res.json({
             message: "User registration successful,please verify email",
             newUser: createdUser,

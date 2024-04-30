@@ -41,6 +41,8 @@ const doctorRoute = () => {
     router.delete("/deleteTime/:id",authenticateDoctor,controller.removeTimeSlot)
     router.get("/patients",authenticateDoctor,controller.getPatientList);
     router.get("/patients/:id",authenticateDoctor,controller.getPatientDetails);
+    router.get("/doctorDetails/:id",authenticateDoctor,controller.getDoctorDetails);
+
 
     return router;
 }

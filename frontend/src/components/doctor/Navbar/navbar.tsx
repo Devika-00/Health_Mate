@@ -1,17 +1,26 @@
+// Import necessary modules
 import React from 'react';
-import { Link,useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { setUser } from '../../../redux/slices/UserSlice';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/reducer/reducer';
+import logout from '../../../utils/logout';
+import { clearDoctor } from '../../../redux/slices/DoctorSlice';
+import { useAppDispatch } from '../../../redux/store/Store';
+import showToast from '../../../utils/toaster';
+import { error } from 'console';
 
+// Navbar component
 const Navbar: React.FC = () => {
-  const doctor = useSelector((state: RootState) => state.UserSlice);
-  const dispatch = useDispatch();
+  // Retrieve doctor information from Redux store
+  const doctor = useSelector((state: RootState) => state.DoctorSlice);
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
+  // Handle logout function
   const handleLogout = () => {
-    dispatch(setUser({ isAuthenticated: false, name: null, role: null, id: null }));
+    dispatch(clearDoctor());
     navigate('/doctor/login');
+    showToast("logout Succesfully","success");
   };
 
   return (
@@ -34,6 +43,8 @@ const Navbar: React.FC = () => {
             {doctor.isAuthenticated && doctor.role === 'doctor' ? (
                 <>
                   <Link to="/doctor/profile" className="text-white px-3 py-2 rounded-md text-sm font-medium">Profile</Link>
+                  {/* Pass doctor ID as parameter */}
+                  <Link to={`/doctor/status/${doctor.id}`} className="text-white px-3 py-2 rounded-md text-sm font-medium">Verification</Link>
                   <button onClick={handleLogout} className="text-blue-900 px-3 py-2  text-sm font-medium bg-gray-100 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50 rounded-md ml-2">Logout</button>
                 </>
               ) : (
@@ -48,3 +59,11 @@ const Navbar: React.FC = () => {
 }
 
 export default Navbar;
+function dispatch(arg0: { payload: undefined; type: "doctorSlice/clearDoctor"; }) {
+  throw new Error('Function not implemented.');
+}
+
+function logoutDoctor(arg0: string) {
+  throw new Error('Function not implemented.');
+}
+

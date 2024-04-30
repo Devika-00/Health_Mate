@@ -4,6 +4,12 @@ export interface CreateDoctorInterface {
     mobile: string;
     password: string;
     verificationToken: string;
+    phoneNumber:string,
+    department:string,
+    education:string,
+    description:string,
+    experience:string,
+    lisenceCertificate:string,
 }
 
 export interface DoctorInterface {
@@ -17,6 +23,7 @@ export interface DoctorInterface {
     gender: string;
     education:string;
     description:string;
+    experience:string;
     certicateUpload?: string;
     lisenceCertificate?:string;
     department: string;

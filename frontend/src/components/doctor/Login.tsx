@@ -12,6 +12,7 @@ import { useAppDispatch } from "../../redux/store/Store";
 import { setUser } from "../../redux/slices/UserSlice";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
+import { setDoctor } from '../../redux/slices/DoctorSlice';
 
 const Login: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -29,10 +30,10 @@ const Login: React.FC = () => {
         .post(DOCTOR_API + "/login", { email, password })
         .then(({ data }) => {
           const access_token = data.accessToken
-          const { doctorName:name, role } = data.doctor;
+          const { doctorName:name, role, _id } = data.doctor;
           localStorage.setItem('access_token', access_token);
           showToast(data.message, "success");
-          dispatch(setUser({ isAuthenticated: true, name, role }));
+          dispatch(setDoctor({ isAuthenticated: true, name, role,id:_id }));
           setTimeout(() => {
             navigate("/doctor");
           }, 1000);
@@ -68,7 +69,7 @@ const Login: React.FC = () => {
 
         console.log(doctor)
 
-        dispatch(setUser({ isAuthenticated: true, name: user.doctorName, role: user.role }));
+        dispatch(setDoctor({ isAuthenticated: true, name: user.doctorName, role: user.role }));
         navigate("/doctor");
       })
       .catch(({ response }) => showToast(response.data.message, "error"));

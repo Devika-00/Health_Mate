@@ -28,6 +28,9 @@ const doctorSchema = new mongoose.Schema({
       education:{
         type:String,
       },
+      experience:{
+        type:String,
+      },
       description:{
         type:String,
       },

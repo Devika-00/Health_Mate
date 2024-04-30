@@ -16,18 +16,25 @@ export const addNewDoctor = async(
     doctorRepository:ReturnType<doctorDbInterface>,
     authService:ReturnType<AuthServiceInterfaceType>
 )=>{
-    const { doctorName, email, password } = doctorData;
+    const { doctorName, email, password,phoneNumber,department,education,description,experience,lisenceCertificate } = doctorData;
   const isEmailExist = await doctorRepository.getDoctorByemail(email);
   if (isEmailExist)
     throw new CustomError("Email already exists", HttpStatus.BAD_REQUEST);
 
   const hashedPassword: string = await authService.encryptPassword(password);
-  const verificationToken = authService.getRandomString(); // generates a random string using uuid 
+  const verificationToken = authService.getRandomString(); 
   const doctor: doctorEntityType = DoctorEntity(
     doctorName,
     email,
     hashedPassword,
     verificationToken,
+    phoneNumber,
+    department,
+    education,
+    description,
+    experience,
+    lisenceCertificate,
+
   );
   const createdDoctor = await doctorRepository.addDoctor(
     doctor
@@ -68,6 +75,10 @@ export const verifyAccount = async (
     if (!isEmailExist)
       throw new CustomError("Invalid credentials", HttpStatus.UNAUTHORIZED);
   
+    if(isEmailExist?.isBlocked){
+      throw new CustomError("Account is Blocked ",HttpStatus.FORBIDDEN);
+  }
+
     if (!isEmailExist.isVerified)
       throw new CustomError("Please verify your email", HttpStatus.UNAUTHORIZED);
   

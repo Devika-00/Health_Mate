@@ -1,28 +1,45 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import DoctorImage from '../../assets/images/doctor1.jpg'; 
 import { useFormik } from "formik";
 import showToast from "../../utils/toaster";
 import axios from "axios";
-import { useState } from "react";
 import { validateSignUp } from "../../utils/validation";
 import { DOCTOR_API } from '../../constants';
+import { uploadCertificateToCloudinary } from "../../Api/uploadImages";
 
 const Signup: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [medicalLicensePreview, setMedicalLicensePreview] = useState<string | null>(null);
   const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
       name: "",
       email: "",
+      phoneNumber: "",
+      department: "",
+      education: "",
+      description: "",
+      experience: "",
       password: "",
       confirmPassword: "",
+      lisenceCertificate: null,
     },
     validate: validateSignUp,
-    onSubmit: ({ name: doctorName, email, password }) => {
+    onSubmit: async ({ name: doctorName, email, password, phoneNumber, department, education, description, experience, lisenceCertificate }) => {
       setIsSubmitting(true);
+      const certificateUrl = await uploadCertificateToCloudinary(lisenceCertificate); 
       axios
-        .post(DOCTOR_API + "/signup", { doctorName, email, password })
+        .post(DOCTOR_API + "/signup", {
+          doctorName,
+          email,
+          password,
+          phoneNumber,
+          department,
+          education,
+          description,
+          experience,
+          lisenceCertificate: certificateUrl,
+        })
         .then(({ data }) => {
           showToast(data.message, "success");
           setTimeout(() => {
@@ -37,9 +54,22 @@ const Signup: React.FC = () => {
     },
   });
 
+  // Handle file input change
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const file = e.target.files[0];
+      formik.setFieldValue('lisenceCertificate', file);
+      const reader = new FileReader();
+      reader.onload = () => {
+        setMedicalLicensePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
-    <div className="flex items-center justify-center h-screen bg-cover bg-center" style={{ backgroundImage: `url(${DoctorImage})`, opacity: 100 }}>
-      <div className="bg-gray-200 w-96 shadow-lg rounded-lg p-10">
+    <div className="flex items-center justify-center bg-cover bg-center bg-gradient-to-b from-violet-500 to-blue-500">
+      <div className="bg-gray-200 w-4/12 shadow-lg rounded-lg p-10 mt-14 mb-10">
         <h2 className="text-3xl font-bold mb-6 text-center">Sign Up</h2>
         <form onSubmit={formik.handleSubmit}>
           <div className="mb-6">
@@ -70,6 +100,102 @@ const Signup: React.FC = () => {
             />
             {formik.errors.email && formik.touched.email && (
               <div className="text-red-500">{formik.errors.email}</div>
+            )}
+          </div>
+          <div className="mb-6">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="phoneNumber">
+              Phone Number
+            </label>
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"
+              id="phoneNumber"
+              type="text"
+              placeholder="Phone Number"
+              {...formik.getFieldProps("phoneNumber")}
+            />
+            {formik.errors.phoneNumber && formik.touched.phoneNumber && (
+              <div className="text-red-500">{formik.errors.phoneNumber}</div>
+            )}
+          </div>
+          <div className="mb-6">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="department">
+              Department
+            </label>
+            <select
+              id="department"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"
+              {...formik.getFieldProps("department")}
+            >
+              <option className="text-gray-700" value=""></option>
+              <option className="text-gray-700" value="Cardiologist">Cardiologist</option>
+              <option className="text-gray-700" value="Neurologist">Neurologist</option>
+              <option className="text-gray-700" value="Dermatologist">Dermatologist</option>
+              <option className="text-gray-700" value="Gynecologist">Gynecologist</option>
+              <option className="text-gray-700" value="Physician">Phyisican</option>
+              <option className="text-gray-700" value="Radiologist">Radiologist</option>
+              <option className="text-gray-700" value="Dentist">Dentist</option>
+              <option className="text-gray-700" value="Psychiatrist">Psychiatrist</option>
+              <option className="text-gray-700" value="Allergist">Allergist</option>
+            </select>
+            {formik.errors.department && formik.touched.department && (
+              <div className="text-red-500">{formik.errors.department}</div>
+            )}
+          </div>
+          <div className="mb-6">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="education">
+              Education
+            </label>
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"
+              id="education"
+              type="text"
+              placeholder="Education"
+              {...formik.getFieldProps("education")}
+            />
+            {formik.errors.education && formik.touched.education && (
+              <div className="text-red-500">{formik.errors.education}</div>
+            )}
+          </div>
+          <div className="mb-6">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
+              Description
+            </label>
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"
+              id="description"
+              placeholder="Description"
+              {...formik.getFieldProps("description")}
+            />
+            {/* Add error handling for description if needed */}
+          </div>
+          <div className="mb-6">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="experience">
+              Experience
+            </label>
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"
+              id="experience"
+              placeholder="Experience"
+              {...formik.getFieldProps("experience")}
+            />
+            {/* Add error handling for experience if needed */}
+          </div>
+          <div className="mb-6">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="medicalLicense">
+              Medical License
+            </label>
+            <input
+              className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"
+              id="medicalLicense"
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+            />
+            {formik.errors.lisenceCertificate && formik.touched.lisenceCertificate&& (
+              <div className="text-red-500">{formik.errors.lisenceCertificate}</div>
+            )}
+            {medicalLicensePreview && (
+              <img src={medicalLicensePreview} alt="Medical License Preview" className="mt-2 w-44 h-24" />
             )}
           </div>
           <div className="mb-6">
@@ -116,12 +242,6 @@ const Signup: React.FC = () => {
         <p className="mt-2 text-center text-gray-700">
           Already have an account? <Link to="/doctor/login" className="text-blue-500 underline">Login</Link>
         </p>
-        {/* <button
-          type="button"
-          className="bg-white hover:bg-gray-100 text-black font-bold py-2 px-4 rounded-full mt-6 focus:outline-none focus:shadow-outline flex items-center justify-center"
-        >
-          Sign up with Google
-        </button> */}
       </div>
     </div>
   );

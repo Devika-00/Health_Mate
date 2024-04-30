@@ -33,11 +33,12 @@ export const userRegister = async (
 
     //create a new User 
     const createdUser: UserInterface = await userRepository.addUser(userEntity);
+    console.log(createdUser);
     
     const OTP = authService.generateOTP();  //generate otp
     const emailSubject = "Account verification";
-    await userRepository.addOTP(OTP, createdUser.id);
     sentMail(createdUser.email,emailSubject,otpEmail(OTP, createdUser.name)); //send otp
+    await userRepository.addOTP(OTP, createdUser.id);
 
     const accessToken = authService.createTokens(
       createdUser.id,

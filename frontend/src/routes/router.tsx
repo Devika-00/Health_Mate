@@ -30,6 +30,9 @@ const DoctorSlotPage = lazy(()=>import("../pages/doctor/SlotPage"));
 const AppoinmentBookingPage = lazy(()=>import("../pages/user/Appoinment"));
 const PatientListPage = lazy(()=>import("../pages/doctor/patientListPages"));
 const SinglePagePatient =lazy(()=>import("../pages/doctor/singlePagePatient"));
+const RequestedDoctors = lazy(()=>import("../pages/admin/requestedDoctors"))
+const VerificationDoctor = lazy(()=>import("../pages/admin/verificationDoctor"));
+const DoctorStatus = lazy(()=>import("../pages/doctor/DoctorStatus"));
 
 export const MainRouter = () => {
     return (
@@ -65,13 +68,16 @@ export const MainRouter = () => {
                     <Route path="/doctor/slot" element ={<DoctorSlotPage/>}/>
                     <Route path="/doctor/patientList" element={<PatientListPage/>}/>
                     <Route path="/doctor/patient-details/:id" element={<SinglePagePatient/>} />
+                    <Route path="/doctor/status/:doctorId" element={<DoctorStatus/>}/>
 
                     {/*Admin Routes*/}
                     <Route path="/admin/login" element={<AdminLogin/>}/>
                     <Route path="/admin" element={<AdminDashboard/>}/>
                     <Route path="/admin/users" element={<AdminUserList/>}/>
                     <Route path="/admin/doctors" element={<AdminDoctorList/>}/>
+                    <Route path="/admin/requesteddoctors" element={<RequestedDoctors/>}/>
                     <Route path="/admin/doctors/:id" element={<AdminDoctorDetails/>}/>
+                    <Route path="/admin/doctors/:id/verification" element={<VerificationDoctor/>}/>
 
                     
                 </Routes>

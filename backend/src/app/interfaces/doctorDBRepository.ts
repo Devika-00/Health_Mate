@@ -7,7 +7,11 @@ export const doctorDbRepository = (
 )=>{
     const getDoctorById = async (id: string) =>await repository.getDoctorById(id);
 
-    const getDoctorByIdUpdate = async (id: string, action:string) =>await repository.getDoctorByIdUpdate(id,action);
+    const getDoctorByIdUpdate = async (id: string, status:string) =>
+      await repository.getDoctorByIdUpdate(id,status);
+    
+
+    const getDoctorByIdUpdateRejected = async (id: string, status:string) =>await repository.getDoctorByIdUpdateRejected(id,status);
 
   const updateDoctorBlock = async (id: string, status: boolean) =>{
       await repository.updateDoctorBlock(id, status);
@@ -39,6 +43,7 @@ export const doctorDbRepository = (
         getAllDoctors,
         updateDoctorBlock,
         getDoctorByIdUpdate,
+        getDoctorByIdUpdateRejected,
 
     }
 }

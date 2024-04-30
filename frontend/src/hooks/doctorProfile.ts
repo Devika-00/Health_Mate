@@ -22,6 +22,7 @@ const doctorProfile = () => {
     education: string;
     status: string;
     description: string;
+    experience:string;
     imageFile: File | null;
     lisenceCertificate: File | null;
   }>({
@@ -31,6 +32,7 @@ const doctorProfile = () => {
     age: null,
     department: "",
     description: "",
+    experience: "",
     phoneNumber: "",
     education: "",
     status:"pending",
@@ -62,6 +64,7 @@ const doctorProfile = () => {
           education: doctor?.education,
           email: doctor?.email,
           phoneNumber: doctor?.phoneNumber,
+          experience:doctor?.experience,
           lisenceCertificate: doctor?.lisenceCertificate,
           status:doctor?.status
         }));
@@ -85,7 +88,7 @@ const doctorProfile = () => {
         reader.readAsDataURL(file);
         setFormData((prev) => ({
           ...prev,
-          [name]: file, // Update form data for both imageFile and lisenceCertificate
+          [name]: file, 
         }));
       }
     } else {
@@ -131,6 +134,7 @@ const doctorProfile = () => {
           department: formData.department,
           education: formData.education,
           description: formData.description,
+          experience:formData.experience,
           profileImage: imageUrl || profile?.profileImage,
           lisenceCertificate: certificateUrl || profile?.lisenceCertificate,
         }, { headers:{

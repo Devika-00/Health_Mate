@@ -20,17 +20,24 @@ export const doctorRepositoryMongodb = () =>{
       email: doctorData.getEmail(),
       password: doctorData.getPassword(),
       verificationToken: doctorData.getVerificationToken(),
+      phoneNumber:doctorData.getPhoneNumber(),
+      department:doctorData.getDepartment(),
+      education:doctorData.getEducation(),
+      description:doctorData.getDescription(),
+      experience:doctorData.getExperience(),
+      lisenceCertificate:doctorData.getLisenceCertificate(),
     });
     return await newDoctor.save();
   };
 
-  const getDoctorByIdUpdate = async (id: string,action:string) =>await Doctor.findByIdAndUpdate(id,{status:action}).select("-password -isVerified -isApproved -isRejected -verificationToken");
+  const getDoctorByIdUpdate = async (id: string,status:string) =>await Doctor.findByIdAndUpdate(id,{status:status, isApproved:true}).select("-password -isVerified -isApproved -isRejected -verificationToken");
 
+  const getDoctorByIdUpdateRejected = async (id: string,status:string) =>await Doctor.findByIdAndUpdate(id,{status:status, isApproved:false}).select("-password -isVerified -isApproved -isRejected -verificationToken");
 
-
-  const updateDoctorBlock = async (id: string, status: boolean) =>{
+  const updateDoctorBlock = async (id: string, status: boolean) => {
     await Doctor.findByIdAndUpdate(id, { isBlocked: status });
   }
+  
 
   const verifyDoctor = async (token: string) =>
     await Doctor.findOneAndUpdate(
@@ -59,7 +66,9 @@ export const doctorRepositoryMongodb = () =>{
     registerGoogleSignedDoctor,
     getAllDoctors,
     updateDoctorBlock,
-    getDoctorByIdUpdate,
+    getDoctorByIdUpdateRejected,
+    getDoctorByIdUpdate
+
 
   }
 

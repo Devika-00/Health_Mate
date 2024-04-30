@@ -145,6 +145,7 @@ const doctorController = (
       next:NextFunction
     )=>{
       try{
+        console.log("haiiiiiiiiiiiiii");
         const doctorId = req.doctor;
         const doctor = await getDoctorProfile(
           doctorId,
@@ -287,10 +288,24 @@ const doctorController = (
     ) => {
       try {
         const {id} = req.params;
-        console.log("///////////////");
         console.log(id);
         const patient = await getPatientFullDetails(id,dbBookingRepository);
         return res.status(HttpStatus.OK).json({ success: true, patient });
+      } catch (error) {
+        next(error);
+      }
+    }
+
+    /**method get doctor details */
+    const getDoctorDetails = async (
+      req: Request,
+      res: Response,
+      next: NextFunction
+    ) => {
+      try {
+        const {id} = req.params;
+        const doctor = await getDoctorProfile(id,dbRepositoryDoctor);
+        return res.status(HttpStatus.OK).json({ success: true, doctor });
       } catch (error) {
         next(error);
       }
@@ -309,6 +324,7 @@ const doctorController = (
         removeTimeSlot,
         getPatientList,
         getPatientDetails,
+        getDoctorDetails,
         
     }
 }

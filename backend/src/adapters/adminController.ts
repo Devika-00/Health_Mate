@@ -6,6 +6,7 @@ import {getUsers,
   getDoctors,
   getSingleDoctor,
   getDoctor,
+  getDoctorRejected,
 } from "../app/use-cases/Admin/adminRead";
 import { AuthServiceInterfaceType } from "../app/service-interface/authServiceInterface";
 import { userDbInterface } from "../app/interfaces/userDbRepository";
@@ -13,6 +14,7 @@ import { userRepositoryMongodbType } from "../frameworks/database/mongodb/reposi
 import { doctorDbInterface } from "../app/interfaces/doctorDBRepository";
 import { doctorRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/doctorRepositoryMongodb";
 import { blockUser,blockDoctor } from "../app/use-cases/Admin/adminUpdate";
+import doctor from "../frameworks/database/mongodb/models/doctor";
 
 // adminAuthController
 export default (
@@ -101,10 +103,11 @@ const getAllDoctors = async (
   const userBlock = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
-      await blockUser(id, dbUserRepository);
+      const updatedUser = await blockUser(id, dbUserRepository);
       return res.status(HttpStatus.OK).json({
         success: true,
         message: "User block status updated successfully",
+        user:updatedUser,
       });
     } catch (error) {
       next(error);
@@ -118,10 +121,12 @@ const getAllDoctors = async (
   const doctorBlock = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
-      await blockDoctor(id, dbDoctorRepository);
+      const updatedDoctor =await blockDoctor(id, dbDoctorRepository);
+      console.log(updatedDoctor)
       return res.status(HttpStatus.OK).json({
         success: true,
-        message: "User block status updated successfully",
+        message: "doctor block status updated successfully",
+        doctor: updatedDoctor 
       });
     } catch (error) {
       next(error);
@@ -144,21 +149,42 @@ const getAllDoctors = async (
   };
 
 
-  /* method patch updateDoctor in admin */
-  const updateDoctor = async(
+  /* method patch verify in admin */
+  const VerifyDoctor = async(
     req:Request,
     res:Response,
     next:NextFunction
   )=>{
     try {
       const {id} = req.params;
-      const {action} = req.body;
-      const doctor = await getDoctor(id,action,dbDoctorRepository);
-      return res.status(HttpStatus.OK).json({ success: true, doctor,message:"update Successfull" });
+      const {status} = req.body;
+      const doctor = await getDoctor(id,status,dbDoctorRepository);
+      return res.status(HttpStatus.OK).json({ success: true, doctor,message:"Verified Successfully" });
     } catch (error) {
       next(error);
     }
   }
+
+
+  /* method patch rejection in admin */
+  const rejectionDoctor = async(
+    req:Request,
+    res:Response,
+    next:NextFunction
+  )=>{
+    try {
+      const {id} = req.params;
+      const {status} = req.body;
+      const {reason} = req.body;
+      const doctor = await getDoctorRejected(id,status,reason,dbDoctorRepository);
+      return res.status(HttpStatus.OK).json({ success: true, doctor,message:"Verified Successfully" });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+
+
 
 
         return {
@@ -168,7 +194,8 @@ const getAllDoctors = async (
             getAllDoctors,
             doctorBlock,
             doctorDetails,
-            updateDoctor,
+            VerifyDoctor,
+            rejectionDoctor,
           }
 
 }  

@@ -30,7 +30,8 @@ const Register: React.FC = () => {
           showToast(message, "success");
           localStorage.setItem('access_token', accessToken); // Store access token in local storage
           setTimeout(() => {
-            setItemToLocalStorage("userId", data.newUser.id);
+            console.log(data.newUser);
+            setItemToLocalStorage("userId", data.newUser._id);
             navigate("/user/verify_otp");
           }, 1000);
         })

@@ -19,9 +19,16 @@ const AdminSidebar: React.FC = () => {
             to="/admin/doctors"
             className="block py-2 px-4 rounded-md hover:bg-gray-700"
           >
-            Doctors
+            Verified Doctors
           </Link>
         </li>
+        <li>
+          <Link
+            to="/admin/requesteddoctors" 
+            className="block py-2 px-4 rounded-md hover:bg-gray-700"
+          >
+            Requested Doctors
+          </Link>
         <li>
           <Link
             to="/admin/users"
@@ -29,6 +36,7 @@ const AdminSidebar: React.FC = () => {
           >
             Users
           </Link>
+        </li>
         </li>
         <li>
           <Link

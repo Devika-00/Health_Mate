@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { UserInterface } from "../../types/UserInterface";
 import axiosJWT from "../../utils/axiosService";
 import { ADMIN_API } from "../../constants";
+import showToast from "../../utils/toaster";
 
 const UserData: React.FC<UserInterface> = ({
   _id,
@@ -13,7 +14,15 @@ const UserData: React.FC<UserInterface> = ({
 
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
-    axiosJWT.patch(ADMIN_API + `/block_user/${_id}`).catch((err) => console.log(err));
+    axiosJWT.patch(ADMIN_API + `/block_user/${_id}`)
+    .then(response => {
+      // Check if isBlocked is true
+      if (response.data.success && !response.data.user.isBlocked) {
+        // Display the response message using toast
+        showToast(response.data.message);
+      }
+      })
+      .catch((err) => console.log(err));
   };
 
   return (

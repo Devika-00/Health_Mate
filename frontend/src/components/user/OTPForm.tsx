@@ -27,6 +27,7 @@ const OTPForm: React.FC = () => {
     },
     onSubmit: ({ otp }) => {
       const userId = getItemFromLocalStorage("userId");
+      console.log(userId);
       if (userId) {
         axios
           .post(USER_API + "/verify_otp", { otp, userId })
