@@ -11,7 +11,6 @@ type SignupValidation = Partial<{
   description: string;
   experience: string;
   lisenceCertificate: string;
-  consultationType: string;
 }>;
 
 const validateSignUp = (values: {
@@ -25,7 +24,6 @@ const validateSignUp = (values: {
   description: string;
   experience: string;
   lisenceCertificate: File | null;
-  consultationType: string;
 }) => {
   const {
     name,
@@ -37,8 +35,7 @@ const validateSignUp = (values: {
     education,
     description,
     experience,
-    lisenceCertificate,
-    consultationType
+    lisenceCertificate
   } = values;
   const errors: SignupValidation = {};
 
@@ -112,13 +109,69 @@ const validateSignUp = (values: {
     errors.lisenceCertificate = "Required*";
   } // Add additional validation rules for lisence certificate if needed
 
-  // Consultation Type Validation
-  if (!consultationType.trim().length) {
-    errors.consultationType = "Required*";
-  } // Add additional validation rules for consultation type if needed
+  return errors;
+};
+
+
+
+
+const validateSignUpUser = (values: {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  
+}) => {
+  const {
+    name,
+    email,
+    password,
+    confirmPassword,
+    
+  } = values;
+  const errors: SignupValidation = {};
+
+  // Name Validation
+  if (!name.trim().length) {
+    errors.name = "Required";
+  } else if (name.length > 20) {
+    errors.name = "Must be 20 characters or less.";
+  } else if (!nameRegex.test(name)) {
+    errors.name = "First letter must be capital and no leading or trailing spaces.";
+  }
+
+  // Email Validation
+  if (!email.trim().length) {
+    errors.email = "Required";
+  } else if (!emailRegex.test(email)) {
+    errors.email = "Invalid email format";
+  }
+
+  // Password Validation
+  if (!password.trim().length) {
+    errors.password = "Required*";
+  } else if (password.length < 8) {
+    errors.password = "Password must be at least 8 characters long.";
+  } else if (!/[a-z]/.test(password) || !/[A-Z]/.test(password)) {
+    errors.password = "Password must contain uppercase and lowercase letters.";
+  } else if (!/\d/.test(password)) {
+    errors.password = "Password must contain at least one digit.";
+  } else if (!/[@$!%*?&]/.test(password)) {
+    errors.password = "Password must contain at least one special character.";
+  }
+
+  // Confirm Password Validation
+  if (!confirmPassword.trim().length) {
+    errors.confirmPassword = "Required*";
+  } else if (confirmPassword.length !== password.length || confirmPassword !== password) {
+    errors.confirmPassword = "Password is not matching";
+  }
+
 
   return errors;
 };
+
+
 
 function validateLogin({
   email,
@@ -173,4 +226,5 @@ export {
   validateSignUp,
   validateLogin,
   validateResetPassword,
+  validateSignUpUser
 };

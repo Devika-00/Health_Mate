@@ -16,6 +16,7 @@ export const userRegister = async (
     authService:ReturnType<AuthServiceInterfaceType>
 )=>{
     const {name,email,password} = user;
+    const authenticationMethod = "password";
 
     //Check the email is already exist
 
@@ -28,7 +29,8 @@ export const userRegister = async (
     const userEntity: userEntityType = createUserEntity(
         name,
         email,
-        hashedPassword
+        hashedPassword,
+        authenticationMethod,
     );
 
     //create a new User 
@@ -103,6 +105,10 @@ export const login = async(
     const isEmailExist = await userDbRepository.getUserbyEmail(email);
    
 
+    if(isEmailExist?.authenticationMethod === "google"){
+      throw new CustomError("Only login with google",HttpStatus.BAD_REQUEST);
+    }
+
     if(!isEmailExist){
         throw new CustomError("Invalid credentials", HttpStatus.UNAUTHORIZED);
     }
@@ -125,6 +131,8 @@ export const login = async(
         throw new CustomError("Invalid credentials",HttpStatus.UNAUTHORIZED);
     }
 
+   
+
     const accessToken = authService.createTokens(
         isEmailExist.id,
         isEmailExist.name,
@@ -140,6 +148,7 @@ export const authenticateGoogleSignInUser = async (
   authService: ReturnType<AuthServiceInterfaceType>
 ) => {
   const { name, email, picture, email_verified } = userData;
+  const authenticationMethod = "google";
 
   const isEmailExist = await userDbRepository.getUserbyEmail(email);
   if (isEmailExist?.isBlocked)
@@ -161,7 +170,9 @@ export const authenticateGoogleSignInUser = async (
       name,
       email,
       picture,
-      email_verified
+      email_verified,
+      authenticationMethod,
+      
     );
 
     const createdUser = await userDbRepository.registerGoogleSignedUser(
@@ -185,6 +196,11 @@ export const sendResetVerificationCode = async (
   authService: ReturnType<AuthServiceInterfaceType>
 ) => {
   const isEmailExist = await userDbRepository.getUserbyEmail(email);
+  console.log(isEmailExist);
+  
+  if(isEmailExist?.authenticationMethod === "google"){
+    throw new CustomError(`${email} is sign in using google signin method .Do not reset the password `,HttpStatus.BAD_REQUEST);
+  }
 
   if (!isEmailExist)
     throw new CustomError(`${email} does not exist`, HttpStatus.BAD_REQUEST);

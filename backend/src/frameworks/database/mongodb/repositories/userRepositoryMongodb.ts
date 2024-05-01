@@ -21,6 +21,7 @@ export const userRepositoryMongodb = () =>{
             name:user.name(),
             email:user.getEmail(),
             password:user.getPassword(),
+            authenticationMethod:user.getAuthenticationMethod(),
         });
         await newUser.save();
         return newUser;
@@ -57,6 +58,7 @@ export const userRepositoryMongodb = () =>{
           email: user.email(),
           profilePicture: user.picture(),
           isVerified: user.email_verified(),
+          authenticationMethod:user.authenticationMethod(),
         });
     
     return {

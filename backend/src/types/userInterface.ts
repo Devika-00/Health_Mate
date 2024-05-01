@@ -2,6 +2,8 @@ export interface CreateUserInterface{
     name: string;
     email: string;
     password: string;
+    authenticationMethod:string,
+
 }
 
 export interface UserInterface {
@@ -9,6 +11,7 @@ export interface UserInterface {
     name: string;
     email: string;
     password: string,
+    authenticationMethod:string,
     profilePicture?: string;
     phoneNumber?:string;
     gender: string;

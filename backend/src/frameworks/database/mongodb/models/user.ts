@@ -38,6 +38,9 @@ const userSchema = new mongoose.Schema({
         type:Boolean,
         default:false,
     },
+    authenticationMethod:{
+        type:String,
+    },
     createdAt:{
         type:Date,
         default: new Date(),

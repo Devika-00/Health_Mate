@@ -126,11 +126,6 @@ const userController=(
     next: NextFunction
   ) => {
     try {
-      // const { access_token: access, refresh_token: refresh } = req.cookies;
-      // if (access || refresh) {
-      //   res.clearCookie("access_token");
-      //   res.clearCookie("refresh_token");
-      // }
       const userData: GoogleResponseType = req.body.user;
       const { accessToken, isEmailExist, createdUser } =
         await authenticateGoogleSignInUser(
@@ -138,10 +133,6 @@ const userController=(
           dbRepositoryUser,
           authService
         );
-      // res.cookie("access_token", accessToken, {
-      //   httpOnly: true,
-      //   secure: true,
-      // });
       const user = isEmailExist ? isEmailExist : createdUser;
       res.status(HttpStatus.OK).json({ message: "login success", user , accessToken: accessToken,});
     } catch (error) {
@@ -159,7 +150,6 @@ const userController=(
       )=>{
         try {
         const {email} = req.body;
-        console.log(email);
         await sendResetVerificationCode(email,dbRepositoryUser,authService);
         return res.status(HttpStatus.OK).json({
             success :true,
