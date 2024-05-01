@@ -25,6 +25,7 @@ export const doctorRepositoryMongodb = () =>{
       education:doctorData.getEducation(),
       description:doctorData.getDescription(),
       experience:doctorData.getExperience(),
+      rejectedReason:doctorData.getRejectedReason(),
       lisenceCertificate:doctorData.getLisenceCertificate(),
     });
     return await newDoctor.save();
@@ -32,7 +33,7 @@ export const doctorRepositoryMongodb = () =>{
 
   const getDoctorByIdUpdate = async (id: string,status:string) =>await Doctor.findByIdAndUpdate(id,{status:status, isApproved:true}).select("-password -isVerified -isApproved -isRejected -verificationToken");
 
-  const getDoctorByIdUpdateRejected = async (id: string,status:string) =>await Doctor.findByIdAndUpdate(id,{status:status, isApproved:false}).select("-password -isVerified -isApproved -isRejected -verificationToken");
+  const getDoctorByIdUpdateRejected = async (id: string,status:string,reason:string) =>await Doctor.findByIdAndUpdate(id,{status:status, isApproved:false, rejectedReason:reason}).select("-password -isVerified -isApproved -isRejected -verificationToken");
 
   const updateDoctorBlock = async (id: string, status: boolean) => {
     await Doctor.findByIdAndUpdate(id, { isBlocked: status });
@@ -57,6 +58,12 @@ export const doctorRepositoryMongodb = () =>{
         isVerified: doctor.email_verified(),
         
       });
+    
+    const getRejectedDoctorById = async (id: string) =>
+        await Doctor.findByIdAndUpdate(id,{status:"pending"}).select(
+          "-password -isVerified -isApproved -isRejected -verificationToken"
+    ); 
+
   return {
     getDoctorById,
     getDoctorByemail,
@@ -67,7 +74,8 @@ export const doctorRepositoryMongodb = () =>{
     getAllDoctors,
     updateDoctorBlock,
     getDoctorByIdUpdateRejected,
-    getDoctorByIdUpdate
+    getDoctorByIdUpdate,
+    getRejectedDoctorById,
 
 
   }

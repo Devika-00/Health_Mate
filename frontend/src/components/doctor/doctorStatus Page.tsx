@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axiosJWT from '../../utils/axiosService';
 import { DOCTOR_API } from '../../constants';
 import { useParams } from 'react-router-dom';
+import showToast from '../../utils/toaster';
 
 const DoctorStatusPage = () => {
   const { doctorId } = useParams(); 
@@ -26,9 +27,22 @@ const DoctorStatusPage = () => {
     setIsModalOpen(true);
   };
 
-  const handleSubmit = (e:any) => {
+  const handleSubmit = async (e:any) => {
     e.preventDefault();
-    // Handle form submission
+    try {
+      const response = await axiosJWT.put(`${DOCTOR_API}/reapply_verification/${doctorId}`, {
+        status: "pending",
+      });
+  
+      if (response.status >= 200 && response.status < 300) {
+        showToast("Reapply of verification successfull");
+        setIsModalOpen(false);
+      } else {
+        console.error('Failed to update doctor status');
+      }
+    } catch (error) {
+      console.error('Error updating doctor status:', error);
+    }
   };
 
   useEffect(() => {

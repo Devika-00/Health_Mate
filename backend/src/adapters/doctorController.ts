@@ -20,6 +20,7 @@ import { BookingRepositoryMongodbType } from "../frameworks/database/mongodb/rep
 
 
 import {getDoctorProfile,
+  DoctorRejected,
   updateDoctor} from "../app/use-cases/doctor/read & Update/profile";
 import { getPatientFullDetails, getPatients } from "../app/use-cases/doctor/doctorRead";
 const doctorController = (
@@ -311,6 +312,21 @@ const doctorController = (
       }
     }
 
+    /*method put doctor rejected */
+    const getDoctorRejected = async (
+      req: Request,
+      res: Response,
+      next: NextFunction
+    ) => {
+      try {
+        const {id} = req.params;
+        const doctor = await DoctorRejected(id,dbRepositoryDoctor);
+        return res.status(HttpStatus.OK).json({ success: true, doctor });
+      } catch (error) {
+        next(error);
+      }
+    }
+
     return {
         signup,
         verifyToken,
@@ -325,6 +341,7 @@ const doctorController = (
         getPatientList,
         getPatientDetails,
         getDoctorDetails,
+        getDoctorRejected,
         
     }
 }

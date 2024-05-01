@@ -42,7 +42,8 @@ const doctorSchema = new mongoose.Schema({
     },
     profileImage:{
         type:String,
-    },isVerified: {
+    },
+    isVerified: {
         type: Boolean,
         default: false,
       },
@@ -57,6 +58,10 @@ const doctorSchema = new mongoose.Schema({
     status:{
       type:String,
       default:"pending",
+    },
+    rejectedReason:{
+      type:String,
+      default:"",
     },
     createdAt:{
         type:Date,

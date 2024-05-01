@@ -15,3 +15,12 @@ export const   updateDoctor = async (
   updateData: DoctorInterface,
   doctorRepository: ReturnType<doctorDbInterface>
 ) => await doctorRepository.updateProfile(doctorID, updateData);
+
+
+export const DoctorRejected = async (
+  doctorID: string,
+  DoctorRepository: ReturnType<doctorDbInterface>
+) => {
+  const doctor = await DoctorRepository.getRejectedDoctorById(doctorID);
+  return doctor ;
+};

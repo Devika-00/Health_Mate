@@ -1,25 +1,41 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux'; // Add this import
 import { ADMIN_API } from '../../constants';
 import axiosJWT from '../../utils/axiosService';
 import { DoctorInterface } from '../../types/DoctorInterface';
 import showToast from '../../utils/toaster';
 import useDoctors from '../../hooks/useDoctors';
+import { clearDoctor } from '../../redux/slices/DoctorSlice'; // Add this import
 
-const DoctorData: React.FC=() => {
-  const { doctors } = useDoctors(); 
- 
+const DoctorData: React.FC = () => {
+  const { doctors, setDoctors } = useDoctors();
+  const dispatch = useDispatch(); // Initialize dispatch
+
+  console.log(doctors);
+
   const approvedDoctors = doctors.filter(doctor => doctor.isApproved);
-  const [isChecked, setIsChecked] = useState<boolean>(false); 
+  const [isChecked, setIsChecked] = useState<boolean>(false);
 
   const handleCheckboxChange = (doctor: DoctorInterface) => {
-    setIsChecked(!isChecked);
-    axiosJWT.patch(ADMIN_API + `/block_doctor/${doctor._id}`) 
-    .then(response => {
-      if (response.data.success && !response.data.doctor.isBlocked) {
-        showToast(response.data.message);
+    const newDoctors = doctors.map((item) => {
+      if (doctor._id === item._id) {
+        doctor.isBlocked = !doctor.isBlocked
+        if (doctor.isBlocked) {
+          dispatch(clearDoctor()); // Dispatch clearDoctor when doctor is blocked
+        }
       }
-    }).catch((err) => console.log(err));
+      return item
+    })
+
+    setDoctors(newDoctors)
+
+    axiosJWT.patch(ADMIN_API + `/block_doctor/${doctor._id}`)
+      .then(response => {
+        if (response.data.success && !response.data.doctor.isBlocked) {
+          showToast(response.data.message);
+        }
+      }).catch((err) => console.log(err));
   };
 
   return (
@@ -40,7 +56,7 @@ const DoctorData: React.FC=() => {
               <div
                 className={`w-3 h-3 rounded-full ${
                   doctor.isBlocked ? "bg-red-500" : "bg-green-400"
-                }`}
+                  }`}
               ></div>
               <p>{doctor.isBlocked ? "Blocked" : "Active"}</p>
             </div>
@@ -62,12 +78,12 @@ const DoctorData: React.FC=() => {
                 <div
                   className={`box block h-6 w-10 rounded-full ${
                     doctor.isBlocked ? "bg-red-500" : "bg-primary"
-                  }`}
+                    }`}
                 ></div>
                 <div
                   className={`absolute left-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-white transition ${
                     doctor.isBlocked ? "translate-x-full" : ""
-                  }`}
+                    }`}
                 ></div>
               </div>
             </label>

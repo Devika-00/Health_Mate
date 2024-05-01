@@ -8,6 +8,7 @@ export default function doctorEntity(
   education: string,
   description:string,
   experience:string,
+  rejectedReason:string,
   lisenceCertificate: string, 
 ){
   return {
@@ -20,6 +21,7 @@ export default function doctorEntity(
       getEducation: (): string => education,
       getDescription:():string =>description,
       getExperience:():string =>experience,
+      getRejectedReason:():string=>rejectedReason,
       getLisenceCertificate: (): string => lisenceCertificate,
   };
 }

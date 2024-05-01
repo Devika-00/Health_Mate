@@ -42,7 +42,7 @@ const doctorRoute = () => {
     router.get("/patients",authenticateDoctor,controller.getPatientList);
     router.get("/patients/:id",authenticateDoctor,controller.getPatientDetails);
     router.get("/doctorDetails/:id",authenticateDoctor,controller.getDoctorDetails);
-
+    router.put("/reapply_verification/:id",authenticateDoctor,controller.getDoctorRejected)
 
     return router;
 }

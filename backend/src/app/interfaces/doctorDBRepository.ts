@@ -11,7 +11,7 @@ export const doctorDbRepository = (
       await repository.getDoctorByIdUpdate(id,status);
     
 
-    const getDoctorByIdUpdateRejected = async (id: string, status:string) =>await repository.getDoctorByIdUpdateRejected(id,status);
+    const getDoctorByIdUpdateRejected = async (id: string, status:string,reason:string) =>await repository.getDoctorByIdUpdateRejected(id,status,reason);
 
   const updateDoctorBlock = async (id: string, status: boolean) =>{
       await repository.updateDoctorBlock(id, status);
@@ -30,6 +30,8 @@ export const doctorDbRepository = (
   const updateProfile = async (doctorID:string, doctorData : Record<string,any>)=>await repository.updateDoctorInfo(doctorID,doctorData);
 
   const getAllDoctors = async () => await repository.getAllDoctors();
+
+  const getRejectedDoctorById = async (id: string) =>await repository.getRejectedDoctorById(id);
  
 
   const registerGoogleSignedDoctor = async (doctor: googleSignInUserEntityType) =>await repository.registerGoogleSignedDoctor(doctor);
@@ -44,6 +46,7 @@ export const doctorDbRepository = (
         updateDoctorBlock,
         getDoctorByIdUpdate,
         getDoctorByIdUpdateRejected,
+        getRejectedDoctorById,
 
     }
 }

@@ -18,7 +18,6 @@ const UserData: React.FC<UserInterface> = ({
     .then(response => {
       // Check if isBlocked is true
       if (response.data.success && !response.data.user.isBlocked) {
-        // Display the response message using toast
         showToast(response.data.message);
       }
       })

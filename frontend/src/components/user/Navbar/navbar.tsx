@@ -4,16 +4,19 @@ import { useSelector, useDispatch } from 'react-redux';
 // import { setUser } from '../../../redux/slices/UserSlice';
 import { RootState } from '../../../redux/reducer/reducer';
 import logout from "../../../utils/logout";
+import showToast from '../../../utils/toaster';
+import { clearUser } from '../../../redux/slices/UserSlice';
 // import { clearUser, setUser } from '../../../redux/slices/UserSlice';
 
 const Navbar: React.FC = () => {
   const user = useSelector((state: RootState) => state.UserSlice);
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     // dispatch(setUser({ isAuthenticated: false, name: null, role: null, id: null }));
-    logout("Logged out successfully");
+    dispatch(clearUser());
+    showToast("Logged out successfully","success");
     navigate('/user/login');
   };
 

@@ -19,7 +19,7 @@ export const getDoctor = async ( id: string,status:string, doctorDbRepository: R
 
 
 export const getDoctorRejected = async ( id: string,status:string,reason:string ,doctorDbRepository: ReturnType<doctorDbInterface>) =>{
-  await doctorDbRepository.getDoctorByIdUpdateRejected(id,status);
+  await doctorDbRepository.getDoctorByIdUpdateRejected(id,status,reason);
   const doctor =await doctorDbRepository.getDoctorById(id);
   if(doctor){
     const doctorName = doctor.doctorName

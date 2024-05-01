@@ -122,7 +122,6 @@ const getAllDoctors = async (
     try {
       const { id } = req.params;
       const updatedDoctor =await blockDoctor(id, dbDoctorRepository);
-      console.log(updatedDoctor)
       return res.status(HttpStatus.OK).json({
         success: true,
         message: "doctor block status updated successfully",
