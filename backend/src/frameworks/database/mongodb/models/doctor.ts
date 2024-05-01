@@ -63,6 +63,9 @@ const doctorSchema = new mongoose.Schema({
       type:String,
       default:"",
     },
+    consultationType:{
+      type:String,
+    },
     createdAt:{
         type:Date,
         default: new Date(),

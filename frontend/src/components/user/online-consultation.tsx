@@ -4,14 +4,13 @@ import axiosJWT from '../../utils/axiosService';
 import { USER_API } from '../../constants';
 import { FaSearch } from 'react-icons/fa';
 
-const DoctorListingPage: React.FC = () => {
+const OnlineDoctors: React.FC = () => {
   const [doctors, setDoctors] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchActive, setSearchActive] = useState<boolean>(false);
   const [selectedDepartment, setSelectedDepartment] = useState<string>('');
-  const [selectedConsultationType, setSelectedConsultationType] = useState<string>('');
   const [departments, setDepartments] = useState<string[]>([
-    "Cardiologist",
+    "Cardilogist",
     "Neurologist",
     "Dermatologist",
     "Gynecologist",
@@ -20,7 +19,7 @@ const DoctorListingPage: React.FC = () => {
     "Dentist",
     "Psychiatrists",
     "Allergist"
-  ]);
+  ]); 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage] = useState<number>(8);
 
@@ -28,12 +27,12 @@ const DoctorListingPage: React.FC = () => {
     const fetchDoctors = async () => {
       try {
         const response = await axiosJWT.get(`${USER_API}/doctors`);
-        // Filter doctors with status approved
+        // Filter doctors with status approved and consultation type online or both
         let filteredDoctors = response.data.doctors.filter(
           (doctor: { status: string; doctorName: string; consultationType: string }) => 
             doctor.status === 'approved' &&
-            doctor.doctorName.toLowerCase().includes(searchQuery.toLowerCase()) &&
-            (selectedConsultationType === '' || doctor.consultationType === selectedConsultationType)
+            (doctor.consultationType === 'online' || doctor.consultationType === 'both') &&
+            doctor.doctorName.toLowerCase().includes(searchQuery.toLowerCase())
         );
 
         // Apply additional filtering by department if a department is selected
@@ -48,7 +47,7 @@ const DoctorListingPage: React.FC = () => {
     };
 
     fetchDoctors();
-  }, [searchQuery, selectedDepartment, selectedConsultationType]);
+  }, [searchQuery, selectedDepartment]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
@@ -60,32 +59,6 @@ const DoctorListingPage: React.FC = () => {
 
   const handleDepartmentChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedDepartment(event.target.value);
-  };
-
-  const handleConsultationTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedValue = event.target.value;
-    setSelectedConsultationType(selectedValue);
-
-    // Filter doctors based on selected consultation type
-    let filteredDoctors = doctors.filter((doctor) => {
-      if (selectedValue === "") {
-        // If no specific consultation type selected, show all doctors
-        return true;
-      } else if (selectedValue === "both") {
-        // Show doctors with consultation type both
-        return doctor.consultationType === "both";
-      } else {
-        // Show doctors with selected consultation type
-        return doctor.consultationType === selectedValue;
-      }
-    });
-
-    // Apply additional filtering by department if a department is selected
-    if (selectedDepartment !== '') {
-      filteredDoctors = filteredDoctors.filter((doctor: { department: string }) => doctor.department === selectedDepartment);
-    }
-
-    setDoctors(filteredDoctors);
   };
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -117,14 +90,6 @@ const DoctorListingPage: React.FC = () => {
             {departments.map((department, index) => (
               <option key={index} value={department}>{department}</option>
             ))}
-          </select>
-        </div>
-        <div className={`border border-gray-500 shadow-lg rounded-md w-80 ml-4`}>
-          <select className="rounded-md px-4 py-2 w-full" value={selectedConsultationType} onChange={handleConsultationTypeChange}>
-            <option value="">All Consultation Types</option>
-            <option value="online">Online</option>
-            <option value="offline">Offline</option>
-            <option value="both">Both</option> {/* Add the "both" option */}
           </select>
         </div>
       </div>
@@ -174,4 +139,4 @@ const DoctorListingPage: React.FC = () => {
   );
 };
 
-export default DoctorListingPage;
+export default OnlineDoctors;

@@ -33,6 +33,8 @@ const SinglePagePatient =lazy(()=>import("../pages/doctor/singlePagePatient"));
 const RequestedDoctors = lazy(()=>import("../pages/admin/requestedDoctors"))
 const VerificationDoctor = lazy(()=>import("../pages/admin/verificationDoctor"));
 const DoctorStatus = lazy(()=>import("../pages/doctor/DoctorStatus"));
+const OnlineDoctors = lazy(()=>import('../pages/user/OnlinePage'));
+const OfflineDoctors = lazy(()=>import('../pages/user/OfflinePage'));
 
 export const MainRouter = () => {
     return (
@@ -47,6 +49,8 @@ export const MainRouter = () => {
                     <Route path="/user/login" element={<Login/>}/>
                     <Route path="/user/forgot-password" element ={<ForgotPassword/>} />
                     <Route path="/user/reset_password/:id" element ={<ResetPassword/>}/>
+                    <Route path="/user/online-consultation" element={<OnlineDoctors/>}/>
+                    <Route path="/user/offline-consultation" element={<OfflineDoctors/>}/>
 
                      
                      {/* Protected user  route */}

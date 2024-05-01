@@ -17,6 +17,7 @@ const Signup: React.FC = () => {
       email: "",
       phoneNumber: "",
       department: "",
+      consultationType: "", 
       education: "",
       description: "",
       experience: "",
@@ -25,7 +26,7 @@ const Signup: React.FC = () => {
       lisenceCertificate: null,
     },
     validate: validateSignUp,
-    onSubmit: async ({ name: doctorName, email, password, phoneNumber, department, education, description, experience, lisenceCertificate }) => {
+    onSubmit: async ({ name: doctorName, email, password, phoneNumber, department, education, description, experience, lisenceCertificate, consultationType }) => {
       setIsSubmitting(true);
       const certificateUrl = await uploadCertificateToCloudinary(lisenceCertificate); 
       axios
@@ -35,6 +36,7 @@ const Signup: React.FC = () => {
           password,
           phoneNumber,
           department,
+          consultationType,
           education,
           description,
           experience,
@@ -142,6 +144,24 @@ const Signup: React.FC = () => {
             )}
           </div>
           <div className="mb-6">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="consultationType">
+              Consultation Type
+            </label>
+            <select
+              id="consultationType"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"
+              {...formik.getFieldProps("consultationType")}
+            >
+              <option className="text-gray-700" value=""></option>
+              <option className="text-gray-700" value="online">Online Consultation</option>
+              <option className="text-gray-700" value="offline">Offline Consultation</option>
+              <option className="text-gray-700" value="both">Both</option>
+            </select>
+            {formik.errors.consultationType && formik.touched.consultationType && (
+              <div className="text-red-500">{formik.errors.consultationType}</div>
+            )}
+          </div>
+          <div className="mb-6">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="education">
               Education
             </label>
@@ -230,6 +250,7 @@ const Signup: React.FC = () => {
               </div>
             )}
           </div>
+          
           <div className="flex items-center justify-center">
             <button
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded focus:outline-none"

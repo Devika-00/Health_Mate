@@ -16,7 +16,7 @@ export const addNewDoctor = async(
     doctorRepository:ReturnType<doctorDbInterface>,
     authService:ReturnType<AuthServiceInterfaceType>
 )=>{
-    const { doctorName, email, password,phoneNumber,department,education,description,experience,lisenceCertificate,rejectedReason } = doctorData;
+    const { doctorName, email, password,phoneNumber,department,consultationType,education,description,experience,lisenceCertificate,rejectedReason } = doctorData;
   const isEmailExist = await doctorRepository.getDoctorByemail(email);
   if (isEmailExist)
     throw new CustomError("Email already exists", HttpStatus.BAD_REQUEST);
@@ -30,6 +30,7 @@ export const addNewDoctor = async(
     verificationToken,
     phoneNumber,
     department,
+    consultationType,
     education,
     description,
     experience,

@@ -11,6 +11,7 @@ type SignupValidation = Partial<{
   description: string;
   experience: string;
   lisenceCertificate: string;
+  consultationType: string;
 }>;
 
 const validateSignUp = (values: {
@@ -24,6 +25,7 @@ const validateSignUp = (values: {
   description: string;
   experience: string;
   lisenceCertificate: File | null;
+  consultationType: string;
 }) => {
   const {
     name,
@@ -35,7 +37,8 @@ const validateSignUp = (values: {
     education,
     description,
     experience,
-    lisenceCertificate
+    lisenceCertificate,
+    consultationType
   } = values;
   const errors: SignupValidation = {};
 
@@ -108,6 +111,11 @@ const validateSignUp = (values: {
   if (!lisenceCertificate) {
     errors.lisenceCertificate = "Required*";
   } // Add additional validation rules for lisence certificate if needed
+
+  // Consultation Type Validation
+  if (!consultationType.trim().length) {
+    errors.consultationType = "Required*";
+  } // Add additional validation rules for consultation type if needed
 
   return errors;
 };

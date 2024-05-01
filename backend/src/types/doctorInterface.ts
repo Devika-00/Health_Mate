@@ -10,6 +10,7 @@ export interface CreateDoctorInterface {
     description:string,
     experience:string,
     rejectedReason:string,
+    consultationType:string,
     lisenceCertificate:string,
 }
 
@@ -26,6 +27,7 @@ export interface DoctorInterface {
     description:string;
     experience:string;
     rejectedReason:string;
+    consultationType:string,
     certicateUpload?: string;
     lisenceCertificate?:string;
     department: string;

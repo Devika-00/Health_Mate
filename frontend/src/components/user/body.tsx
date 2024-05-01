@@ -27,7 +27,7 @@ const Body: React.FC = () => {
       {/* Online and Offline Consultation Cards */}
       <div className="flex justify-center gap-16 mb-8">
         {/* Online Consultation Card */}
-        <Link to="/online-consultation" className="w-96">
+        <Link to="/user/online-consultation" className="w-96">
           <div className="bg-gray-100 rounded-lg shadow-2xl border border-gray-300 flex flex-col justify-center items-center cursor-pointer">
             <img src="https://asianetbroadband.in/wp-content/uploads/2022/03/online-consultation.jpg" alt="Online Consultation" className="h-72 w-80 object-cover rounded-t-lg mt-7" />
             <div className="p-4 text-center">
@@ -38,7 +38,7 @@ const Body: React.FC = () => {
         </Link>
         
         {/* Offline Consultation Card */}
-        <Link to="/offline-consultation" className="w-96">
+        <Link to="/user/offline-consultation" className="w-96">
           <div className="bg-gray-100 rounded-lg shadow-2xl border border-gray-300 flex flex-col justify-center items-center cursor-pointer">
             <img src="https://media.istockphoto.com/id/1473559425/photo/female-medical-practitioner-reassuring-a-patient.jpg?s=612x612&w=0&k=20&c=kGbm-TE5qdppyyiteyip7_CzKLktyPrRuWD4Zz2EcqE=" alt="Offline Consultation" className="h-72 w-80 object-cover rounded-t-lg mt-7" />
             <div className="p-4 text-center">

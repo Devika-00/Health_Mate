@@ -22,6 +22,7 @@ export const doctorRepositoryMongodb = () =>{
       verificationToken: doctorData.getVerificationToken(),
       phoneNumber:doctorData.getPhoneNumber(),
       department:doctorData.getDepartment(),
+      consultationType:doctorData.getConsultationType(),
       education:doctorData.getEducation(),
       description:doctorData.getDescription(),
       experience:doctorData.getExperience(),
