@@ -2,23 +2,24 @@ import { TimeSlotEntityType } from "../../../../entities/timeSlotEntity";
 import TimeSlot from "../models/timeSlots";
 
 export const timeSlotRepositoryMongodb = () => {
-  const addTimeSlots = async (doctorId:string,time:string,date:string) =>
+  const addTimeSlots = async (doctorId:string,startDate:string,endDate:string,slotTime:[]) =>
     await TimeSlot.create({
       doctorId: doctorId,
-      time: time, 
-      date:date,
+      startDate:startDate,
+      endDate:endDate,
+      slotTime:slotTime,
       isAvailable:true,
     });
 
    const getSlotByTime = async (
     doctorId: string,
     time:string,
-    date:string,
-   ) => await TimeSlot.findOne({ doctorId, time,date});
+    
+   ) => await TimeSlot.findOne({ doctorId, time});
 
   
-  const getAllTimeSlots = async (doctorId: string,date:string) =>
-    await TimeSlot.find({ doctorId , date }).sort({ time: -1 });
+  const getAllTimeSlots = async (doctorId: string) =>
+    await TimeSlot.find({ doctorId }).sort({ time: -1 });
 
   const getAllDateSlots = async (doctorId: string) =>
     await TimeSlot.find({ doctorId  }).sort({ date: -1 });
@@ -27,12 +28,19 @@ export const timeSlotRepositoryMongodb = () => {
   const removeTimeSlotbyId = async (id: string) =>
     await TimeSlot.findByIdAndDelete(id);
 
+  const existingSlotAvailable = async (doctorId: string, startDate: any, endDate: any) => {
+    return await TimeSlot.findOne({ doctorId, startDate, endDate });
+}
+
+
+
   return {
     addTimeSlots,
     getAllTimeSlots,
     getSlotByTime,
     removeTimeSlotbyId,
     getAllDateSlots,
+    existingSlotAvailable
   };
 };
 

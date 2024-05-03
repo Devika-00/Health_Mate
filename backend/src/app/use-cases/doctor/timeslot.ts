@@ -5,31 +5,30 @@ import { TimeSlotDataInterface } from "../../../types/timeSlotInterface";
 import CustomError from "../../../utils/customError";
 
 export const addTimeSlot = async (
-  doctorId: string,
-  timeData: TimeSlotDataInterface, // Object containing both time and date
+  data: any, 
   dbTimeSlotRepository: ReturnType<TimeSlotDbInterface>
 ) => {
-  const { time, date } = timeData; // Destructure time and date from timeData
-   
-  const isTimeSlotExists = await dbTimeSlotRepository.isTimeSlotExist(
-    doctorId,
-    time,
-    date,
-  );
+  const { doctorId, startDate, endDate, slotTime } = data; 
+  // Check if slot with the same doctor, startDate, and endDate already exists
+  const existingSlot:any = await dbTimeSlotRepository.exsitingSlotAvailables(doctorId, startDate, endDate);
 
-  if (isTimeSlotExists)
-    throw new CustomError("Time slot already exists", HttpStatus.BAD_REQUEST);
+  if (existingSlot) {
+    // Update the slotTime array if slot already exists
+    existingSlot.slotTime = [...new Set([...existingSlot.slotTime, ...slotTime])];
+    await existingSlot.save();
+    return { status: true, message: 'Slots updated successfully' };
+  } else {
+    const newSlot = await dbTimeSlotRepository.addtimeSlot(doctorId, startDate, endDate, slotTime);
+    return newSlot;
+  }
+}
 
-  const newSlot = await dbTimeSlotRepository.addtimeSlot(doctorId, time, date);
-  return newSlot;
-};
 
 
   export const getTimeSlotsByDoctorId = async (
     doctorId: string,
-    date:any,
     dbTimeSlotRepository: ReturnType<TimeSlotDbInterface>
-  ) => await dbTimeSlotRepository.getAllTimeSlots(doctorId,date);
+  ) => await dbTimeSlotRepository.getAllTimeSlots(doctorId);
 
 
   export const deleteTimeSlot = async (

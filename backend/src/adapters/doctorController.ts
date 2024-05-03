@@ -200,37 +200,37 @@ const doctorController = (
   };
 
 
-  const scheduleTime = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    try {
-      const doctorId = req.doctor;
-      const { time, date } = req.body; // Destructure time and date from req.body
-      const newTimeSlot = await addTimeSlot(
-        doctorId,
-        {
-          time, date,
-          isAvailable:true,
-        }, // Pass time and date as an object
-        dbTimeSlotRepository
-      );
+  // const scheduleTime = async (
+  //   req: Request,
+  //   res: Response,
+  //   next: NextFunction
+  // ) => {
+  //   try {
+  //     const doctorId = req.doctor;
+  //     const { time, date } = req.body; // Destructure time and date from req.body
+  //     const newTimeSlot = await addTimeSlot(
+  //       doctorId,
+  //       {
+  //         time, date,
+  //         isAvailable:true,
+  //       }, // Pass time and date as an object
+  //       dbTimeSlotRepository
+  //     );
   
-      res.status(HttpStatus.OK).json({
-        success: true,
-        message: "Time slot added successfully",
-        newTimeSlot,
-      });
-    } catch (error) {
-      next(error);
-    }
-  };
+  //     res.status(HttpStatus.OK).json({
+  //       success: true,
+  //       message: "Time slot added successfully",
+  //       newTimeSlot,
+  //     });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // };
   
 
   /*
    * * METHOD :GET
-   * return all time slot to the restaurant
+   * return all time slot to the doctor
    */
   const getTimeSlots = async (
     req: Request,
@@ -239,10 +239,8 @@ const doctorController = (
   ) => {
     try {
       const doctorId = req.doctor;
-      const { date } = req.params; 
       const timeSlots = await getTimeSlotsByDoctorId(
         doctorId,
-        date,
         dbTimeSlotRepository
       );
       res.status(HttpStatus.OK).json({ success: true, timeSlots });
@@ -251,23 +249,23 @@ const doctorController = (
     }
   };
 
-  const removeTimeSlot = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    try {
+  // const removeTimeSlot = async (
+  //   req: Request,
+  //   res: Response,
+  //   next: NextFunction
+  // ) => {
+  //   try {
       
-      const{ id } = req.params;
-      console.log(id);
-      await deleteTimeSlot(id, dbTimeSlotRepository);
-      res
-        .status(HttpStatus.OK)
-        .json({ success: true, message: "Slot deleted successfully" });
-    } catch (error) {
-      next(error);
-    }
-  }
+  //     const{ id } = req.params;
+  //     console.log(id);
+  //     await deleteTimeSlot(id, dbTimeSlotRepository);
+  //     res
+  //       .status(HttpStatus.OK)
+  //       .json({ success: true, message: "Slot deleted successfully" });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // }
     
     const getPatientList = async (
       req: Request,
@@ -327,6 +325,53 @@ const doctorController = (
       }
     }
 
+
+  /* add slot Method post*/ 
+   
+  const addSlot = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { doctorId, startDate, endDate, slotTime } = req.body;
+      const data = { doctorId, startDate, endDate, slotTime };
+      const response = await addTimeSlot(
+        data,
+        dbTimeSlotRepository
+      );
+  
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: "slots added successfully",
+        response, 
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /* Method Delete - slot delete*/
+  const deleteSlot = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      
+      const{ id } = req.params;
+      console.log(id);
+      await deleteTimeSlot(id, dbTimeSlotRepository);
+      res
+        .status(HttpStatus.OK)
+        .json({ success: true, message: "Slot deleted successfully" });
+    } catch (error) {
+      next(error);
+    }
+  } 
+
+
+
     return {
         signup,
         verifyToken,
@@ -335,13 +380,14 @@ const doctorController = (
         updateDoctorInfo,
         googleSignIn,
         doctorStatus,
-        scheduleTime,
         getTimeSlots,
-        removeTimeSlot,
+        // removeTimeSlot,
         getPatientList,
         getPatientDetails,
         getDoctorDetails,
         getDoctorRejected,
+        addSlot,
+        deleteSlot,
         
     }
 }

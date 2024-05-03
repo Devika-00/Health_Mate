@@ -2,7 +2,8 @@ import { Types } from "mongoose";
 
 
 export interface TimeSlotDataInterface {
-   time:string,
-   date:string,
+   startDate:string,
+   endDate:string,
+   slotTime:[],
    isAvailable:Boolean,
   }

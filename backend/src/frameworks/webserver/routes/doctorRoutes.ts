@@ -36,9 +36,14 @@ const doctorRoute = () => {
     router.get("/profile",authenticateDoctor,controller.doctorProfile);
     router.patch("/profile/edit",authenticateDoctor,controller.updateDoctorInfo);
     router.get("/status",authenticateDoctor,controller.doctorStatus);
-    router.post("/schedule",authenticateDoctor,controller.scheduleTime);
-    router.get("/timeslots/:date",authenticateDoctor,controller.getTimeSlots)
-    router.delete("/deleteTime/:id",authenticateDoctor,controller.removeTimeSlot)
+    // router.post("/schedule",authenticateDoctor,controller.scheduleTime);
+    // router.get("/timeslots/:date",authenticateDoctor,controller.getTimeSlots);
+
+
+    router.post("/addSlot",authenticateDoctor,controller.addSlot);
+    router.post("/getTimeSlots",authenticateDoctor,controller.getTimeSlots);
+    router.delete("/deleteSlot/:id",authenticateDoctor,controller.deleteSlot);
+    // router.delete("/deleteTime/:id",authenticateDoctor,controller.removeTimeSlot);
     router.get("/patients",authenticateDoctor,controller.getPatientList);
     router.get("/patients/:id",authenticateDoctor,controller.getPatientDetails);
     router.get("/doctorDetails/:id",authenticateDoctor,controller.getDoctorDetails);

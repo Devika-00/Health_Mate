@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface DoctorState {
+    doctor: any;
     name: string | null;
     isAuthenticated: boolean | null;
     role: string | null;

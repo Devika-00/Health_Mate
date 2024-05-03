@@ -273,7 +273,6 @@ const getTimeslots = async(
 
   const timeSlots = await getTimeSlotsByDoctorId(
     id,
-    date,
     dbTimeSlotRepository
   )
   res.status(HttpStatus.OK).json({ success: true, timeSlots });

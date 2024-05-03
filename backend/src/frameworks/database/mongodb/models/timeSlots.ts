@@ -6,15 +6,29 @@ const timeSlotSchema = new mongoose.Schema({
     ref: 'Doctor',
     required: true,
   },
-  date: {
+  startDate: {
     type: Date,
-    required: true,
+    required: true
   },
-  time: String,
-  isAvailable: {
+  endDate: {
+    type: Date,
+    required: true
+  },
+  slotTime: {
+    type: [String], 
+    required: true
+  },
+
+  
+  available: {
     type: Boolean,
-    default: true,
-  },
+    default: true
+  }
+
+
 });
+
+timeSlotSchema.index({ doctor: 1, startDate: 1, endDate: 1 }, { unique: true });
+
 
 export default mongoose.model('TimeSlot', timeSlotSchema);

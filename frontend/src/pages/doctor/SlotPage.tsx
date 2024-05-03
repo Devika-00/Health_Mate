@@ -1,14 +1,13 @@
 import React from 'react'
 import Navbar from '../../components/doctor/Navbar/navbar'
 import Footer from '../../components/doctor/Footer/Footer'
-import ScheduleSlotPage from '../../components/doctor/Scheduleslot'
-
+import Calender from '../../components/doctor/celender/Calender'
 
 const SlotPage:React.FC = () => {
   return (
     <>
     <Navbar/> 
-    <ScheduleSlotPage/>
+    <Calender/>
     <Footer style={''}/>
     </>
     

@@ -1,13 +1,15 @@
 export default function TimeSlotEntity(
   doctorId: string,
-  time: string,
-  date: string,
+ startDate:string,
+ endDate:string,
+ slotTime:[string],
   isAvailable: boolean = true
 ) {
   return {
     doctorId: (): string => doctorId,
-    time: (): string => time,
-    date: (): string => date,
+   startDate:():string=>startDate,
+   endDate:():string=>endDate,
+   slotTime:():[string]=>slotTime,
     isAvailable: (): boolean => isAvailable,
   };
 }
