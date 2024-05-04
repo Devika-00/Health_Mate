@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { USER_API } from '../../constants';
 import axiosJWT from '../../utils/axiosService';
 import { useParams } from 'react-router-dom';
@@ -18,8 +18,9 @@ const AppointmentBookingPage: React.FC = () => {
     patientNumber: '',
     patientProblem: '',
   });
-  const [isSlotAvailable, setIsSlotAvailable] = useState(true);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null); // State to store selected date
+  const [timeSlots, setTimeSlots] = useState<string[]>([]);
+  console.log(timeSlots);
 
   useEffect(() => {
     const fetchDoctorDetails = async () => {
@@ -34,12 +35,23 @@ const AppointmentBookingPage: React.FC = () => {
     fetchDoctorDetails();
   }, [id]);
 
+  useEffect(() => {
+    const fetchTimeSlots = async () => {
+      if (selectedDate) {
+        try {
+          const response = await axiosJWT.get(`${USER_API}/timeslots/${id}?date=${selectedDate.toISOString()}`);
+          setTimeSlots(response.data.timeSlots[0].slotTime);
+        } catch (error) {
+          console.error('Error fetching time slots:', error);
+        }
+      }
+    };
+
+    fetchTimeSlots();
+  }, [selectedDate, id]);
+
   const handleBookAppointment = () => {
-    if (isSlotAvailable) {
-      setIsModalOpen(true);
-    } else {
-      showToast('No slots available for this date.', 'error');
-    }
+    // Your logic here to book the appointment
   };
 
   const handleModalClose = () => {
@@ -53,7 +65,7 @@ const AppointmentBookingPage: React.FC = () => {
 
   const handleAppointmentConfirmation = async () => {
     try {
-      // Appointment booking logic
+      // Your logic here to confirm the appointment
     } catch (error) {
       console.error('Error booking appointment:', error);
       showToast('Error booking appointment. Please try again later.', 'error');
@@ -76,17 +88,16 @@ const AppointmentBookingPage: React.FC = () => {
             </div>
           </div>
 
-           {/* Calendar */}
-           <div className="mb-4">
+          {/* Calendar */}
+          <div className="mb-4">
             <h1 className='ml-4 mt-6 font-medium text-blue-950 text-lg'>Select The Scheduled Date</h1>
-            <DatePicker // Add react-datepicker component
-              selected={selectedDate} // Set selected date
-              onChange={(date: Date | null) => setSelectedDate(date)} // Handle date change
-              className=" rounded-lg px-4 py-2 w-full mt-2" // Add CSS classes
-              dateFormat="MM/dd/yyyy" // Specify date format
-              minDate={new Date()} // Set minimum date to today
-              placeholderText="Select Date" // Placeholder text
-              // Custom input with calendar icon
+            <DatePicker
+              selected={selectedDate}
+              onChange={(date: Date | null) => setSelectedDate(date)}
+              className="rounded-lg px-4 py-2 w-full mt-2"
+              dateFormat="MM/dd/yyyy"
+              minDate={new Date()}
+              placeholderText="Select Date"
               customInput={
                 <div className="relative">
                   <input
@@ -100,6 +111,18 @@ const AppointmentBookingPage: React.FC = () => {
               }
             />
           </div>
+
+          {/* Time Slots Section */}
+          {timeSlots.length > 0 && (
+            <div className="max-w-md mx-auto">
+              <h1 className="text-2xl font-bold mb-4">Schedule Time Slots</h1>
+              <div className="grid grid-cols-2 gap-4">
+                {timeSlots.map((slot, index) => (
+                  <button key={index} className="w-full bg-white border border-gray-300 rounded-md py-2 px-4 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:ring-offset-2 focus:ring-offset-gray-100">{slot}</button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Book Appointment Button */}
           <div className="flex justify-end">
@@ -151,47 +174,7 @@ const AppointmentBookingPage: React.FC = () => {
                 className="border rounded-lg px-4 py-2 w-full"
               />
             </div>
-            <div className="mb-6">
-              <label htmlFor="age" className="block mb-2">
-                Age
-              </label>
-              <input
-                type="text"
-                required
-                id="age"
-                name="patientAge"
-                value={patientDetails.patientAge}
-                onChange={handleInputChange}
-                className="border rounded-lg px-4 py-2 w-full"
-              />
-            </div>
-            <div className="mb-6">
-              <label htmlFor="phoneNumber" className="block mb-2">
-                Phone Number
-              </label>
-              <input
-                type="text"
-                required
-                id="phoneNumber"
-                name="patientNumber"
-                value={patientDetails.patientNumber}
-                onChange={handleInputChange}
-                className="border rounded-lg px-4 py-2 w-full"
-              />
-            </div>
-            <div className="mb-6">
-              <label htmlFor="problem" className="block mb-2">
-                Problem
-              </label>
-              <input
-                id="problem"
-                required
-                name="patientProblem"
-                value={patientDetails.patientProblem}
-                onChange={handleInputChange}
-                className="border rounded-lg px-4 py-2 w-full"
-              />
-            </div>
+            {/* Add other patient detail inputs */}
             <button onClick={handleAppointmentConfirmation} className="bg-blue-950 text-white py-2 px-4 rounded-lg">
               Book Appointment
             </button>

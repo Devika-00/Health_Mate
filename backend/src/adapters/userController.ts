@@ -25,6 +25,7 @@ import { TimeSlotDbInterface } from "../app/interfaces/timeSlotDbRepository";
 import { TimeSlotRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/timeSlotRepositotyMongodb";
 import { getTimeSlotsByDoctorId,
          getDateSlotsByDoctorId,
+         getAllTimeSlotsByDoctorId,
  } from "../app/use-cases/doctor/timeslot";
 import timeSlots from "../frameworks/database/mongodb/models/timeSlots";
 
@@ -262,24 +263,28 @@ const doctorDetails = async (
   }
 };
 /**get time slot by doctorId GET method*/
-const getTimeslots = async(
-  req:Request,
-  res:Response,
-  next:NextFunction
-)=>{
-  try{
-  const {id} = req.params;
-  const {date} = req.query; 
+const getTimeslots = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const { date } = req.query;
 
-  const timeSlots = await getTimeSlotsByDoctorId(
-    id,
-    dbTimeSlotRepository
-  )
-  res.status(HttpStatus.OK).json({ success: true, timeSlots });
-}catch (error) {
-  next(error);
-}
-}
+    const timeSlots = await getAllTimeSlotsByDoctorId(
+      id,
+      date,
+      dbTimeSlotRepository
+    );
+
+    console.log(timeSlots);
+
+    res.status(HttpStatus.OK).json({ success: true, timeSlots });
+  } catch (error) {
+    next(error);
+  }
+};
 
 
 /**get time slot by doctorId GET method*/

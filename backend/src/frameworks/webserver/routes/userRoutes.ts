@@ -56,7 +56,7 @@ router.get("/profile", authenticateUser, controller.userProfile);
 router.get("/doctors", authenticateUser, controller.doctorPage);
 router.get("/doctor/:id", authenticateUser,controller.doctorDetails);
 router.patch("/profile/edit", authenticateUser, controller.updateUserInfo);
-router.get("/time-slots/:id",authenticateUser,controller.getTimeslots);
+router.get("/timeslots/:id",authenticateUser,controller.getTimeslots);
 router.get("/time-slots/:id/dates",authenticateUser,controller.getDateSlots);
 
 

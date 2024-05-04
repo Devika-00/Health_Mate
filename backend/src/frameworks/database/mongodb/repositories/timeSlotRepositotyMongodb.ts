@@ -19,7 +19,22 @@ export const timeSlotRepositoryMongodb = () => {
 
   
   const getAllTimeSlots = async (doctorId: string) =>
-    await TimeSlot.find({ doctorId }).sort({ time: -1 });
+    await TimeSlot.find({ doctorId }).sort({ slotTime: -1 });
+
+  const getAllTimeSlotsByDate = async (doctorId: string, date: Date) => {
+    try {
+      const timeSlots = await TimeSlot.find({
+        doctorId,
+        startDate: { $lte: date },
+        endDate: { $gte: date }
+      }).sort({ slotTime: -1 });
+  
+      return timeSlots;
+    } catch (error) {
+      console.error('Error fetching time slots:', error);
+      throw error;
+    }
+  };
 
   const getAllDateSlots = async (doctorId: string) =>
     await TimeSlot.find({ doctorId  }).sort({ date: -1 });
@@ -40,7 +55,8 @@ export const timeSlotRepositoryMongodb = () => {
     getSlotByTime,
     removeTimeSlotbyId,
     getAllDateSlots,
-    existingSlotAvailable
+    existingSlotAvailable,
+    getAllTimeSlotsByDate,
   };
 };
 

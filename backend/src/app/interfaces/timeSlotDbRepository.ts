@@ -19,8 +19,12 @@ export const timeSlotDbRepository = (
 }
 
 
+  const getAllTimeSlotsBydate = async (doctorId: string,date:any) =>
+    await repository.getAllTimeSlotsByDate(doctorId,date);
+
   const getAllTimeSlots = async (doctorId: string) =>
     await repository.getAllTimeSlots(doctorId);
+
 
   const getAllDateSlots = async (doctorId: string) =>
     await repository.getAllDateSlots(doctorId);
@@ -35,6 +39,7 @@ export const timeSlotDbRepository = (
     removeTimeSlotbyId,
     getAllDateSlots,
     exsitingSlotAvailables,
+    getAllTimeSlotsBydate,
   };
 };
 export type TimeSlotDbInterface = typeof timeSlotDbRepository;

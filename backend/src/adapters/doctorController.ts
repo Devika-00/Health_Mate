@@ -334,6 +334,7 @@ const doctorController = (
     next: NextFunction
   ) => {
     try {
+      console.log("///////");
       const { doctorId, startDate, endDate, slotTime } = req.body;
       const data = { doctorId, startDate, endDate, slotTime };
       const response = await addTimeSlot(

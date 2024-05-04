@@ -11,7 +11,7 @@ export const addTimeSlot = async (
   const { doctorId, startDate, endDate, slotTime } = data; 
   // Check if slot with the same doctor, startDate, and endDate already exists
   const existingSlot:any = await dbTimeSlotRepository.exsitingSlotAvailables(doctorId, startDate, endDate);
-
+ 
   if (existingSlot) {
     // Update the slotTime array if slot already exists
     existingSlot.slotTime = [...new Set([...existingSlot.slotTime, ...slotTime])];
@@ -25,10 +25,19 @@ export const addTimeSlot = async (
 
 
 
+  export const getAllTimeSlotsByDoctorId = async (
+    doctorId: string,
+    date: any,
+    dbTimeSlotRepository: ReturnType<TimeSlotDbInterface>
+  ) => await dbTimeSlotRepository.getAllTimeSlotsBydate(doctorId,date);
+
+
+
   export const getTimeSlotsByDoctorId = async (
     doctorId: string,
     dbTimeSlotRepository: ReturnType<TimeSlotDbInterface>
   ) => await dbTimeSlotRepository.getAllTimeSlots(doctorId);
+  
 
 
   export const deleteTimeSlot = async (
