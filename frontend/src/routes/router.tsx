@@ -28,6 +28,7 @@ const AboutPage = lazy(()=>import("../pages/user/AboutPage"));
 const DoctorDetailsUser = lazy(()=>import("../pages/user/singleDoctorDetails"));
 const DoctorSlotPage = lazy(()=>import("../pages/doctor/SlotPage"));
 const AppoinmentBookingPage = lazy(()=>import("../pages/user/Appoinment"));
+const AppoinmentOnlineBookingPage = lazy(()=>import("../pages/user/OnlineAppoinment"));
 const PatientListPage = lazy(()=>import("../pages/doctor/patientListPages"));
 const SinglePagePatient =lazy(()=>import("../pages/doctor/singlePagePatient"));
 const RequestedDoctors = lazy(()=>import("../pages/admin/requestedDoctors"))
@@ -59,7 +60,8 @@ export const MainRouter = () => {
                      <Route path="/user/doctor" element={<DoctorList />} />
                      <Route path="/user/aboutus" element={<AboutPage />} />
                      <Route path="/user/doctor/:id" element={<DoctorDetailsUser />} />
-                     <Route path="/user/appoinment/:id" element={<AppoinmentBookingPage />} />
+                     <Route path="/user/appoinmentOffline/:id" element={<AppoinmentBookingPage />} />
+                     <Route path="/user/appoinmentOnline/:id" element={<AppoinmentOnlineBookingPage />} />
 
                     
 

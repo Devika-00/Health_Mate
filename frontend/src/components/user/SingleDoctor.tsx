@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axiosJWT from '../../utils/axiosService';
 import { USER_API } from '../../constants';
+import { FaCalendarCheck, FaVideo, FaCalendarAlt } from 'react-icons/fa'; // Import icons from React Icons
 
 const DoctorDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -22,12 +23,44 @@ const DoctorDetailsPage: React.FC = () => {
   }, [id]);
 
   const handleBookAppointment = () => {
-    navigate(`/user/appoinment/${id}`); // Using navigate instead of history.push
+    navigate(`/user/appoinmentOffline/${id}`); // Using navigate instead of history.push
+  };
+
+  const handleOnlineBookAppointment = () => {
+    navigate(`/user/appoinmentOnline/${id}`); // Using navigate instead of history.push
   };
 
   if (!doctor) {
     return <div>Loading...</div>;
   }
+
+  // Function to render appointment button based on consultation type
+  const renderAppointmentButton = () => {
+    if (doctor.consultationType === 'online') {
+      return (
+        <button onClick={handleOnlineBookAppointment} className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4">
+          <FaVideo className="mr-2" /> Online Appointment
+        </button>
+      );
+    } else if (doctor.consultationType === 'offline') {
+      return (
+        <button onClick={handleBookAppointment} className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4">
+          <FaCalendarAlt className="mr-2" /> Book Appointment
+        </button>
+      );
+    } else if (doctor.consultationType === 'both') {
+      return (
+        <div>
+          <button onClick={handleOnlineBookAppointment} className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 mr-4">
+            <FaVideo className="mr-2" /> Online Appointment
+          </button>
+          <button onClick={handleBookAppointment} className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4">
+            <FaCalendarAlt className="mr-2" /> Book Appointment
+          </button>
+        </div>
+      );
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -44,7 +77,7 @@ const DoctorDetailsPage: React.FC = () => {
             <p className="text-lg">{doctor.doctorName}</p>
             <p className="text-lg text-green-500 font-bold">Verified</p>
             {/* Add verified symbol here if necessary */}
-            <button onClick={handleBookAppointment} className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4">Book Appointment</button>
+            {renderAppointmentButton()}
           </div>
           <div className="bg-gray-100 p-4 rounded-lg mb-4">
             <h3 className="text-xl font-bold mb-4">About</h3>
