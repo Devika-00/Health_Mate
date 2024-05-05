@@ -4,14 +4,13 @@ import axiosJWT from '../../utils/axiosService';
 import { useParams } from 'react-router-dom';
 import Modal from 'react-modal';
 import showToast from '../../utils/toaster';
+import DatePicker from 'react-datepicker'; // Import react-datepicker
+import "react-datepicker/dist/react-datepicker.css"; // Import react-datepicker styles
+import { Calendar } from "lucide-react";
 
 const AppointmentOnlineBookingPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [doctor, setDoctor] = useState<any>(null);
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>('');
-  const [timeSlots, setTimeSlots] = useState<any[]>([]);
-  const [dates, setDates] = useState<string[]>([]);
-  const [selectedDate, setSelectedDate] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [patientDetails, setPatientDetails] = useState({
     patientName: '',
@@ -19,26 +18,15 @@ const AppointmentOnlineBookingPage: React.FC = () => {
     patientNumber: '',
     patientProblem: '',
   });
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null); // State to store selected date
+  const [timeSlots, setTimeSlots] = useState<string[]>([]);
+  console.log(timeSlots);
 
   useEffect(() => {
     const fetchDoctorDetails = async () => {
       try {
         const response = await axiosJWT.get(`${USER_API}/doctor/${id}`);
         setDoctor(response.data.doctor);
-        // Fetch scheduled dates inside fetchDoctorDetails
-        try {
-          const datesResponse = await axiosJWT.get(`${USER_API}/time-slots/${id}/dates`);
-          console.log(datesResponse);
-          // Parse dates to format them as needed
-          const formattedDates: string[] = datesResponse.data.dateSlots.map((date: any) => {
-            const splittedDate = date.date.split('T')[0]; // Split date and time, and take only the date part
-            return splittedDate;
-          });
-          const uniqueDates: string[] = Array.from(new Set(formattedDates));
-          setDates(uniqueDates);
-        } catch (error) {
-          console.error('Error fetching scheduled dates:', error);
-        }
       } catch (error) {
         console.error('Error fetching doctor details:', error);
       }
@@ -47,18 +35,34 @@ const AppointmentOnlineBookingPage: React.FC = () => {
     fetchDoctorDetails();
   }, [id]);
 
+  useEffect(() => {
+    // Set initial selectedDate to today's date
+    setSelectedDate(new Date());
+  }, []);
+
+  useEffect(() => {
+    const fetchTimeSlots = async () => {
+      if (selectedDate) {
+        try {
+          const response = await axiosJWT.get(`${USER_API}/timeslots/${id}?date=${selectedDate.toISOString()}`);
+          if (response.data.timeSlots.length > 0) {
+            setTimeSlots(response.data.timeSlots[0].slotTime);
+          } else {
+            setTimeSlots([]); // Reset timeSlots state if no slots are scheduled
+          }
+        } catch (error) {
+          console.error('Error fetching time slots:', error);
+        }
+      }
+    };
+    fetchTimeSlots();
+  }, [selectedDate, id]);
+
   const handleBookAppointment = () => {
-    // Check if both time slot and date are selected
-    if (selectedTimeSlot && selectedDate) {
-      setIsModalOpen(true);
-    } else {
-      // Display error toast if either time slot or date is not selected
-      showToast('Please select both time slot and date.', 'error');
-    }
+    // Your logic here to book the appointment
   };
 
   const handleModalClose = () => {
-    // Close the modal
     setIsModalOpen(false);
   };
 
@@ -69,73 +73,10 @@ const AppointmentOnlineBookingPage: React.FC = () => {
 
   const handleAppointmentConfirmation = async () => {
     try {
-      const { patientName, patientAge, patientNumber, patientProblem } = patientDetails;
-
-      // Validation checks
-      const nameRegex = /^[A-Z][a-zA-Z]+$/; // Regex for name validation
-      const ageRegex = /^\d+$/; // Regex for age validation
-      const numberRegex = /^\d{10}$/; // Regex for phone number validation
-
-      // Validate patient name
-      if (!patientName || !nameRegex.test(patientName)) {
-        showToast('Please enter a valid name (first letter capital, letters only).', 'error');
-        return;
-      }
-
-      // Validate patient age
-      if (!patientAge || !ageRegex.test(patientAge) || parseInt(patientAge) < 3) {
-        showToast('Please enter a valid age (numeric value, at least 3 years old).', 'error');
-        return;
-      }
-
-      // Validate patient number
-      if (!patientNumber || !numberRegex.test(patientNumber)) {
-        showToast('Please enter a valid phone number (10 digits, numbers only).', 'error');
-        return;
-      }
-
-      // Validate patient problem
-      if (!patientProblem.trim()) {
-        showToast('Please enter the patient\'s problem.', 'error');
-        return;
-      }
-
-      const appointmentData = {
-        doctorId: id,
-        doctorName: doctor.doctorName,
-        selectedTimeSlot: selectedTimeSlot,
-        selectedDate: selectedDate,
-        patientName: patientName,
-        patientAge: patientAge,
-        patientNumber: patientNumber,
-        patientProblem: patientProblem,
-      };
-      const response = await axiosJWT.post(`${USER_API}/book-appointment`, appointmentData);
-      console.log('Appointment booked successfully:', response.data);
-      setIsModalOpen(false);
-      showToast('Appointment booked successfully.', 'success');
+      // Your logic here to confirm the appointment
     } catch (error) {
       console.error('Error booking appointment:', error);
       showToast('Error booking appointment. Please try again later.', 'error');
-    }
-  };
-
-  const handleTimeSlotSelection = (timeSlot: string) => {
-    setSelectedTimeSlot(timeSlot);
-  };
-
-  const handleDateSelection = (date: string) => {
-    setSelectedDate(date);
-    setTimeSlots([]); // Clear time slots when date changes
-    fetchTimeSlots(date);
-  };
-
-  const fetchTimeSlots = async (selectedDate: string) => {
-    try {
-      const response = await axiosJWT.get(`${USER_API}/time-slots/${id}?date=${selectedDate}`);
-      setTimeSlots(response.data.timeSlots);
-    } catch (error) {
-      console.error('Error fetching time slots:', error);
     }
   };
 
@@ -147,67 +88,55 @@ const AppointmentOnlineBookingPage: React.FC = () => {
         <div>
           {/* Doctor Profile */}
           <div className="flex items-center mb-8">
-            <img src={doctor.profileImage} alt={doctor.doctorName} className="w-28 h-28 rounded-full mr-4" />
-            <div>
+            <img src={doctor.profileImage} alt={doctor.doctorName} className="w-60 h-60 rounded mr-4" />
+            <div className='ml-8'>
               <h2 className="text-xl font-bold">{doctor.doctorName}</h2>
               <p>{doctor.department}</p>
               <p className="text-green-600 font-semibold"> Verified </p>
-              <p className="text-lg">Consultation: Online</p>
-              <p className="text-lg">Fee: 300/-</p>
+              <div className="text-gray-800 bg-blue-100 p-4 rounded-md mt-5 font-bold">
+                <p className="mb-2">Consultation: Online</p>
+                <p>Fee: 300/-</p>
+              </div>
             </div>
           </div>
 
-          {/* Scheduled Dates */}
-          <div className="mb-8">
-            <h2 className="text-xl font-bold mb-4">Scheduled Dates</h2>
-            <div className="grid grid-cols-4 gap-4">
-              {dates &&
-                dates.map((date: string, index: number) => (
-                  <div
-                    key={index}
-                    className={`bg-blue-100 rounded-lg shadow-md p-4 flex items-center justify-between cursor-pointer ${
-                      selectedDate === date && 'border border-blue-500'
-                    }`}
-                    onClick={() => handleDateSelection(date)}
-                  >
-                    <div>
-                      <input type="radio" id={`dateSlot${index}`} name="dateSlot" value={date} />
-                      <label htmlFor={`dateSlot${index}`} className="text-lg font-bold">
-                        {date}
-                      </label>
-                    </div>
-                  </div>
-                ))}
-            </div>
-          </div>
+          {/* Calendar */}
+        <div className="mb-4">
+          <h1 className='ml-4 mt-6 font-medium text-blue-950 text-lg'>Select The Scheduled Date</h1>
+          <DatePicker
+            selected={selectedDate}
+            onChange={(date: Date | null) => setSelectedDate(date)}
+            className="rounded-lg px-4 py-2 w-full mt-2"
+            dateFormat="MM/dd/yyyy"
+            minDate={new Date()}
+            placeholderText="Select Date"
+            customInput={
+              <div className="relative">
+                <input
+                  className="border shadow-2xl border-gray-900 rounded-lg px-4 py-2 w-full font-medium text-gray-900"
+                  value={selectedDate ? selectedDate.toDateString() : ''}
+                  readOnly
+                  placeholder="Select Date"
+                />
+                <Calendar className="absolute right-3 top-3 text-gray-800 cursor-pointer mr-3" />
+              </div>
+            }
+          />
+        </div>
 
-          {/* Time Slots */}
-          <div className="mb-8">
-            <h2 className="text-xl font-bold mb-4">Available Time Slots</h2>
-            <div className="grid grid-cols-9 gap-4">
-              {timeSlots &&
-                timeSlots.map((slot: any, index: number) => (
-                  <div
-                    key={index}
-                    className={`bg-blue-100 rounded-lg shadow-md p-4 flex items-center justify-between cursor-pointer ${
-                      selectedTimeSlot === slot.time && 'border border-blue-500'
-                    }`}
-                    onClick={() => handleTimeSlotSelection(slot.time)}
-                  >
-                    <div>
-                      <input type="radio" id={`timeSlot${index}`} name="timeSlot" value={slot.time} />
-                      <label htmlFor={`timeSlot${index}`} className="text-lg font-bold">
-                        {slot.time}
-                      </label>
-                      <p className={slot.isAvailable ? 'text-green-700' : 'text-red-600'}>
-                        {slot.isAvailable ? 'Available' : 'Not Available'}
-                      </p>
-                      {/* Render availability status */}
-                    </div>
-                  </div>
-                ))}
+          {/* Time Slots Section */}
+        {timeSlots.length > 0 ? (
+          <div className="max-w-md mx-auto">
+            <h1 className="text-2xl font-bold mb-4">Schedule Time Slots</h1>
+            <div className="grid grid-cols-2 gap-4">
+              {timeSlots.map((slot, index) => (
+                <button key={index} className="w-full bg-white border border-gray-300 rounded-md py-2 px-4 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:ring-offset-2 focus:ring-offset-gray-100">{slot}</button>
+              ))}
             </div>
           </div>
+        ) : (
+          <p className="text-red-600 mt-4">No slots scheduled for the selected date.</p>
+        )}
 
           {/* Book Appointment Button */}
           <div className="flex justify-end">
@@ -245,7 +174,6 @@ const AppointmentOnlineBookingPage: React.FC = () => {
               close
             </button>
             <h2 className="text-xl font-bold mb-4">Patient Details</h2>
-            {/* Form elements without <form> */}
             <div className="mb-6">
               <label htmlFor="name" className="block mb-2">
                 Name
@@ -260,47 +188,7 @@ const AppointmentOnlineBookingPage: React.FC = () => {
                 className="border rounded-lg px-4 py-2 w-full"
               />
             </div>
-            <div className="mb-6">
-              <label htmlFor="age" className="block mb-2">
-                Age
-              </label>
-              <input
-                type="text"
-                required
-                id="age"
-                name="patientAge"
-                value={patientDetails.patientAge}
-                onChange={handleInputChange}
-                className="border rounded-lg px-4 py-2 w-full"
-              />
-            </div>
-            <div className="mb-6">
-              <label htmlFor="phoneNumber" className="block mb-2">
-                Phone Number
-              </label>
-              <input
-                type="text"
-                required
-                id="phoneNumber"
-                name="patientNumber"
-                value={patientDetails.patientNumber}
-                onChange={handleInputChange}
-                className="border rounded-lg px-4 py-2 w-full"
-              />
-            </div>
-            <div className="mb-6">
-              <label htmlFor="problem" className="block mb-2">
-                Problem
-              </label>
-              <input
-                id="problem"
-                required
-                name="patientProblem"
-                value={patientDetails.patientProblem}
-                onChange={handleInputChange}
-                className="border rounded-lg px-4 py-2 w-full"
-              />
-            </div>
+            {/* Add other patient detail inputs */}
             <button onClick={handleAppointmentConfirmation} className="bg-blue-950 text-white py-2 px-4 rounded-lg">
               Book Appointment
             </button>
