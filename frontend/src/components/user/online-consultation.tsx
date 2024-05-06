@@ -27,12 +27,9 @@ const OnlineDoctors: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage] = useState<number>(8);
 
-  console.log(doctors);
-
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        // Fetch all doctors
         const response = await axiosJWT.get(`${USER_API}/doctors`);
         const fetchedDoctors = response.data.doctors;
 
