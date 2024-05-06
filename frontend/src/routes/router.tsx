@@ -2,6 +2,7 @@ import {Suspense, lazy} from "react";
 import { Routes, Route } from "react-router-dom";
 import PublicRoute from "./PublicRoutes";
 import ProtectedRoute from "./ProtectedRoute";
+import App from "../App";
 
 
 
@@ -36,6 +37,8 @@ const VerificationDoctor = lazy(()=>import("../pages/admin/verificationDoctor"))
 const DoctorStatus = lazy(()=>import("../pages/doctor/DoctorStatus"));
 const OnlineDoctors = lazy(()=>import('../pages/user/OnlinePage'));
 const OfflineDoctors = lazy(()=>import('../pages/user/OfflinePage'));
+const PaymentCompleted = lazy(() => import("../pages/user/PayementCompleted"));
+const AppoinmentDetails = lazy(()=>import("../pages/user/AppoinmentDetails"));
 
 export const MainRouter = () => {
     return (
@@ -62,6 +65,8 @@ export const MainRouter = () => {
                      <Route path="/user/doctor/:id" element={<DoctorDetailsUser />} />
                      <Route path="/user/appoinmentOffline/:id" element={<AppoinmentBookingPage />} />
                      <Route path="/user/appoinmentOnline/:id" element={<AppoinmentOnlineBookingPage />} />
+                     <Route path="/payment_status/:id" element={<PaymentCompleted />} />
+                     <Route path="/appoinmentDetails/:id" element={<AppoinmentDetails/>} />
 
                     
 

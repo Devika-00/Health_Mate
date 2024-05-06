@@ -3,14 +3,15 @@
 export default function bookingEntity(
   userId: string,
   doctorId: string,
-  selectedPackage: "Messaging" | "Voice Call" | "Video Call" | "In Person",
-  selectedTimeSlot: string,
-  selectedDate:string,
-  selectedPackageAmount:Number,
   patientName: string,
   patientAge: string,
   patientNumber: string,
-  patientProblem: string,
+  patientGender: string,
+  consultionType:string,
+  fee:number,
+  paymentStatus:string,
+  date:string,
+  timeSlot:string,
   
 ) {
 
@@ -18,14 +19,16 @@ export default function bookingEntity(
   return {
     getUserId: (): string => userId,
     getDoctorId: (): string => doctorId,
-    getSelectedPackage: (): "Messaging" | "Voice Call" | "Video Call" | "In Person" => selectedPackage,
-    getSelectedTimeSlot: (): string => selectedTimeSlot,
-    getSelectedDate:() : string =>selectedDate,
-    getSelectedPackageAmount:() : Number =>selectedPackageAmount,
     getPatientName: (): string => patientName,
     getPatientAge: (): string => patientAge,
     getPatientNumber: (): string => patientNumber,
-    getPatientProblem: (): string => patientProblem
+    getPatientGender:() : string =>patientGender,
+    getConsultationType:() :string =>consultionType,
+    getFee:() :number=>fee,
+    getPaymentStatus:():string=>paymentStatus,
+    getDate:():string=>date,
+    getTimeSlot:():string=>timeSlot,
+  
   };
 }
 

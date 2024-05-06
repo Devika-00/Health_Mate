@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { BookingEntityType } from "../../../../entities/bookingEntity";
 import Booking from "../models/Booking";
 import { Types } from "mongoose";
+import { get } from "mongoose";
 
 export const bookingRepositoryMongodb = () => {
 
@@ -9,14 +10,15 @@ export const bookingRepositoryMongodb = () => {
         return await Booking.create({
           userId: data.getUserId(),
           doctorId: data.getDoctorId(),
-          selectedPackage: data.getSelectedPackage(),
-          selectedTimeSlot: data.getSelectedTimeSlot(),
-          selectedPackageAmount: data.getSelectedPackageAmount(),
-          selectedDate: data.getSelectedDate(),
           patientName: data.getPatientName(),
           patientAge: data.getPatientAge(),
           patientNumber: data.getPatientNumber(),
-          patientProblem: data.getPatientProblem(),
+          patientGender:data.getPatientGender(),
+          consultationType:data.getConsultationType(),
+          fee:data.getFee(),
+          paymentStatus:data.getPaymentStatus(),
+          date:data.getDate(),
+          timeSlot:data.getTimeSlot(),
         });
       };
 
@@ -26,11 +28,24 @@ export const bookingRepositoryMongodb = () => {
 
       const getSinglePatient = async (id:string) => await Booking.findById(id);
       
+      const updateBooking = async (
+        bookingId: string,
+        updatingData: Record<any, any>
+    ) => {
+        return await Booking.findOneAndUpdate({ bookingId }, {paymentStatus:"Paid"});
+    };
 
+
+    const getBookingById = async (bookingId: string) =>
+      await Booking.findOne({ bookingId });
+    
+    
     return{
         createBooking,
         getAllPatients,
         getSinglePatient,
+        updateBooking,
+        getBookingById,
     }    
 }
 

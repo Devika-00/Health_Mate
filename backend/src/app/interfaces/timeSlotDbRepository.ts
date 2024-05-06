@@ -32,6 +32,8 @@ export const timeSlotDbRepository = (
   const removeTimeSlotbyId = async (timeSlotId: string) =>
     await repository.removeTimeSlotbyId(timeSlotId);
 
+  const getAllTimeSlot = async () => await repository.getAllTimeSlot();
+
   return {
     addtimeSlot,
     isTimeSlotExist,
@@ -40,6 +42,7 @@ export const timeSlotDbRepository = (
     getAllDateSlots,
     exsitingSlotAvailables,
     getAllTimeSlotsBydate,
+    getAllTimeSlot,
   };
 };
 export type TimeSlotDbInterface = typeof timeSlotDbRepository;

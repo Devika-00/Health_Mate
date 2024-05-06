@@ -4,7 +4,7 @@ import { authService } from "../../services/authService";
 import { userRepositoryMongodb } from "../../database/mongodb/repositories/userRepositoryMongodb";
 import { authServiceInterface } from "../../../app/service-interface/authServiceInterface";
 import userController from "../../../adapters/userController";
-import authenticateUser from "../middlewares/authMiddleware";
+import authenticateUser, { authenticateDoctor } from "../middlewares/authMiddleware";
 import doctorController from "../../../adapters/doctorController";
 import { doctorDbRepository } from "../../../app/interfaces/doctorDBRepository";
 import { doctorRepositoryMongodb } from "../../database/mongodb/repositories/doctorRepositoryMongodb";
@@ -54,6 +54,7 @@ router.post("/reset_password/:token",controller.resetPassword);
 
 router.get("/profile", authenticateUser, controller.userProfile);
 router.get("/doctors", authenticateUser, controller.doctorPage);
+router.get("/timeslots",authenticateUser,controller.getAllTimeSlots);
 router.get("/doctor/:id", authenticateUser,controller.doctorDetails);
 router.patch("/profile/edit", authenticateUser, controller.updateUserInfo);
 router.get("/timeslots/:id",authenticateUser,controller.getTimeslots);
@@ -62,8 +63,9 @@ router.get("/time-slots/:id/dates",authenticateUser,controller.getDateSlots);
 
 /*  Booking Routes for booking Controller  */
 
-router.post("/book-appoinment",authenticateUser,_bookingController.BookAppoinment);
-
+router.post("/appointments",authenticateUser,_bookingController.BookAppoinment);
+router.patch("/payment/status/:id",authenticateUser,_bookingController.updatePaymentStatus);
+router.get("/bookingdetails/:id",authenticateUser,_bookingController.getBookingDetails);
 
 return router;
 

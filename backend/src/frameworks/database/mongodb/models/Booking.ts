@@ -14,29 +14,28 @@ const bookingSchema = new mongoose.Schema({
   patientNumber:{
     tpe:String,
   },
-  patientProblem:{
+  patientGender:{
     type:String,
   },
-    selectedPackage: {
+    consultationType: {
     type: String,
     required: true,
   },
-  selectedTimeSlot: {
-    type: String,
+  fee: {
+    type: Number,
     required: true,
   },
-  selectedDate: {
-    type: Date, 
+  paymentStatus: {
+    type: String, 
     required: true, 
   },
-  selectedPackageAmount:{
-    type:Number,
+  date:{
+    type:String,
     require:true,
   },
-  payment:{
-    type:Boolean,
+  timeSlot:{
+    type:String,
     required:true,
-    default:false,
   },
   createdAt: {
     type: Date,

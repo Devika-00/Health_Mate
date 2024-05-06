@@ -7,6 +7,9 @@ import showToast from '../../utils/toaster';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { Calendar } from "lucide-react";
+import { loadStripe } from '@stripe/stripe-js';
+import { Navigate, useNavigate } from "react-router-dom";
+
 
 const AppointmentBookingPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -61,7 +64,39 @@ const AppointmentBookingPage: React.FC = () => {
     fetchTimeSlots();
   }, [selectedDate, id]);
 
-  const handleBookAppointment = () => {
+  const stripePromise = loadStripe('pk_test_51PD7KTSIzXVKkSTfUhacmtu4D3bCdX2OCgy7mCYS0JJVvro7cM8QwwIoQVHcBlCEg41UUlqIplqs0avKVML03Bnc00iATAKl4Y');
+
+  const handleBookAppointment = async () => {
+    try {
+      const appointmentData = {
+        doctorId: id,
+        patientDetails: existingPatientDetails || patientDetails,
+        consultationType: 'Offline',
+        fee: 400,
+        paymentStatus: 'Pending',
+        date: selectedDate,
+        timeSlot: selectedTimeSlot,
+      };
+      const response = await axiosJWT.post(`${USER_API}/appointments`, appointmentData);
+      
+      if (response.data.id) {
+        const stripe = await stripePromise;
+        const result = await stripe?.redirectToCheckout({
+          sessionId:response.data.id,
+        });
+        if (result?.error) console.error(result.error);
+      }
+      const bookingId = response.data.booking.bookingId;
+      Navigate({
+        to: `${USER_API}/payment_status/${bookingId}?success=true`
+      });
+    }catch (error) {
+      console.error('Error booking appointment:', error);
+      showToast('Error booking appointment. Please try again later.', 'error');
+    }
+  };
+
+  const handleNextStepBookAppointment = () => {
     if (selectedTimeSlot) {
       setIsModalOpen(true);
     } else {
@@ -97,18 +132,6 @@ const AppointmentBookingPage: React.FC = () => {
     setPatientDetails({ ...patientDetails, [name]: value });
   };
 
-  const handleAppointmentConfirmation = async () => {
-    try {
-      const appointmentDetails = {
-        timeSlot: selectedTimeSlot,
-        patientDetails: existingPatientDetails ? existingPatientDetails : patientDetails,
-      };
-      setScheduledAppointments([...scheduledAppointments, appointmentDetails]);
-    } catch (error) {
-      console.error('Error booking appointment:', error);
-      showToast('Error booking appointment. Please try again later.', 'error');
-    }
-  };
 
   const handleAddDetails = () => {
     setIsDetailsModalOpen(true);
@@ -332,8 +355,8 @@ const AppointmentBookingPage: React.FC = () => {
         )}
       </div>
 
-
       <div className="flex justify-start ml-8 mt-8">
+          {existingPatientDetails ? (
             <button
               onClick={handleBookAppointment}
               disabled={timeSlots.length === 0}
@@ -343,6 +366,17 @@ const AppointmentBookingPage: React.FC = () => {
             >
               Book an Appointment
             </button>
+          ):(
+            <button
+              onClick={handleNextStepBookAppointment}
+              disabled={timeSlots.length === 0}
+              className={`bg-blue-950 text-white py-2 px-4 rounded-lg ${
+                timeSlots.length === 0 ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
+            >
+              Next
+            </button>
+          )}
           </div> 
 
     </div>

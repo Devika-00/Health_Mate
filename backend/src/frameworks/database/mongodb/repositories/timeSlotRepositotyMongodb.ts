@@ -46,6 +46,7 @@ export const timeSlotRepositoryMongodb = () => {
   const existingSlotAvailable = async (doctorId: string, startDate: any, endDate: any) => {
     return await TimeSlot.findOne({ doctorId, startDate, endDate });
 }
+const getAllTimeSlot = async () => await TimeSlot.find({ available: true }); 
 
 
 
@@ -57,6 +58,7 @@ export const timeSlotRepositoryMongodb = () => {
     getAllDateSlots,
     existingSlotAvailable,
     getAllTimeSlotsByDate,
+    getAllTimeSlot,
   };
 };
 

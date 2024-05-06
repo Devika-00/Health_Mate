@@ -8,8 +8,9 @@ import { TimeSlotRepositoryMongodbType } from "../frameworks/database/mongodb/re
 import { BookingDbRepositoryInterface} from "../app/interfaces/bookingDbRepository";
 import { BookingRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/BookingRepositoryMongodb";
 import { BookingEntityType } from "../entities/bookingEntity";
-import { appoinmentBooking } from "../app/use-cases/user/Booking/bookingUser";
+import { appoinmentBooking, createPayment, getBookingByBookingId, updateBookingStatus } from "../app/use-cases/user/Booking/bookingUser";
 import { HttpStatus } from "../types/httpStatus";
+import { getUserById } from "../app/use-cases/user/auth/userAuth";
 
 
 
@@ -44,9 +45,19 @@ const bookingController=(
                 dbDoctorRepository,
                 
             );
+
+            const user = await getUserById(userId,dbRepositoryUser)
+            const sessionId= await createPayment(
+              user?.name!,
+              user?.email!,
+              createBooking.id,
+              createBooking.fee,  
+            );
+
             res.status(HttpStatus.OK).json({
                 success: true,
                 message: "Booking created successfully",
+                id:sessionId,
               });
             
         } catch (error) {
@@ -55,13 +66,70 @@ const bookingController=(
 
     }
 
-    return {BookAppoinment
-        
+     /**
+   * *METHOD :PATCH
+   * * Update payment status and table slot information if payment status is failed
+   */
+
+  const updatePaymentStatus = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { id } = req.params;
+      const { paymentStatus } = req.body;
+      await updateBookingStatus(
+        id,
+        paymentStatus,
+        dbBookingRepository,
+      );
+      res
+        .status(HttpStatus.OK)
+        .json({ success: true, message: "Booking status updated" });
+    } catch (error) {
+      next(error)
+
     }
+  }
+
+
+  /*
+   * * METHOD :GET
+   * * Retrieve booking details
+   */
+  const getBookingDetails = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { bookingID } = req.params;
+      const userID = req.user;
+      const  data  = await getBookingByBookingId(
+        bookingID,
+        dbBookingRepository
+      );
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: "Bookings details fetched successfully",
+        data,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+
+
+
+    return {BookAppoinment,
+        updatePaymentStatus,
+        getBookingDetails,
+        }
+   
 }
 
 export default bookingController;
 
-function apooinmentBooking(data: any, userId: any) {
-    throw new Error("Function not implemented.");
-}
+

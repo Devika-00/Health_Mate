@@ -28,6 +28,7 @@ import { getTimeSlotsByDoctorId,
          getAllTimeSlotsByDoctorId,
  } from "../app/use-cases/doctor/timeslot";
 import timeSlots from "../frameworks/database/mongodb/models/timeSlots";
+import { getAllTimeSlot } from "../app/use-cases/user/timeslots/get and update ";
 
 
 
@@ -248,6 +249,24 @@ const doctorPage = async (
   }
 };
 
+
+ /*
+   * METHOD:GET
+   * Retrieve all the doctors from db
+   */
+ const getAllTimeSlots = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const timeslots = await getAllTimeSlot(dbTimeSlotRepository);
+    return res.status(HttpStatus.OK).json({ success: true, timeslots });
+  } catch (error) {
+    next(error);
+  }
+};
+
 /* method get doctor details */
 const doctorDetails = async (
   req: Request,
@@ -255,6 +274,7 @@ const doctorDetails = async (
   next: NextFunction
 ) => {
   try {
+    
     const {id} = req.params;
     const doctor = await getSingleDoctor(id,dbDoctorRepository);
     return res.status(HttpStatus.OK).json({ success: true, doctor });
@@ -295,7 +315,6 @@ const getDateSlots = async(
 )=>{
   try{
   const {id} = req.params;
-
   const dateSlots = await getDateSlotsByDoctorId(
     id,
     dbTimeSlotRepository
@@ -322,6 +341,7 @@ const getDateSlots = async(
         doctorDetails,
         getTimeslots,
         getDateSlots,
+        getAllTimeSlots,
     };
     };
 
