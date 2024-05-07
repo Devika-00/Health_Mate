@@ -140,7 +140,7 @@ const bookingController=(
 
   /*
    * * METHOD :GET
-   * * Retrieve booking details
+   * * Retrieve booking details by id
    */
   const getAllBookingDetails = async (
     req: Request,
@@ -164,12 +164,38 @@ const bookingController=(
   };
 
 
+  /**
+   * *METHOD :GET
+   * * Retrieve all bookings done by user
+   */
+  const getAllAppoinments = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const userID = req.user;
+      console.log(userID);
+      const bookings = await getBookingByUserId(userID, dbBookingRepository);
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: "Bookings fetched successfully",
+        bookings,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+
+
 
 
     return {BookAppoinment,
         updatePaymentStatus,
         getBookingDetails,
         getAllBookingDetails,
+        getAllAppoinments,
         }
    
 }

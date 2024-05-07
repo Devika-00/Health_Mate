@@ -26,9 +26,9 @@ const Profile: React.FC = () => {
       <div className="flex flex-col items-center justify-center h-screen bg-white">
         <div className="flex flex-col items-center w-2/5 justify-center mb-10 mt-12 bg-blue-900 rounded-lg p-6 shadow-lg text-white relative">
           {/* Chat icon */}
-          <Link to="/chat" className="absolute top-4 right-4 bg-white rounded-full p-2">
+          {/* <Link to="/chat" className="absolute top-4 right-4 bg-white rounded-full p-2">
             <BsChatSquareDots className="h-8 w-8 mt-1 text-blue-900" />
-          </Link>
+          </Link> */}
           {/* Profile Image */}
           <div className="relative mb-4">
             <img src={

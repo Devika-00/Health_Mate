@@ -39,6 +39,7 @@ const OnlineDoctors = lazy(()=>import('../pages/user/OnlinePage'));
 const OfflineDoctors = lazy(()=>import('../pages/user/OfflinePage'));
 const PaymentCompleted = lazy(() => import("../pages/user/PayementCompleted"));
 const AppoinmentDetails = lazy(()=>import("../pages/user/AppoinmentDetails"));
+const AppoinmentListPage = lazy(()=>import("../pages/user/getAppoinmentsAll"));
 
 export const MainRouter = () => {
     return (
@@ -67,6 +68,7 @@ export const MainRouter = () => {
                      <Route path="/user/appoinmentOnline/:id" element={<AppoinmentOnlineBookingPage />} />
                      <Route path="/payment_status/:id" element={<PaymentCompleted />} />
                      <Route path="/appoinmentDetails/:id" element={<AppoinmentDetails/>} />
+                     <Route path ="/user/appoinmentlist" element={<AppoinmentListPage/>}/>
 
                     
 
