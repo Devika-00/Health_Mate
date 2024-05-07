@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/reducer/reducer';
 
 
+
 const AppointmentBookingPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [doctor, setDoctor] = useState<any>(null);
@@ -82,7 +83,7 @@ const AppointmentBookingPage: React.FC = () => {
     fetchBookings();
   }, [id]);
 
-  console.log(bookings,"............");
+ 
 
   const stripePromise = loadStripe('pk_test_51PD7KTSIzXVKkSTfUhacmtu4D3bCdX2OCgy7mCYS0JJVvro7cM8QwwIoQVHcBlCEg41UUlqIplqs0avKVML03Bnc00iATAKl4Y');
 
@@ -194,7 +195,14 @@ const AppointmentBookingPage: React.FC = () => {
                 <p>Fee: 400/-</p>
               </div>
             </div>
+          {/* Google Map */}
+          <div className="flex justify-center mb-8 h-56 ml-96 w-full">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3929.9542915875227!2d76.32012407479272!3d9.937761290164516!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b087303f27ba213%3A0xd163e2ff8e59c028!2sP%20S%20Mission%20Hospital!5e0!3m2!1sen!2sin!4v1715065874858!5m2!1sen!2sin" width="400" height="300" style={{border: "0"}} allowFullScreen loading="lazy"  referrerPolicy="no-referrer-when-downgrade"></iframe>
           </div>
+          </div>
+
+
+          
 
           <div className="mb-4">
             <h1 className='ml-4 mt-6 font-medium text-blue-950 text-lg'>Select The Scheduled Date</h1>
