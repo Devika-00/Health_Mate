@@ -33,10 +33,42 @@ export const appoinmentBooking = async(
         timeSlot,
 
     );
+
     const booking = await bookingDbRepository.createBooking(appoinment);
+
 
     return booking;
 }
+
+
+export const checkIsBooked = async(
+  data: any,
+  userId:any,
+  bookingDbRepository: ReturnType<BookingDbRepositoryInterface>,
+)=>{
+  const { doctorId, patientDetails: { patientName, patientAge, patientNumber, patientGender }, consultationType, fee, paymentStatus, date, timeSlot } = data;
+  const appoinment = bookingEntity(
+      userId,
+      doctorId,
+      patientName,
+      patientAge,
+      patientNumber,
+      patientGender,
+      consultationType,
+      fee,
+      paymentStatus,
+      date,
+      timeSlot,
+
+  );
+
+  const isBooked = await bookingDbRepository.deleteSlot(doctorId,date,timeSlot);
+
+
+  return isBooked;
+}
+
+
 
 export const createPayment = async (
     userName: string ,

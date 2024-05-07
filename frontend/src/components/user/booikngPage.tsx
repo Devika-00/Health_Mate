@@ -83,6 +83,15 @@ const AppointmentBookingPage: React.FC = () => {
     fetchBookings();
   }, [id]);
 
+
+  function stripDate(dateString: any) {
+    const date = new Date(dateString);
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
+  }
+
  
 
   const stripePromise = loadStripe('pk_test_51PD7KTSIzXVKkSTfUhacmtu4D3bCdX2OCgy7mCYS0JJVvro7cM8QwwIoQVHcBlCEg41UUlqIplqs0avKVML03Bnc00iATAKl4Y');
@@ -95,22 +104,24 @@ const AppointmentBookingPage: React.FC = () => {
         consultationType: 'Offline',
         fee: 400,
         paymentStatus: 'Pending',
-        date: selectedDate,
+        date: stripDate(selectedDate),
         timeSlot: selectedTimeSlot,
       };
       const response = await axiosJWT.post(`${USER_API}/appointments`, appointmentData);
-      
+      console.log(response);
       if (response.data.id) {
         const stripe = await stripePromise;
         const result = await stripe?.redirectToCheckout({
           sessionId:response.data.id,
         });
         if (result?.error) console.error(result.error);
-      }
+      
       const bookingId = response.data.booking.bookingId;
       Navigate({
         to: `${USER_API}/payment_status/${bookingId}?success=true`
-      });
+      });}else{
+        showToast(response.data.message,"error");
+      }
     }catch (error) {
       console.error('Error booking appointment:', error);
       showToast('Error booking appointment. Please try again later.', 'error');

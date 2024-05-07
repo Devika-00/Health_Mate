@@ -8,7 +8,7 @@ import { TimeSlotRepositoryMongodbType } from "../frameworks/database/mongodb/re
 import { BookingDbRepositoryInterface} from "../app/interfaces/bookingDbRepository";
 import { BookingRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/BookingRepositoryMongodb";
 import { BookingEntityType } from "../entities/bookingEntity";
-import { appoinmentBooking, createPayment, getBookingByBookingId, getBookingByUserId, updateBookingStatus } from "../app/use-cases/user/Booking/bookingUser";
+import { appoinmentBooking, checkIsBooked, createPayment, getBookingByBookingId, getBookingByUserId, updateBookingStatus } from "../app/use-cases/user/Booking/bookingUser";
 import { HttpStatus } from "../types/httpStatus";
 import { getUserById } from "../app/use-cases/user/auth/userAuth";
 
@@ -38,27 +38,44 @@ const bookingController=(
         try {
             const data = req.body;
             const userId = req.user;
-            const createBooking = await appoinmentBooking(
-                data,
-                userId,
-                dbBookingRepository,
-                dbDoctorRepository,
-                
-            );
 
-            const user = await getUserById(userId,dbRepositoryUser)
-            const sessionId= await createPayment(
-              user?.name!,
-              user?.email!,
-              createBooking.id,
-              createBooking.fee,  
-            );
+            const checkBooking:any = await checkIsBooked(
+              data,
+              userId,
+              dbBookingRepository,
+            )
 
-            res.status(HttpStatus.OK).json({
-                success: true,
-                message: "Booking created successfully",
-                id:sessionId,
+            if(checkBooking){
+              res.status(HttpStatus.OK).json({
+                success: false,
+                message: "slot already booked select another slot",
               });
+            }else {
+
+              const createBooking = await appoinmentBooking(
+                  data,
+                  userId,
+                  dbBookingRepository,
+                  dbDoctorRepository,
+                  
+              );
+  
+  
+              const user = await getUserById(userId,dbRepositoryUser)
+              const sessionId= await createPayment(
+                user?.name!,
+                user?.email!,
+                createBooking.id,
+                createBooking.fee,  
+              );
+  
+              res.status(HttpStatus.OK).json({
+                  success: true,
+                  message: "Booking created successfully",
+                  id:sessionId,
+                });
+            }
+
             
         } catch (error) {
             next(error);

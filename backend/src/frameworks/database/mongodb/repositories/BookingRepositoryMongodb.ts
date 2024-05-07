@@ -4,6 +4,15 @@ import Booking from "../models/Booking";
 import { Types } from "mongoose";
 import { get } from "mongoose";
 
+interface BookingDocument extends Document {
+  _id: any;
+  doctorId: string;
+  startDate: Date;
+  endDate: Date;
+  slotTime: string[]; // Assuming slotTime is an array of strings
+  // Add other properties as needed
+}
+
 export const bookingRepositoryMongodb = () => {
 
     const createBooking = async (data: BookingEntityType) => { 
@@ -24,6 +33,11 @@ export const bookingRepositoryMongodb = () => {
 
 
       const getAllPatients = async () => await Booking.find();
+
+      const deleteSlot = async(doctorId:string,date:string,timeSlot:string) => 
+        await Booking.findOne({doctorId: doctorId, timeSlot:timeSlot,date:date,})
+          
+      
 
 
       const getSinglePatient = async (id:string) => await Booking.findById(id);
@@ -50,7 +64,9 @@ export const bookingRepositoryMongodb = () => {
         updateBooking,
         getBookingById,
         getAllBookingByUserId,
+        deleteSlot,
     }    
+
 }
 
 

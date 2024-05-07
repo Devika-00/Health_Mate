@@ -10,6 +10,10 @@ export const bookingDbRepository = (
     
   const getAllPatients = async () => await repository.getAllPatients();
 
+  const deleteSlot = async(doctorId:string,date:string,timeSlot:string)=>
+    await repository.deleteSlot(doctorId,date,timeSlot)
+  
+
   const getSinglePatient = async (id:string) => await repository.getSinglePatient(id);
 
   const updateBookingDetails = async (
@@ -31,6 +35,7 @@ export const bookingDbRepository = (
         updateBookingDetails,
         getBookingById,
         getAllBookingByUserId,
+        deleteSlot,
     }
   }
 
