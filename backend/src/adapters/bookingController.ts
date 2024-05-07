@@ -104,10 +104,10 @@ const bookingController=(
     next: NextFunction
   ) => {
     try {
-      const { bookingID } = req.params;
-      const userID = req.user;
+      const { id } = req.params;
+      console.log(req.params,"......");
       const  data  = await getBookingByBookingId(
-        bookingID,
+        id,
         dbBookingRepository
       );
       res.status(HttpStatus.OK).json({

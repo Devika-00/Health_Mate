@@ -6,14 +6,16 @@ import { USER_API } from '../../constants';
 import { useParams } from 'react-router-dom';
 
 const Appoinmentdetails: React.FC = () => {
-  const { bookingId } = useParams<{ bookingId: string }>();
+  const { id } = useParams<{ id: string }>();
   const [bookingDetails, setBookingDetails] = useState<any>(null);
   const [doctorDetails, setDoctorDetails] = useState<any>(null);
 
+console.log(id);
   useEffect(() => {
     const fetchBookingDetails = async () => {
       try {
-        const response = await axiosJWT.get(`${USER_API}/bookingdetails/${bookingId}`);
+        const response = await axiosJWT.get(`${USER_API}/bookingdetails/${id}`);
+        console.log(response);
         const bookingData = response.data.data.bookingDetails;
         setBookingDetails(bookingData);
 
@@ -25,7 +27,7 @@ const Appoinmentdetails: React.FC = () => {
       }
     };
     fetchBookingDetails();
-  }, [bookingId]);
+  }, [id]);
 
   return (
     <>

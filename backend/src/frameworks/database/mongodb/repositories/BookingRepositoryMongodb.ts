@@ -37,7 +37,7 @@ export const bookingRepositoryMongodb = () => {
 
 
     const getBookingById = async (bookingId: string) =>
-      await Booking.findOne({ bookingId });
+      await Booking.findById({ _id:bookingId });
 
     const getAllBookingByUserId = async (userId: string) =>
       await Booking.find({ userId:userId });

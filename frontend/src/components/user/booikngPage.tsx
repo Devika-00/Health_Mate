@@ -369,7 +369,6 @@ const AppointmentBookingPage: React.FC = () => {
               <h2 className=' font-bold mb-3 text-lg'>Patient Details</h2>
               <p>Name: {existingPatientDetails.patientName}</p>
               <p>Age: {existingPatientDetails.patientAge}</p>
-              <p>Phone Number: {existingPatientDetails.patientNumber}</p>
               <p>Gender: {existingPatientDetails.patientGender}</p>
             </div>
           </div>
