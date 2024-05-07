@@ -38,6 +38,9 @@ export const bookingRepositoryMongodb = () => {
 
     const getBookingById = async (bookingId: string) =>
       await Booking.findOne({ bookingId });
+
+    const getAllBookingByUserId = async (userId: string) =>
+      await Booking.find({ userId:userId });
     
     
     return{
@@ -46,6 +49,7 @@ export const bookingRepositoryMongodb = () => {
         getSinglePatient,
         updateBooking,
         getBookingById,
+        getAllBookingByUserId,
     }    
 }
 

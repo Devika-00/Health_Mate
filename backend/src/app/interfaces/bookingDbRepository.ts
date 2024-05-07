@@ -21,12 +21,16 @@ export const bookingDbRepository = (
   const getBookingById = async (bookingId: string) =>
     await repository.getBookingById(bookingId);
 
+  const getAllBookingByUserId = async (userId: string) =>
+    await repository.getAllBookingByUserId(userId);
+
     return {
         createBooking,
         getAllPatients,
         getSinglePatient,
         updateBookingDetails,
         getBookingById,
+        getAllBookingByUserId,
     }
   }
 

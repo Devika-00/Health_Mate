@@ -9,6 +9,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Calendar } from "lucide-react";
 import { loadStripe } from '@stripe/stripe-js';
 import { Navigate, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../redux/reducer/reducer';
 
 
 const AppointmentBookingPage: React.FC = () => {
@@ -27,8 +29,11 @@ const AppointmentBookingPage: React.FC = () => {
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
   const [existingPatientDetails, setExistingPatientDetails] = useState<any>(null);
   const [scheduledAppointments, setScheduledAppointments] = useState<any[]>([]);
+  const [bookings, setBookings] = useState<any[]>([]);
+  const dispatch = useDispatch(); // Initialize useDispatch hook
+  const userId = useSelector((state: RootState) => state.UserSlice.id);
 
-  console.log(existingPatientDetails);
+ 
 
   useEffect(() => {
     const fetchDoctorDetails = async () => {
@@ -63,6 +68,21 @@ const AppointmentBookingPage: React.FC = () => {
     };
     fetchTimeSlots();
   }, [selectedDate, id]);
+
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const response = await axiosJWT.get(`${USER_API}/bookings/${userId}`);
+        console.log(response.data.data.bookingDetails,); 
+        setBookings(response.data.data.bookingDetails);
+      } catch (error) {
+        console.error('Error fetching bookings:', error);
+      }
+    };
+    fetchBookings();
+  }, [id]);
+
+  console.log(bookings,"............");
 
   const stripePromise = loadStripe('pk_test_51PD7KTSIzXVKkSTfUhacmtu4D3bCdX2OCgy7mCYS0JJVvro7cM8QwwIoQVHcBlCEg41UUlqIplqs0avKVML03Bnc00iATAKl4Y');
 
@@ -138,13 +158,15 @@ const AppointmentBookingPage: React.FC = () => {
   };
 
   const handleSelectExisting = (patientDetails: any) => {
+    setIsDetailsModalOpen(true);
     setPatientDetails(patientDetails);
     setIsModalOpen(false);
   };
 
   const handleAddPatientDetails = () => {
-    if (patientDetails.patientName && patientDetails.patientAge && patientDetails.patientNumber && patientDetails.patientGender) {
+    if (patientDetails.patientName && patientDetails.patientAge && patientDetails.patientGender) {
       setIsDetailsModalOpen(false);
+      setIsModalOpen(false);
       setExistingPatientDetails(patientDetails);
     } else {
       showToast('Please fill in all fields', 'error');
@@ -246,21 +268,24 @@ const AppointmentBookingPage: React.FC = () => {
               close
             </button>
             <h2 className="text-xl font-bold mb-4">Patient Details</h2>
-            {existingPatientDetails ? (
-              <div
-                onClick={() => handleSelectExisting(existingPatientDetails)}
-                className="border rounded-lg p-4 mb-4 cursor-pointer"
-              >
-                <p>Name: {existingPatientDetails.patientName}</p>
-                <p>Age: {existingPatientDetails.patientAge}</p>
-                <p>Phone Number: {existingPatientDetails.patientNumber}</p>
-                <p>Gender: {existingPatientDetails.patientGender}</p>
-              </div>
+            {bookings.length > 0 ? (
+              bookings.map((booking, index) => (
+                <div
+                  key={index}
+                  className="border rounded-lg p-4 mb-4 cursor-pointer"
+                  onClick={() => handleSelectExisting(booking)}
+                >
+                  <p>Name: {booking.patientName}</p>
+                  <p>Age: {booking.patientAge}</p>
+                  <p>Gender: {booking.patientGender}</p>
+                </div>
+              ))
             ) : (
-              <p className="mb-4">No patient details found.</p>
+              <p className="mb-4">No existing patient details</p>
             )}
             <button onClick={handleAddDetails} className="bg-blue-950 text-white py-2 px-4 rounded-lg mr-2">Add Details +</button>
           </Modal>
+
 
           <Modal
             isOpen={isDetailsModalOpen}
@@ -306,16 +331,6 @@ const AppointmentBookingPage: React.FC = () => {
                 type="text"
                 name="patientAge"
                 value={patientDetails.patientAge}
-                onChange={handleInputChange}
-                className="border border-gray-400 rounded-lg px-4 py-2 w-full mt-1"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block mb-1">Phone Number:</label>
-              <input
-                type="text"
-                name="patientNumber"
-                value={patientDetails.patientNumber}
                 onChange={handleInputChange}
                 className="border border-gray-400 rounded-lg px-4 py-2 w-full mt-1"
               />

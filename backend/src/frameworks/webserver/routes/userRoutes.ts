@@ -66,6 +66,8 @@ router.get("/time-slots/:id/dates",authenticateUser,controller.getDateSlots);
 router.post("/appointments",authenticateUser,_bookingController.BookAppoinment);
 router.patch("/payment/status/:id",authenticateUser,_bookingController.updatePaymentStatus);
 router.get("/bookingdetails/:id",authenticateUser,_bookingController.getBookingDetails);
+router.get("/bookings/:id",authenticateUser,_bookingController.getAllBookingDetails);
+
 
 return router;
 

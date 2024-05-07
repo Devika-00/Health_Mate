@@ -8,7 +8,7 @@ import { TimeSlotRepositoryMongodbType } from "../frameworks/database/mongodb/re
 import { BookingDbRepositoryInterface} from "../app/interfaces/bookingDbRepository";
 import { BookingRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/BookingRepositoryMongodb";
 import { BookingEntityType } from "../entities/bookingEntity";
-import { appoinmentBooking, createPayment, getBookingByBookingId, updateBookingStatus } from "../app/use-cases/user/Booking/bookingUser";
+import { appoinmentBooking, createPayment, getBookingByBookingId, getBookingByUserId, updateBookingStatus } from "../app/use-cases/user/Booking/bookingUser";
 import { HttpStatus } from "../types/httpStatus";
 import { getUserById } from "../app/use-cases/user/auth/userAuth";
 
@@ -121,11 +121,38 @@ const bookingController=(
   };
 
 
+  /*
+   * * METHOD :GET
+   * * Retrieve booking details
+   */
+  const getAllBookingDetails = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const  {id}  = req.params;
+      const  data  = await getBookingByUserId(
+        id,
+        dbBookingRepository
+      );
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: "Bookings details fetched successfully",
+        data,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+
 
 
     return {BookAppoinment,
         updatePaymentStatus,
         getBookingDetails,
+        getAllBookingDetails,
         }
    
 }

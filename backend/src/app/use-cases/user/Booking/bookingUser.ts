@@ -101,3 +101,11 @@ export const createPayment = async (
     const bookingDetails = await bookingRepository.getBookingById(bookingID);
     return { bookingDetails };
   };
+
+  export const getBookingByUserId = async (
+    userId: string,
+    bookingRepository: ReturnType<BookingDbRepositoryInterface>
+  ) => {
+    const bookingDetails = await bookingRepository.getAllBookingByUserId(userId);
+    return { bookingDetails };
+  };
