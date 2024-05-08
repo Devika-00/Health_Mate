@@ -8,7 +8,7 @@ import { TimeSlotRepositoryMongodbType } from "../frameworks/database/mongodb/re
 import { BookingDbRepositoryInterface} from "../app/interfaces/bookingDbRepository";
 import { BookingRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/BookingRepositoryMongodb";
 import { BookingEntityType } from "../entities/bookingEntity";
-import { appoinmentBooking, checkIsBooked, createPayment, getBookingByBookingId, getBookingByUserId, updateBookingStatus } from "../app/use-cases/user/Booking/bookingUser";
+import { appoinmentBooking, changeAppoinmentstaus, checkIsBooked, createPayment, getBookingByBookingId, getBookingByDoctorId, getBookingByUserId, updateBookingStatus } from "../app/use-cases/user/Booking/bookingUser";
 import { HttpStatus } from "../types/httpStatus";
 import { getUserById } from "../app/use-cases/user/auth/userAuth";
 
@@ -110,10 +110,34 @@ const bookingController=(
     }
   }
 
+  /* method put update cancelappoinment*/
+  const cancelAppoinment = async(
+    req:Request,
+    res:Response,
+    next:NextFunction
+  )=>{
+    try {
+      const {appoinmentStatus} = req.body;
+      const {id} = req.params;
+
+      const updateBooking = await changeAppoinmentstaus(
+        appoinmentStatus,
+        id,
+        dbBookingRepository
+      );
+      res
+        .status(HttpStatus.OK)
+        .json({ success: true, message: "Cancel Appoinment" });
+
+    } catch (error) {
+      next(error)
+    }
+  }
+
 
   /*
    * * METHOD :GET
-   * * Retrieve booking details
+   * * Retrieve booking details by bookingId
    */
   const getBookingDetails = async (
     req: Request,
@@ -140,7 +164,7 @@ const bookingController=(
 
   /*
    * * METHOD :GET
-   * * Retrieve booking details by id
+   * * Retrieve booking details by user id
    */
   const getAllBookingDetails = async (
     req: Request,
@@ -188,6 +212,33 @@ const bookingController=(
   };
 
 
+  /*
+   * * METHOD :GET
+   * * Retrieve Appoinments details by doctor id
+   */
+  const getAppoinmentList = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const  {id}  = req.params;
+      console.log(id);
+      const  data  = await getBookingByDoctorId(
+        id,
+        dbBookingRepository
+      );
+      res.status(HttpStatus.OK).json({
+        success: true,
+        message: "Bookings details fetched successfully",
+        data,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+
 
 
 
@@ -196,6 +247,8 @@ const bookingController=(
         getBookingDetails,
         getAllBookingDetails,
         getAllAppoinments,
+        cancelAppoinment,
+        getAppoinmentList,
         }
    
 }

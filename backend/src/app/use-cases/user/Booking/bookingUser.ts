@@ -17,7 +17,7 @@ export const appoinmentBooking = async(
     bookingDbRepository: ReturnType<BookingDbRepositoryInterface>,
     doctorDbRepository: ReturnType<doctorDbInterface>,
 )=>{
-    const { doctorId, patientDetails: { patientName, patientAge, patientNumber, patientGender }, consultationType, fee, paymentStatus, date, timeSlot } = data;
+    const { doctorId, patientDetails: { patientName, patientAge, patientNumber, patientGender }, consultationType, fee, paymentStatus,appoinmentStatus, date, timeSlot } = data;
     const doctorDetails = await doctorDbRepository.getDoctorById(doctorId);
     const appoinment = bookingEntity(
         userId,
@@ -29,6 +29,7 @@ export const appoinmentBooking = async(
         consultationType,
         fee,
         paymentStatus,
+        appoinmentStatus,
         date,
         timeSlot,
 
@@ -46,7 +47,7 @@ export const checkIsBooked = async(
   userId:any,
   bookingDbRepository: ReturnType<BookingDbRepositoryInterface>,
 )=>{
-  const { doctorId, patientDetails: { patientName, patientAge, patientNumber, patientGender }, consultationType, fee, paymentStatus, date, timeSlot } = data;
+  const { doctorId, patientDetails: { patientName, patientAge, patientNumber, patientGender }, consultationType, fee, paymentStatus,appoinmentStatus, date, timeSlot } = data;
   const appoinment = bookingEntity(
       userId,
       doctorId,
@@ -57,6 +58,7 @@ export const checkIsBooked = async(
       consultationType,
       fee,
       paymentStatus,
+      appoinmentStatus,
       date,
       timeSlot,
 
@@ -139,5 +141,25 @@ export const createPayment = async (
     bookingRepository: ReturnType<BookingDbRepositoryInterface>
   ) => {
     const bookingDetails = await bookingRepository.getAllBookingByUserId(userId);
+    return { bookingDetails };
+  };
+
+
+  export const changeAppoinmentstaus = async (
+    appoinmentStatus:string,
+    id:any,
+    bookingRepository:ReturnType<BookingDbRepositoryInterface>
+  )=>{
+    const changeStatus = await bookingRepository.changeBookingstatus(appoinmentStatus,id);
+     return changeStatus;
+  }
+
+  /**doctor use cases */
+
+  export const getBookingByDoctorId = async (
+    doctorId: string,
+    bookingRepository: ReturnType<BookingDbRepositoryInterface>
+  ) => {
+    const bookingDetails = await bookingRepository.getAllBookingByDoctorId(doctorId);
     return { bookingDetails };
   };

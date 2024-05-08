@@ -104,8 +104,10 @@ const AppointmentBookingPage: React.FC = () => {
         consultationType: 'Offline',
         fee: 400,
         paymentStatus: 'Pending',
+        appoinmentStatus:'Booked',
         date: stripDate(selectedDate),
         timeSlot: selectedTimeSlot,
+
       };
       const response = await axiosJWT.post(`${USER_API}/appointments`, appointmentData);
       console.log(response);

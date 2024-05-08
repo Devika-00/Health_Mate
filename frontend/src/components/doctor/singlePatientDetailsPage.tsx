@@ -1,34 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosJWT from '../../utils/axiosService';
 import { useParams } from 'react-router-dom';
-import { DOCTOR_API } from '../../constants';
-
-// Define the interface for the patient data
-interface Patient {
-  _id: string;
-  patientName: string;
-  patientAge: number;
-  patientProblem: string;
-  selectedPackage: string;
-  selectedDate: string;
-  selectedTime: string;
-  selectedPackageAmount: number;
-  payment: boolean;
-}
+import { USER_API } from '../../constants';
 
 const PatientDetailPage = () => {
-  const { id } = useParams();
-  const [patient, setPatient] = useState<Patient | null>(null); // Explicitly specify the type
+  const { id } = useParams<{ id: string }>();
+  const [patient, setPatient] = useState<any>(null);
 
   useEffect(() => {
     const fetchPatientDetails = async () => {
       try {
-        const response = await axios.get(`${DOCTOR_API}/patients/${id}`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-          }
-        });
-        setPatient(response.data.patient);
+        const response = await axiosJWT.get(`${USER_API}/bookingdetails/${id}`);
+        const bookingData = response.data.data.bookingDetails;
+        setPatient(bookingData);
       } catch (error) {
         console.error('Error fetching patient details:', error);
       }
@@ -39,41 +23,33 @@ const PatientDetailPage = () => {
 
   return (
     <div className="flex justify-center items-center h-screen">
-      <div className="max-w-lg mx-auto px-24 py-10 bg-blue-200 rounded-lg shadow-md">
+      <div className="w-8/12 h-6/12 p-8 bg-gray-300 rounded-lg shadow-lg border border-gray-200">
         <h1 className="text-3xl font-bold mb-8">Patient Details</h1>
         {patient ? (
           <div>
             <div className="mb-4">
-              <p className="font-bold">Name:</p>
-              <p>{patient.patientName}</p>
+              <p className="font-bold">Name:   {patient.patientName}</p>
             </div>
             <div className="mb-4">
-              <p className="font-bold">Age:</p>
-              <p>{patient.patientAge}</p>
+              <p className="font-bold">Age:   {patient.patientAge}</p>
             </div>
             <div className="mb-4">
-              <p className="font-bold">Problem:</p>
-              <p>{patient.patientProblem}</p>
+              <p className="font-bold">Gender:   {patient.patientGender}</p>
             </div>
             <div className="mb-4">
-              <p className="font-bold">Package:</p>
-              <p>{patient.selectedPackage}</p>
+              <p className="font-bold">Consultation Type:   {patient.consultationType}</p>
             </div>
             <div className="mb-4">
-              <p className="font-bold">Date:</p>
-              <p>{patient.selectedDate}</p>
+              <p className="font-bold">Date:   {new Date(patient.date).toLocaleDateString()}</p>
             </div>
             <div className="mb-4">
-              <p className="font-bold">Time:</p>
-              <p>{patient.selectedTime}</p>
+              <p className="font-bold">Time:   {patient.timeSlot}</p>
             </div>
             <div className="mb-4">
-              <p className="font-bold">Amount:</p>
-              <p>{patient.selectedPackageAmount}</p>
+              <p className="font-bold">Amount:   {patient.fee}</p>
             </div>
             <div className="mb-4">
-              <p className="font-bold">Payment:</p>
-              <p>{patient.payment ? 'Success' : 'Pending'}</p>
+              <p className="font-bold">Payment:   {patient.paymentStatus} </p>
             </div>
           </div>
         ) : (

@@ -10,6 +10,7 @@ export default function bookingEntity(
   consultionType:string,
   fee:number,
   paymentStatus:string,
+  appoinmentStatus:string,
   date:string,
   timeSlot:string,
   
@@ -26,6 +27,7 @@ export default function bookingEntity(
     getConsultationType:() :string =>consultionType,
     getFee:() :number=>fee,
     getPaymentStatus:():string=>paymentStatus,
+    getAppoinmentStatus:():string=>appoinmentStatus,
     getDate:():string=>date,
     getTimeSlot:():string=>timeSlot,
   

@@ -36,12 +36,12 @@ const Navbar: React.FC = () => {
             <div className="hidden md:block">
               <Link to="/doctor" className="text-white px-3 py-2 rounded-md text-sm font-medium">Home</Link>
               <Link to="/doctor/slot" className="text-white px-3 py-2 rounded-md text-sm font-medium">Slot</Link>
-              <Link to="/doctor/patientList" className="text-white px-3 py-2 rounded-md text-sm font-medium">Patients</Link>
             </div>
             {/* Profile and Login */}
             <div className=" flex items-center">
             {doctor.isAuthenticated && doctor.role === 'doctor' ? (
                 <>
+                  <Link to="/doctor/patientList" className="text-white px-3 py-2 rounded-md text-sm font-medium">Appointment</Link>
                   <Link to="/doctor/profile" className="text-white px-3 py-2 rounded-md text-sm font-medium">Profile</Link>
                   <Link to={`/doctor/status/${doctor.id}`} className="text-white px-3 py-2 rounded-md text-sm font-medium">Verification</Link>
                   <button onClick={handleLogout} className="text-blue-900 px-3 py-2  text-sm font-medium bg-gray-100 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50 rounded-md ml-2">Logout</button>

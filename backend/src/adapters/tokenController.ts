@@ -56,7 +56,7 @@ const tokenContoller = (
         return res
           .status(HttpStatus.OK)
           .json({ success: true, access_token, user });
-      } else if (decodedToken.role === "seller") {
+      } else if (decodedToken.role === "doctor") {
         const restaurant = await getDoctorById(
           decodedToken.id,
           dbRepositoryRestaurant

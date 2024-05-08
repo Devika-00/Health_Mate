@@ -94,6 +94,7 @@ const AppointmentOnlineBookingPage: React.FC = () => {
         consultationType: 'Offline',
         fee: 400,
         paymentStatus: 'Pending',
+        appoinmentStatus:'Booked',
         date: selectedDate,
         timeSlot: selectedTimeSlot,
       };

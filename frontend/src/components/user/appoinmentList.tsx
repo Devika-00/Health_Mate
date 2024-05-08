@@ -21,8 +21,6 @@ const AppointmentsListPage = () => {
     fetchAppointments();
   }, []);
 
-  console.log(appointments);
-
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Appointments List</h1>
@@ -32,12 +30,12 @@ const AppointmentsListPage = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {appointments.map((appointment:any) => (
-            <Link to={`/appointments/${appointment._id}`} key={appointment._id}>
+            <Link to={`/appoinmentDetails/${appointment._id}`} key={appointment._id}>
               <div className="border rounded-lg shadow-md p-4 cursor-pointer transition duration-300 transform hover:scale-105">
                 <h2 className="text-xl font-bold mb-2">{appointment.patientName}</h2>
                 <p className="text-gray-600">Age: {appointment.patientAge}</p>
                 <p className="text-gray-600">Date: {appointment.date}</p>
-                <p className="text-gray-600">Time: {appointment.time}</p>
+                <p className="text-gray-600">Time: {appointment.timeSlot}</p>
               </div>
             </Link>
           ))}

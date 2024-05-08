@@ -4,14 +4,6 @@ import Booking from "../models/Booking";
 import { Types } from "mongoose";
 import { get } from "mongoose";
 
-interface BookingDocument extends Document {
-  _id: any;
-  doctorId: string;
-  startDate: Date;
-  endDate: Date;
-  slotTime: string[]; // Assuming slotTime is an array of strings
-  // Add other properties as needed
-}
 
 export const bookingRepositoryMongodb = () => {
 
@@ -26,6 +18,7 @@ export const bookingRepositoryMongodb = () => {
           consultationType:data.getConsultationType(),
           fee:data.getFee(),
           paymentStatus:data.getPaymentStatus(),
+          appoinmentStatus:data.getAppoinmentStatus(),
           date:data.getDate(),
           timeSlot:data.getTimeSlot(),
         });
@@ -55,6 +48,17 @@ export const bookingRepositoryMongodb = () => {
 
     const getAllBookingByUserId = async (userId: string) =>
       await Booking.find({ userId:userId });
+
+    const getAllBookingByDoctorId = async (doctorId: string) =>
+      await Booking.find({ doctorId:doctorId });
+
+    const changeBookingStatus = async (appoinmentStatus: string, id: string) => {
+      try {
+        await Booking.findByIdAndUpdate(id, { appoinmentStatus: appoinmentStatus });
+      } catch (error) {
+        console.error('Error updating booking status:', error);
+      }
+    };
     
     
     return{
@@ -65,6 +69,8 @@ export const bookingRepositoryMongodb = () => {
         getBookingById,
         getAllBookingByUserId,
         deleteSlot,
+        changeBookingStatus,
+        getAllBookingByDoctorId,
     }    
 
 }

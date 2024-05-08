@@ -4,13 +4,13 @@ import Footer from '../../components/user/Footer/Footer';
 import axiosJWT from '../../utils/axiosService';
 import { USER_API } from '../../constants';
 import { useParams } from 'react-router-dom';
+import showToast from '../../utils/toaster';
 
-const Appoinmentdetails: React.FC = () => {
+const AppointmentDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [bookingDetails, setBookingDetails] = useState<any>(null);
   const [doctorDetails, setDoctorDetails] = useState<any>(null);
 
-console.log(id);
   useEffect(() => {
     const fetchBookingDetails = async () => {
       try {
@@ -28,6 +28,26 @@ console.log(id);
     };
     fetchBookingDetails();
   }, [id]);
+
+  const handleCancelAppointment = async () => {
+    try {
+      await axiosJWT.put(`${USER_API}/bookingdetails/${id}`, { appoinmentStatus: 'Cancelled' });
+      setBookingDetails((prevState: any) => ({ ...prevState, appoinmentStatus: 'Cancelled' }));
+      showToast("Cancel request send","success");
+    } catch (error) {
+      console.error('Error cancelling appointment:', error);
+    }
+  };
+
+  const renderStatus = () => {
+    if (bookingDetails.appoinmentStatus === "Booked") {
+      return <button onClick={handleCancelAppointment} className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded mt-5">Cancel Appointment</button>
+    } else if (bookingDetails.appoinmentStatus === "Cancelled") {
+      return <p className="text-red-500">Appointment Cancelled</p>;
+    } else if (bookingDetails.appoinmentStatus === "Consulted") {
+      return <p className="text-green-500">Consultation Completed</p>;
+    }
+  };
 
   return (
     <>
@@ -58,6 +78,8 @@ console.log(id);
                 <p className='font-medium'>Patient Name: {bookingDetails.patientName}</p>
                 <p className='font-medium'>Patient Age: {bookingDetails.patientAge}</p>
                 <p className='font-medium'>Patient Gender: {bookingDetails.patientGender}</p>
+                {/* Render status based on appointmentStatus */}
+                {renderStatus()}
               </div>
             </div>
 
@@ -77,4 +99,4 @@ console.log(id);
   );
 };
 
-export default Appoinmentdetails;
+export default AppointmentDetails;

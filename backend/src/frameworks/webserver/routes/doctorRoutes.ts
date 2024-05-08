@@ -9,6 +9,9 @@ import { timeSlotDbRepository } from "../../../app/interfaces/timeSlotDbReposito
 import {  timeSlotRepositoryMongodb } from "../../database/mongodb/repositories/timeSlotRepositotyMongodb";
 import { bookingDbRepository } from "../../../app/interfaces/bookingDbRepository";
 import { bookingRepositoryMongodb } from "../../database/mongodb/repositories/BookingRepositoryMongodb";
+import bookingController from "../../../adapters/bookingController";
+import { userDbRepository } from "../../../app/interfaces/userDbRepository";
+import { userRepositoryMongodb } from "../../database/mongodb/repositories/userRepositoryMongodb";
 
 
 
@@ -26,6 +29,18 @@ const doctorRoute = () => {
         bookingDbRepository,
         bookingRepositoryMongodb,
     );
+
+
+    const _bookingController = bookingController(
+        userDbRepository,
+        userRepositoryMongodb,
+        doctorDbRepository,
+        doctorRepositoryMongodb,
+        timeSlotDbRepository,
+        timeSlotRepositoryMongodb,
+        bookingDbRepository,
+        bookingRepositoryMongodb,
+    )
 
 
     router.post("/signup", controller.signup);
@@ -48,6 +63,11 @@ const doctorRoute = () => {
     router.get("/patients/:id",authenticateDoctor,controller.getPatientDetails);
     router.get("/doctorDetails/:id",authenticateDoctor,controller.getDoctorDetails);
     router.put("/reapply_verification/:id",authenticateDoctor,controller.getDoctorRejected)
+
+
+    /*Booking Routes for booking Controller */
+
+    router.get("/bookingdetails/:id",authenticateDoctor,_bookingController.getAppoinmentList)
 
     return router;
 }

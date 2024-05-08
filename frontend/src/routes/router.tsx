@@ -80,7 +80,7 @@ export const MainRouter = () => {
                     <Route path="/doctor/Profile" element ={<ProfileDoctor/>}/>
                     <Route path="/doctor/slot" element ={<DoctorSlotPage/>}/>
                     <Route path="/doctor/patientList" element={<PatientListPage/>}/>
-                    <Route path="/doctor/patient-details/:id" element={<SinglePagePatient/>} />
+                    <Route path="/patient-details/:id" element={<SinglePagePatient/>} />
                     <Route path="/doctor/status/:doctorId" element={<DoctorStatus/>}/>
 
                     {/*Admin Routes*/}

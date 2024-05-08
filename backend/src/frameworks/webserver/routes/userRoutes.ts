@@ -68,6 +68,7 @@ router.get("/allAppoinments",authenticateUser,_bookingController.getAllAppoinmen
 router.patch("/payment/status/:id",authenticateUser,_bookingController.updatePaymentStatus);
 router.get("/bookingdetails/:id",authenticateUser,_bookingController.getBookingDetails);
 router.get("/bookings/:id",authenticateUser,_bookingController.getAllBookingDetails);
+router.put("/bookingdetails/:id",authenticateUser,_bookingController.cancelAppoinment);
 
 
 return router;

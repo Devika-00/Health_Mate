@@ -28,6 +28,12 @@ export const bookingDbRepository = (
   const getAllBookingByUserId = async (userId: string) =>
     await repository.getAllBookingByUserId(userId);
 
+  const getAllBookingByDoctorId = async (doctorId: string) =>
+    await repository.getAllBookingByDoctorId(doctorId);
+
+  const changeBookingstatus = async (appoinmentStatus:string,id:string)=>
+    await repository.changeBookingStatus(appoinmentStatus,id);
+
     return {
         createBooking,
         getAllPatients,
@@ -36,6 +42,8 @@ export const bookingDbRepository = (
         getBookingById,
         getAllBookingByUserId,
         deleteSlot,
+        changeBookingstatus,
+        getAllBookingByDoctorId,
     }
   }
 
