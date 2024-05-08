@@ -2,9 +2,29 @@
 import { Link } from 'react-router-dom';
 import { DoctorInterface } from '../../types/DoctorInterface';
 import useDoctors from '../../hooks/useDoctors'; 
+import { useEffect, useState } from 'react';
+import { ADMIN_API } from '../../constants';
 
 const RequestedDoctorData: React.FC = () => {
-  const { doctors } = useDoctors(); 
+  
+  const [doctors, setDoctors] = useState<DoctorInterface[]>([]);
+
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const response = await fetch(`${ADMIN_API}/doctors`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch doctors');
+        }
+        const data = await response.json();
+        setDoctors(data.doctors);
+      } catch (error) {
+        console.error('Error fetching doctors:', error);
+      }
+    };
+
+    fetchDoctors();
+  }, []);
 
   return (
     <>

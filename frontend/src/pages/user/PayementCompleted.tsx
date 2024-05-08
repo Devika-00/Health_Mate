@@ -9,8 +9,12 @@ const PaymentCompleted = () => {
   const [searchParams] = useSearchParams();
   const { id } = useParams();
 
+  console.log(id);
+
   const status = searchParams.get("success");
   const isSuccess = status === "true" ? true : false;
+
+  console.log(status);
 
   if (status) {
     const paymentStatus = isSuccess ? "Paid" : "Failed";

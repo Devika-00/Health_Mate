@@ -7,9 +7,7 @@ import RequestedDoctorData from "../../components/admin/requestedDoctors";
 
 const RequestedDoctorList: React.FC = () => {
   // Using the useUsers hook to fetch doctor data
-  const { doctors } = useDoctors();
   
-
   return (
     <div className="flex h-screen">
       <AdminSidebar />
@@ -30,10 +28,8 @@ const RequestedDoctorList: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {doctors.map((doctor) => {
-                  return <RequestedDoctorData {...doctor} key={doctor._id} />;
-                })}
-              </tbody>
+                <RequestedDoctorData/>
+                </tbody>
             </table>
           </div>
         </div>

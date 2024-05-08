@@ -12,8 +12,6 @@ const DoctorData: React.FC = () => {
   const { doctors, setDoctors } = useDoctors();
   const dispatch = useDispatch(); // Initialize dispatch
 
-  console.log(doctors);
-
   const approvedDoctors = doctors.filter(doctor => doctor.isApproved);
   const [isChecked, setIsChecked] = useState<boolean>(false);
 

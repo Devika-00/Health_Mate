@@ -28,6 +28,8 @@ const DoctorListingPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage] = useState<number>(8);
 
+  console.log(doctors)
+
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
@@ -48,11 +50,12 @@ const DoctorListingPage: React.FC = () => {
         });
 
 
+
        // Filter doctors based on search query and selected department
        let filteredDoctors = doctorsWithTimeslots.filter(
         (doctor: { status: string; doctorName: string; consultationType: string }) =>
           doctor.status === 'approved' &&
-          (doctor.consultationType === 'online' || doctor.consultationType === 'both') &&
+          (doctor.consultationType === 'online' || doctor.consultationType === 'both' || doctor.consultationType === 'offline') &&
           doctor.doctorName.toLowerCase().includes(searchQuery.toLowerCase())
       );
 
@@ -83,6 +86,7 @@ const DoctorListingPage: React.FC = () => {
           return doctorTimeslots.some((slot: { slotTime: string | string[]; }) => slot.slotTime.includes(selectedTimeSlot));
         });
         }
+        
 
         setDoctors(filteredDoctors);
       } catch (error) {
@@ -113,25 +117,28 @@ const DoctorListingPage: React.FC = () => {
     setSelectedTimeSlot(event.target.value);
   };
 
-  const handleConsultationTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedValue = event.target.value;
-    setSelectedConsultationType(selectedValue);
+//   const handleConsultationTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+//   const selectedValue = event.target.value;
+//   setSelectedConsultationType(selectedValue);
 
-    // Filter doctors based on selected consultation type
-    let filteredDoctors = doctors.filter((doctor) => {
-      if (selectedValue === "") {
-        // If no specific consultation type selected, show all doctors
-        return true;
-      } else if (selectedValue === "both") {
-        // Show doctors with consultation type both
-        return doctor.consultationType === "both";
-      } else {
-        // Show doctors with selected consultation type
-        return doctor.consultationType === selectedValue;
-      }
-    });
-    setDoctors(filteredDoctors);
-  };
+
+//   // Filter doctors based on selected consultation type
+//   let filteredDoctors = doctors.filter((doctor) => {
+//     if (selectedValue === "") {
+//       // If no specific consultation type selected, show all doctors
+//       return true;
+//     } else if (selectedValue=== "both") {
+//       // Show doctors with consultation type both
+//       return doctor.consultationType === "both";
+//     } else if(selectedValue === "online"){
+//       // Show doctors with selected consultation type
+//       return doctor.consultationType === "online";
+//     }else if(selectedValue === "offline"){
+//       return doctor.consultationType === "offline"
+//     }
+//   });
+//   setDoctors(filteredDoctors);
+// };
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -164,14 +171,14 @@ const DoctorListingPage: React.FC = () => {
             ))}
           </select>
         </div>
-        <div className={`border border-gray-500 shadow-lg rounded-md w-80 ml-4`}>
+        {/* <div className={`border border-gray-500 shadow-lg rounded-md w-80 ml-4`}>
           <select className="rounded-md px-4 py-2 w-full" value={selectedConsultationType} onChange={handleConsultationTypeChange}>
             <option value="">All Consultation Types</option>
             <option value="online">Online</option>
             <option value="offline">Offline</option>
-            <option value="both">Both</option> {/* Add the "both" option */}
+            <option value="both">Both</option>
           </select>
-        </div>
+        </div> */}
 
         <div className="border border-gray-500 shadow-lg rounded-md ml-3 w-80">
           <select className="rounded-md px-4 py-2 w-full" value={selectedTimeSlot} onChange={handleTimeSlotChange}>

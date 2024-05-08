@@ -7,7 +7,6 @@ import DoctorData from "../../components/admin/doctorData";
 
 const DoctorList: React.FC = () => {
   // Using the useUsers hook to fetch doctor data
-  const { doctors } = useDoctors();
   
 
   return (
@@ -32,9 +31,7 @@ const DoctorList: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-              {doctors.map((doctor) => {
-                  return <DoctorData {...doctor} key={doctor._id} />;
-                })}
+              <DoctorData/>
               </tbody>
             </table>
           </div>

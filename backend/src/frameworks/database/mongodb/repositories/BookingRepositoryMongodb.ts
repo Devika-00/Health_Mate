@@ -59,6 +59,9 @@ export const bookingRepositoryMongodb = () => {
         console.error('Error updating booking status:', error);
       }
     };
+
+    const changeBookingstatusPayment = async (id:string) =>
+      await Booking.findByIdAndUpdate(id,{PaymentStatus:"Success"});
     
     
     return{
@@ -71,6 +74,7 @@ export const bookingRepositoryMongodb = () => {
         deleteSlot,
         changeBookingStatus,
         getAllBookingByDoctorId,
+        changeBookingstatusPayment,
     }    
 
 }

@@ -24,20 +24,6 @@ const Profile: React.FC = () => {
 
   let statusMessage = '';
 
-  switch (formData?.status) {
-    case 'pending':
-      statusMessage = "Please update the profile with all fields for verification and Please wait to admin to verify.";
-      break;
-    case 'rejected':
-      statusMessage = "Verification of Doctor Rejected";
-      break;
-    case 'approved':
-      statusMessage = "Verified Doctor";
-      break;
-    default:
-      break;
-  }
-
   return (
     <>
       <Navbar />

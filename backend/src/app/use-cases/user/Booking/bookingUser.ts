@@ -163,3 +163,11 @@ export const createPayment = async (
     const bookingDetails = await bookingRepository.getAllBookingByDoctorId(doctorId);
     return { bookingDetails };
   };
+
+
+  export const updateBookingStatusPayment = async(
+    id:string,
+    bookingRepository:ReturnType<BookingDbRepositoryInterface>
+  )=>{
+    const status = await bookingRepository.changeBookingstatusPayment(id);
+  }

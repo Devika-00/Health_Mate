@@ -8,7 +8,7 @@ import { TimeSlotRepositoryMongodbType } from "../frameworks/database/mongodb/re
 import { BookingDbRepositoryInterface} from "../app/interfaces/bookingDbRepository";
 import { BookingRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/BookingRepositoryMongodb";
 import { BookingEntityType } from "../entities/bookingEntity";
-import { appoinmentBooking, changeAppoinmentstaus, checkIsBooked, createPayment, getBookingByBookingId, getBookingByDoctorId, getBookingByUserId, updateBookingStatus } from "../app/use-cases/user/Booking/bookingUser";
+import { appoinmentBooking, changeAppoinmentstaus, checkIsBooked, createPayment, getBookingByBookingId, getBookingByDoctorId, getBookingByUserId, updateBookingStatus, updateBookingStatusPayment } from "../app/use-cases/user/Booking/bookingUser";
 import { HttpStatus } from "../types/httpStatus";
 import { getUserById } from "../app/use-cases/user/auth/userAuth";
 
@@ -68,6 +68,7 @@ const bookingController=(
                 createBooking.id,
                 createBooking.fee,  
               );
+
   
               res.status(HttpStatus.OK).json({
                   success: true,
@@ -96,6 +97,13 @@ const bookingController=(
     try {
       const { id } = req.params;
       const { paymentStatus } = req.body;
+
+      const updateStatus = await updateBookingStatusPayment(
+      id,
+      dbBookingRepository,
+      )
+
+
       await updateBookingStatus(
         id,
         paymentStatus,
