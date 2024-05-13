@@ -96,6 +96,7 @@ const bookingController=(
   ) => {
     try {
       const { id } = req.params;
+      console.log(id,"payment status checking");
       const { paymentStatus } = req.body;
 
       const updateStatus = await updateBookingStatusPayment(

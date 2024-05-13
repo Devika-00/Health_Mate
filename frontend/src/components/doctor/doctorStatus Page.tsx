@@ -66,7 +66,7 @@ const DoctorStatusPage = () => {
     switch (formData.status) {
       case 'pending':
         return 'text-orange-500';
-      case 'verified':
+      case 'approved':
         return 'text-green-500';
       case 'rejected':
         return 'text-red-500';
@@ -90,7 +90,7 @@ const DoctorStatusPage = () => {
         </div>
         <hr className="my-4" />
         {/* Status */}
-        <p className={`text-lg font-semibold ${getStatusColor()}`}>{formData.status}</p>
+        <p className={`text-lg font-semibold ${getStatusColor()}`}>Verification Status:{formData.status}</p>
         {formData.status === 'rejected' && (
           <p className="text-red-500">Rejected Reason: {formData.rejectedReason}</p>
         )}

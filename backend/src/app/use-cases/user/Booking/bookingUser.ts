@@ -170,4 +170,5 @@ export const createPayment = async (
     bookingRepository:ReturnType<BookingDbRepositoryInterface>
   )=>{
     const status = await bookingRepository.changeBookingstatusPayment(id);
+    return status;
   }

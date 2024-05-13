@@ -8,7 +8,7 @@ const AdminSidebar: React.FC = () => {
       <ul className="space-y-2">
         <li>
           <Link
-            to="/admin/dashboard"
+            to="/admin"
             className="block py-2 px-4 rounded-md hover:bg-gray-700"
           >
             Dashboard

@@ -45,7 +45,7 @@ const DoctorCalendar: React.FC = () => {
     try {
       const response = await axiosJWT.delete(`${DOCTOR_API}/deleteSlot/${slotId}`);
       if(response){
-       
+       showToast("Delete Succesfully","success");
       }
     } catch (error) {}
   };

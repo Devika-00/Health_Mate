@@ -258,7 +258,7 @@ const AppointmentBookingPage: React.FC = () => {
               </div>
             </div>
           ) : (
-            <p className="text-red-600 mt-4">No slots scheduled for the selected date.</p>
+            <><p className="text-red-600 mt-4 text-lg">The doctor is on leave </p><p className="text-red-600 mt-4">No slots scheduled for the selected date.</p></>
           )}
 
           <Modal
