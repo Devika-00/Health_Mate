@@ -3,23 +3,25 @@ import Navbar from '../../components/user/Navbar/navbar';
 import Footer from '../../components/user/Footer/Footer';
 import axiosJWT from '../../utils/axiosService';
 import { USER_API } from '../../constants';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import showToast from '../../utils/toaster';
+import { Modal, Button } from 'react-bootstrap';
 
 const AppointmentDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [bookingDetails, setBookingDetails] = useState<any>(null);
   const [doctorDetails, setDoctorDetails] = useState<any>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [cancelReason, setCancelReason] = useState('');
 
   useEffect(() => {
     const fetchBookingDetails = async () => {
       try {
         const response = await axiosJWT.get(`${USER_API}/bookingdetails/${id}`);
-        console.log(response);
         const bookingData = response.data.data.bookingDetails;
         setBookingDetails(bookingData);
 
-        // Fetch doctor details using doctorId from bookingDetails
         const doctorResponse = await axiosJWT.get(`${USER_API}/doctor/${bookingData.doctorId}`);
         setDoctorDetails(doctorResponse.data.doctor);
       } catch (error) {
@@ -31,19 +33,35 @@ const AppointmentDetails: React.FC = () => {
 
   const handleCancelAppointment = async () => {
     try {
-      await axiosJWT.put(`${USER_API}/bookingdetails/${id}`, { appoinmentStatus: 'Cancelled' });
+      await axiosJWT.put(`${USER_API}/bookingdetails/${id}`, { appoinmentStatus: 'Cancelled', cancelReason });
       setBookingDetails((prevState: any) => ({ ...prevState, appoinmentStatus: 'Cancelled' }));
-      showToast("Cancel request send","success");
+      showToast("Appoinment Cancelled", "success");
+      setShowModal(false);
     } catch (error) {
       console.error('Error cancelling appointment:', error);
     }
   };
 
+  const handleReschedule = () =>{
+    if (bookingDetails.consultationType === "Online") {
+      navigate(`/user/appoinmentOnline/${bookingDetails.doctorId}`);
+    } else if (bookingDetails.consultationType === "Offline") {
+      navigate(`/user/appoinmentOffline/${bookingDetails.doctorId}`);
+    }
+  }
+
   const renderStatus = () => {
     if (bookingDetails.appoinmentStatus === "Booked") {
-      return <button onClick={handleCancelAppointment} className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded mt-5">Cancel Appointment</button>
+      return <button onClick={() => setShowModal(true)} className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded mt-5">Cancel Appointment</button>
     } else if (bookingDetails.appoinmentStatus === "Cancelled") {
-      return <p className="text-red-500">Appointment Cancelled</p>;
+      return (
+        <div className="flex justify-between items-center">
+          <p className="text-red-500">Appointment Cancelled</p>
+          <button onClick={handleReschedule} className="bg-blue-800 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Reschedule Appointment
+          </button>
+        </div>
+      );
     } else if (bookingDetails.appoinmentStatus === "Consulted") {
       return <p className="text-green-500">Consultation Completed</p>;
     }
@@ -57,7 +75,6 @@ const AppointmentDetails: React.FC = () => {
 
         {bookingDetails && doctorDetails && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Doctor details */}
             <div className="bg-blue-50 p-6 rounded-lg shadow-md border border-blue-200">
               <div className="flex items-center mb-4">
                 <img src={doctorDetails.profileImage} alt={doctorDetails.doctorName} className="w-40 h-40 rounded mr-4" />
@@ -69,7 +86,6 @@ const AppointmentDetails: React.FC = () => {
               </div>
             </div>
 
-            {/* Appointment details */}
             <div className="bg-blue-50 p-6 rounded-lg shadow-md border border-blue-200">
               <h2 className="text-2xl font-bold mb-4">Scheduled Appointment</h2>
               <div>
@@ -78,12 +94,10 @@ const AppointmentDetails: React.FC = () => {
                 <p className='font-medium'>Patient Name: {bookingDetails.patientName}</p>
                 <p className='font-medium'>Patient Age: {bookingDetails.patientAge}</p>
                 <p className='font-medium'>Patient Gender: {bookingDetails.patientGender}</p>
-                {/* Render status based on appointmentStatus */}
                 {renderStatus()}
               </div>
             </div>
 
-            {/* Consultation details */}
             <div className="bg-blue-50 p-6 rounded-lg shadow-md border border-blue-200">
               <h2 className="text-2xl font-bold mb-4">Consultation Details</h2>
               <div>
@@ -93,6 +107,42 @@ const AppointmentDetails: React.FC = () => {
             </div>
           </div>
         )}
+
+        {/* Modal for cancellation reason */}
+        {showModal && (
+          <div className="fixed top-0 left-0 flex justify-center items-center w-full h-full bg-gray-900 bg-opacity-50 z-50">
+            <div className="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all max-w-lg w-full">
+              <div className="bg-gray-50 px-4 py-5 sm:p-6">
+                <h3 className="text-lg font-medium text-gray-900">Reason for Cancellation</h3>
+                <div className="mt-2">
+                  <textarea
+                    value={cancelReason}
+                    onChange={(e) => setCancelReason(e.target.value)}
+                    className="block w-full p-2 sm:text-sm border-gray-300 rounded-md"
+                    rows={4}
+                    placeholder="Enter reason for cancellation"
+                  ></textarea>
+                </div>
+              </div>
+              <div className="bg-gray-100 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button
+                  onClick={handleCancelAppointment}
+                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-500 text-base font-medium text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+                >
+                  Confirm
+                </button>
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+
       </div>
       <Footer />
     </>

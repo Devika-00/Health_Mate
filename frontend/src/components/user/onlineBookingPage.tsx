@@ -82,7 +82,6 @@ const AppointmentOnlineBookingPage: React.FC = () => {
     fetchBookings();
   }, [id]);
 
-  console.log(bookings,"............");
 
   const stripePromise = loadStripe('pk_test_51PD7KTSIzXVKkSTfUhacmtu4D3bCdX2OCgy7mCYS0JJVvro7cM8QwwIoQVHcBlCEg41UUlqIplqs0avKVML03Bnc00iATAKl4Y');
 
@@ -95,6 +94,7 @@ const AppointmentOnlineBookingPage: React.FC = () => {
         fee: 400,
         paymentStatus: 'Pending',
         appoinmentStatus:'Booked',
+        appoinmentCancelReason:'',
         date: selectedDate,
         timeSlot: selectedTimeSlot,
       };

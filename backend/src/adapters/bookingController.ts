@@ -127,10 +127,12 @@ const bookingController=(
   )=>{
     try {
       const {appoinmentStatus} = req.body;
+      const {cancelReason} = req.body;
       const {id} = req.params;
 
       const updateBooking = await changeAppoinmentstaus(
         appoinmentStatus,
+        cancelReason,
         id,
         dbBookingRepository
       );
@@ -155,7 +157,6 @@ const bookingController=(
   ) => {
     try {
       const { id } = req.params;
-      console.log(req.params,"......");
       const  data  = await getBookingByBookingId(
         id,
         dbBookingRepository

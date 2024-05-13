@@ -11,6 +11,7 @@ export default function bookingEntity(
   fee:number,
   paymentStatus:string,
   appoinmentStatus:string,
+  appoinmentCancelReason:string,
   date:string,
   timeSlot:string,
   
@@ -28,6 +29,7 @@ export default function bookingEntity(
     getFee:() :number=>fee,
     getPaymentStatus:():string=>paymentStatus,
     getAppoinmentStatus:():string=>appoinmentStatus,
+    getAppoinmentCancelReason:():string=>appoinmentCancelReason,
     getDate:():string=>date,
     getTimeSlot:():string=>timeSlot,
   

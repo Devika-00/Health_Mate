@@ -33,6 +33,9 @@ const bookingSchema = new mongoose.Schema({
     type:String,
     default:"Booked"
   },
+  appoinmentCancelReason:{
+    type:String,
+  },
   date:{
     type:String,
     require:true,

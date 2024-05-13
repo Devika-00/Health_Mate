@@ -105,6 +105,7 @@ const AppointmentBookingPage: React.FC = () => {
         fee: 400,
         paymentStatus: 'Pending',
         appoinmentStatus:'Booked',
+        appoinmentCancelReason:'',
         date: stripDate(selectedDate),
         timeSlot: selectedTimeSlot,
 

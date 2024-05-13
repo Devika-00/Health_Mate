@@ -17,7 +17,7 @@ export const appoinmentBooking = async(
     bookingDbRepository: ReturnType<BookingDbRepositoryInterface>,
     doctorDbRepository: ReturnType<doctorDbInterface>,
 )=>{
-    const { doctorId, patientDetails: { patientName, patientAge, patientNumber, patientGender }, consultationType, fee, paymentStatus,appoinmentStatus, date, timeSlot } = data;
+    const { doctorId, patientDetails: { patientName, patientAge, patientNumber, patientGender }, consultationType, fee, paymentStatus,appoinmentStatus,appoinmentCancelReason, date, timeSlot } = data;
     const doctorDetails = await doctorDbRepository.getDoctorById(doctorId);
     const appoinment = bookingEntity(
         userId,
@@ -30,6 +30,7 @@ export const appoinmentBooking = async(
         fee,
         paymentStatus,
         appoinmentStatus,
+        appoinmentCancelReason,
         date,
         timeSlot,
 
@@ -47,7 +48,7 @@ export const checkIsBooked = async(
   userId:any,
   bookingDbRepository: ReturnType<BookingDbRepositoryInterface>,
 )=>{
-  const { doctorId, patientDetails: { patientName, patientAge, patientNumber, patientGender }, consultationType, fee, paymentStatus,appoinmentStatus, date, timeSlot } = data;
+  const { doctorId, patientDetails: { patientName, patientAge, patientNumber, patientGender }, consultationType, fee, paymentStatus,appoinmentStatus,appoinmentCancelReason, date, timeSlot } = data;
   const appoinment = bookingEntity(
       userId,
       doctorId,
@@ -59,6 +60,7 @@ export const checkIsBooked = async(
       fee,
       paymentStatus,
       appoinmentStatus,
+      appoinmentCancelReason,
       date,
       timeSlot,
 
@@ -147,10 +149,11 @@ export const createPayment = async (
 
   export const changeAppoinmentstaus = async (
     appoinmentStatus:string,
+    cancelReason:string,
     id:any,
     bookingRepository:ReturnType<BookingDbRepositoryInterface>
   )=>{
-    const changeStatus = await bookingRepository.changeBookingstatus(appoinmentStatus,id);
+    const changeStatus = await bookingRepository.changeBookingstatus(appoinmentStatus,cancelReason,id);
      return changeStatus;
   }
 

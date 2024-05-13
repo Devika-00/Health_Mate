@@ -19,6 +19,7 @@ export const bookingRepositoryMongodb = () => {
           fee:data.getFee(),
           paymentStatus:data.getPaymentStatus(),
           appoinmentStatus:data.getAppoinmentStatus(),
+          appoinmentCancelReason:data.getAppoinmentCancelReason(),
           date:data.getDate(),
           timeSlot:data.getTimeSlot(),
         });
@@ -52,9 +53,9 @@ export const bookingRepositoryMongodb = () => {
     const getAllBookingByDoctorId = async (doctorId: string) =>
       await Booking.find({ doctorId:doctorId });
 
-    const changeBookingStatus = async (appoinmentStatus: string, id: string) => {
+    const changeBookingStatus = async (appoinmentStatus: string,cancelReason:string, id: string) => {
       try {
-        await Booking.findByIdAndUpdate(id, { appoinmentStatus: appoinmentStatus });
+        await Booking.findByIdAndUpdate(id, { appoinmentStatus: appoinmentStatus,  appoinmentCancelReason: cancelReason});
       } catch (error) {
         console.error('Error updating booking status:', error);
       }

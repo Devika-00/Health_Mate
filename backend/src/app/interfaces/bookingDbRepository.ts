@@ -31,8 +31,8 @@ export const bookingDbRepository = (
   const getAllBookingByDoctorId = async (doctorId: string) =>
     await repository.getAllBookingByDoctorId(doctorId);
 
-  const changeBookingstatus = async (appoinmentStatus:string,id:string)=>
-    await repository.changeBookingStatus(appoinmentStatus,id);
+  const changeBookingstatus = async (appoinmentStatus:string,cancelReason:string,id:string)=>
+    await repository.changeBookingStatus(appoinmentStatus,cancelReason,id);
 
   const changeBookingstatusPayment = async(id:string)=>
     await repository.changeBookingstatusPayment(id)
