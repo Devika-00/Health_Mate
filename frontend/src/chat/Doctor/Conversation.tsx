@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axiosJWT from "../../utils/axiosService";
-import { USER_API } from "../../constants";
+import { DOCTOR_API, USER_API } from "../../constants";
 
 interface ConversationProps {
     conversation: {
@@ -13,15 +13,16 @@ interface ConversationProps {
 }
 
 const Conversation: React.FC<ConversationProps> = ({ conversation }) => {
-    const [doctorData, setDoctorData] = useState<any>({});
+    const [userData, setUserData] = useState<any>({});
     
 
     useEffect(() => {
         const fetchDoctorData = async () => {
             try {
-                const doctorId = conversation.members[1];
-                const response = await axiosJWT.get(`${USER_API}/doctor/${doctorId}`);
-                setDoctorData(response.data.doctor);
+                const userId = conversation.members[0];
+                const response = await axiosJWT.get(`${DOCTOR_API}/user/${userId}`);
+                console.log(response,"usersssss");
+                setUserData(response.data.user);
             } catch (error) {
                 console.error("Error fetching doctor data:", error);
             }
@@ -35,10 +36,10 @@ const Conversation: React.FC<ConversationProps> = ({ conversation }) => {
       <div className="bg-white rounded-lg shadow-md p-2 flex items-center mb-1">
           <img
               className="w-14 h-14 rounded-full object-cover mr-4"
-              src={doctorData.profileImage} // Assuming profileImage is the property for profile image
+              src={userData.profilePicture} 
               alt="Doctor Profile"
           />
-          <span className="font-medium">{doctorData.doctorName}</span>
+          <span className="font-medium">{userData.name}</span>
       </div>
   );
 };

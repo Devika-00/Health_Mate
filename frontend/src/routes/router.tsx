@@ -41,6 +41,7 @@ const PaymentCompleted = lazy(() => import("../pages/user/PayementCompleted"));
 const AppoinmentDetails = lazy(()=>import("../pages/user/AppoinmentDetails"));
 const AppoinmentListPage = lazy(()=>import("../pages/user/getAppoinmentsAll"));
 const Chat = lazy(()=>import("../pages/user/Chat"));
+const DoctorChat=lazy(()=>import("../pages/doctor/Chat"));
 
 export const MainRouter = () => {
     return (
@@ -84,6 +85,7 @@ export const MainRouter = () => {
                     <Route path="/doctor/patientList" element={<PatientListPage/>}/>
                     <Route path="/patient-details/:id" element={<SinglePagePatient/>} />
                     <Route path="/doctor/status/:doctorId" element={<DoctorStatus/>}/>
+                    <Route path="/doctor/chat" element={<DoctorChat/>}/>
 
                     {/*Admin Routes*/}
                     <Route path="/admin/login" element={<AdminLogin/>}/>

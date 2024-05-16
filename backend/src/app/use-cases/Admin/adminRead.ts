@@ -14,6 +14,9 @@ export const getDoctors = async (doctorDbRepository: ReturnType<doctorDbInterfac
 export const getSingleDoctor = async ( id: string, doctorDbRepository: ReturnType<doctorDbInterface>) =>
   await doctorDbRepository.getDoctorById(id);
 
+export const getSingleUser = async ( id: string, userDbRepository: ReturnType<userDbInterface>) =>
+  await userDbRepository.getUserbyId(id);
+
 export const getDoctor = async ( id: string,status:string, doctorDbRepository: ReturnType<doctorDbInterface>) =>
   await doctorDbRepository.getDoctorByIdUpdate(id,status);
 

@@ -22,6 +22,8 @@ const doctorRoute = () => {
     const controller = doctorController(
         authServiceInterface,
         authService,
+        userDbRepository,
+        userRepositoryMongodb,
         doctorDbRepository,
         doctorRepositoryMongodb,
         timeSlotDbRepository,
@@ -59,6 +61,7 @@ const doctorRoute = () => {
     router.post("/getTimeSlots",authenticateDoctor,controller.getTimeSlots);
     router.delete("/deleteSlot/:id",authenticateDoctor,controller.deleteSlot);
     // router.delete("/deleteTime/:id",authenticateDoctor,controller.removeTimeSlot);
+    router.get("/user/:id", authenticateDoctor,controller.userDetails);
     router.get("/patients",authenticateDoctor,controller.getPatientList);
     router.get("/patients/:id",authenticateDoctor,controller.getPatientDetails);
     router.get("/doctorDetails/:id",authenticateDoctor,controller.getDoctorDetails);

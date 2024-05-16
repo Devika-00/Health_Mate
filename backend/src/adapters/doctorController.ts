@@ -23,9 +23,14 @@ import {getDoctorProfile,
   DoctorRejected,
   updateDoctor} from "../app/use-cases/doctor/read & Update/profile";
 import { getPatientFullDetails, getPatients } from "../app/use-cases/doctor/doctorRead";
+import { userDbInterface } from "../app/interfaces/userDbRepository";
+import { userRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/userRepositoryMongodb";
+import { getSingleUser } from "../app/use-cases/Admin/adminRead";
 const doctorController = (
     authServiceInterface:AuthServiceInterfaceType,
     authServiceImpl : AuthService,
+    userDbRepository: userDbInterface,
+    userRepositoryImpl: userRepositoryMongodbType,
     doctorDbRepository :doctorDbInterface,
     doctorDbRepositoryImpl:doctorRepositoryMongodbType,
     timeSlotDbRepository: TimeSlotDbInterface,
@@ -34,6 +39,7 @@ const doctorController = (
     bookingDbRepositoryImpl: BookingRepositoryMongodbType,
 ) => {
     const authService = authServiceInterface(authServiceImpl());
+    const dbRepositoryUser = userDbRepository(userRepositoryImpl());
     const dbRepositoryDoctor = doctorDbRepository(doctorDbRepositoryImpl());
     const dbTimeSlotRepository = timeSlotDbRepository(timeSlotDbRepositoryImpl());
     const dbBookingRepository = bookingDbRepository(bookingDbRepositoryImpl());
@@ -139,6 +145,23 @@ const doctorController = (
       };
 
 
+      /* method get doctor details */
+    const userDetails = async (
+      req: Request,
+      res: Response,
+      next: NextFunction
+    ) => {
+      try {
+        
+        const {id} = req.params;
+        const user = await getSingleUser(id,dbRepositoryUser);
+        return res.status(HttpStatus.OK).json({ success: true, user });
+      } catch (error) {
+        next(error);
+      }
+    };
+
+
     /**method get retrieve doctor profile */
     const doctorProfile = async(
       req:Request,
@@ -146,7 +169,6 @@ const doctorController = (
       next:NextFunction
     )=>{
       try{
-        console.log("haiiiiiiiiiiiiii");
         const doctorId = req.doctor;
         const doctor = await getDoctorProfile(
           doctorId,
@@ -389,6 +411,7 @@ const doctorController = (
         getDoctorRejected,
         addSlot,
         deleteSlot,
+        userDetails,
         
     }
 }
