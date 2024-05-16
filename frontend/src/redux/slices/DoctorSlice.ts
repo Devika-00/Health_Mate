@@ -13,6 +13,7 @@ interface DoctorState {
     isAuthenticated: null,
     role: null,
     id: null,
+    doctor: undefined
   };
 
   const Doctorslice = createSlice({

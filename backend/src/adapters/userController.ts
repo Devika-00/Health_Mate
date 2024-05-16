@@ -82,6 +82,7 @@ const userController=(
         }
     };
 
+
     //Resend Otp method : POST
 
     const resendOtp = async (req:Request,res:Response,next:NextFunction)=>{

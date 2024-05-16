@@ -8,6 +8,7 @@ export const USER_API = BASE_URL + "user";
 export const DOCTOR_API = BASE_URL + "doctor";
 export const ADMIN_API = BASE_URL + "admin";
 export const TOKEN_API = BASE_URL + "token";
+export const CHAT_API = BASE_URL + "chat";
 export const CLOUDINARY_UPLOAD_API =
   "https://api.cloudinary.com/v1_1/dbl7wgz51/upload";
 export const cloudinaryUploadPreset = "ml_default";
