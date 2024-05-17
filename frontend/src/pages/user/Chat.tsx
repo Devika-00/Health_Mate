@@ -6,6 +6,7 @@ import { FiSend } from "react-icons/fi";
 import { useAppSelector } from "../../redux/store/Store";
 import axiosJWT from "../../utils/axiosService";
 import { CHAT_API } from "../../constants";
+import { io } from "socket.io-client";
 
 const Chat: React.FC = () => {
     const user = useAppSelector((state) => state.UserSlice);
@@ -14,7 +15,37 @@ const Chat: React.FC = () => {
     const [currentChat, setCurrentChat] = useState<any | null>(null);
     const [messages, setMessages] = useState<any[]>([]);
     const [newMessage, setNewMessage] = useState<string>("");
+    const [arrivalMessage, setarrivalMessage] = useState<any>(null);
+    const socket = useRef<any>();
     const scrollRef = useRef<HTMLDivElement>(null);
+
+
+    useEffect(()=>{
+        socket.current = io("ws://localhost:3000");
+        socket.current.on("getMessage",(data:any)=>{
+            console.log(data)
+            setarrivalMessage({
+                senderId:data.senderId,
+                text:data.text,
+                createdAt:Date.now(),
+            })
+        })
+    },[]);
+
+
+    useEffect(()=>{
+        arrivalMessage && 
+        currentChat?.members.includes(arrivalMessage.senderId) &&
+        setMessages((prev)=>[...prev,arrivalMessage]);
+    },[arrivalMessage,currentChat])
+
+
+    useEffect(()=>{
+        socket.current.emit("addUser",user.id);
+        socket.current.on("getUsers",(users: any)=>{
+            console.log(users,"hellooooo");
+        })
+    },[user]);
 
     useEffect(() => {
         const getConversations = async () => {
@@ -55,6 +86,14 @@ const Chat: React.FC = () => {
             text: newMessage,
             conversationId: currentChat?._id,
         };
+
+        const receiverId = currentChat.members.find((member:any)=> member !== user.id)
+
+        socket.current.emit("sendMessage",{
+            senderId:user.id,
+            receiverId,
+            text:newMessage
+        })
     
         try {
             const response = await axiosJWT.post(`${CHAT_API}/messages`, message);
@@ -64,6 +103,9 @@ const Chat: React.FC = () => {
             console.error("Error sending message:", error);
         }
     };
+
+
+
 
     useEffect(() => {
         scrollRef.current?.scrollIntoView({ behavior: "smooth" });

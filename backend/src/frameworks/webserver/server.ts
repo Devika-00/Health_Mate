@@ -1,7 +1,8 @@
-import { Application } from "express";
-import configKeys from "../../config";
 
-const server = (app:Application)=>{
+import configKeys from "../../config";
+import { Server } from "http";
+
+const server = (app:Server)=>{
     app.listen(configKeys.PORT,()=>
     console.log(`Server listening on http;//localhost:${configKeys.PORT}`)
     );

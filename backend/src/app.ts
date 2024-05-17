@@ -5,13 +5,26 @@ import connectDB from "./frameworks/database/mongodb/connection";
 import CustomError from "./utils/customError";
 import errorHandlingMiddleware from "./frameworks/webserver/middlewares/errorhandler.middleware";
 import routes from "./frameworks/webserver/routes";
+import { createServer } from "http";
+import { Server } from "socket.io";
+import socketConfig from "./frameworks/webserver/webSocket/socket";
 
 const app:Application = express();
 
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: true,
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+
+socketConfig(io);
 expressConfig(app);
 connectDB();
 routes(app);
-startServer(app);
+startServer(httpServer);
 
 app.use(errorHandlingMiddleware);
 app.all("*",(req, res, next: NextFunction)=>{

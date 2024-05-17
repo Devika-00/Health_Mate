@@ -6,15 +6,43 @@ import { FiSend } from "react-icons/fi";
 import { useAppSelector } from "../../redux/store/Store";
 import axiosJWT from "../../utils/axiosService";
 import { CHAT_API } from "../../constants";
+import { io } from "socket.io-client";
 
 const Chat: React.FC = () => {
     const doctor = useAppSelector((state) => state.DoctorSlice);
+
 
     const [conversations, setConversations] = useState<any[]>([]);
     const [currentChat, setCurrentChat] = useState<any | null>(null);
     const [messages, setMessages] = useState<any[]>([]);
     const [newMessage, setNewMessage] = useState<string>("");
+    const [arrivalMessage, setarrivalMessage] = useState<any>(null);
+    const socket = useRef<any>();
     const scrollRef = useRef<HTMLDivElement>(null);
+
+    useEffect(()=>{
+        socket.current = io("ws://localhost:3000");
+        socket.current.on("getMessage",(data:any)=>{
+            setarrivalMessage({
+                senderId:data.senderId,
+                text:data.text,
+                createdAt:Date.now(),
+            })
+        })
+    },[]);
+
+    useEffect(()=>{
+        arrivalMessage && 
+        currentChat?.members.includes(arrivalMessage.senderId) &&
+        setMessages((prev)=>[...prev,arrivalMessage]);
+    },[arrivalMessage,currentChat])
+
+    useEffect(()=>{
+        socket.current.emit("addUser",doctor.id);
+        socket.current.on("getUsers",(doctors: any)=>{
+            console.log(doctors,"hellooooo");
+        })
+    },[doctor]);
 
     useEffect(() => {
         const getConversations = async () => {
@@ -55,6 +83,15 @@ const Chat: React.FC = () => {
             text: newMessage,
             conversationId: currentChat?._id,
         };
+
+
+        const receiverId = currentChat.members.find((member:any)=> member !== doctor.id)
+
+        socket.current.emit("sendMessage",{
+            senderId:doctor.id,
+            receiverId,
+            text:newMessage
+        })
     
         try {
             const response = await axiosJWT.post(`${CHAT_API}/messages`, message);
