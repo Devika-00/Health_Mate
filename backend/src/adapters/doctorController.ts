@@ -8,6 +8,8 @@ import { doctorDbInterface } from "../app/interfaces/doctorDBRepository";
 import { TimeSlotDbInterface } from "../app/interfaces/timeSlotDbRepository";
 import { TimeSlotRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/timeSlotRepositotyMongodb";
 import { doctorRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/doctorRepositoryMongodb";
+import { PrescriptionDbInterface } from "../app/interfaces/prescriptionDbRepository";
+import { PrescriptionRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/prescriptionRepositoryMongodb";
 import {
     addNewDoctor,
     verifyAccount,
@@ -26,6 +28,7 @@ import { getPatientFullDetails, getPatients } from "../app/use-cases/doctor/doct
 import { userDbInterface } from "../app/interfaces/userDbRepository";
 import { userRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/userRepositoryMongodb";
 import { getSingleUser } from "../app/use-cases/Admin/adminRead";
+import { addPrescriptionToUser } from "../app/use-cases/Prescription/prescriptionUseCase";
 const doctorController = (
     authServiceInterface:AuthServiceInterfaceType,
     authServiceImpl : AuthService,
@@ -35,12 +38,15 @@ const doctorController = (
     doctorDbRepositoryImpl:doctorRepositoryMongodbType,
     timeSlotDbRepository: TimeSlotDbInterface,
     timeSlotDbRepositoryImpl: TimeSlotRepositoryMongodbType,
+    prescriptionDbRepository:PrescriptionDbInterface,
+    prescriptionDbRepositoryImpl:PrescriptionRepositoryMongodbType,
     bookingDbRepository: BookingDbRepositoryInterface,
     bookingDbRepositoryImpl: BookingRepositoryMongodbType,
 ) => {
     const authService = authServiceInterface(authServiceImpl());
     const dbRepositoryUser = userDbRepository(userRepositoryImpl());
     const dbRepositoryDoctor = doctorDbRepository(doctorDbRepositoryImpl());
+    const dbPrescriptionRepository = prescriptionDbRepository(prescriptionDbRepositoryImpl());
     const dbTimeSlotRepository = timeSlotDbRepository(timeSlotDbRepositoryImpl());
     const dbBookingRepository = bookingDbRepository(bookingDbRepositoryImpl());
 
@@ -383,7 +389,6 @@ const doctorController = (
     try {
       
       const{ id } = req.params;
-      console.log(id);
       await deleteTimeSlot(id, dbTimeSlotRepository);
       res
         .status(HttpStatus.OK)
@@ -391,7 +396,30 @@ const doctorController = (
     } catch (error) {
       next(error);
     }
-  } 
+  }
+
+  /* method post - add prescription */
+  const addPrescription = async (
+    req:Request,
+    res:Response,
+    next:NextFunction
+  )=>{
+    try {
+      const {appointmentId,prescriptionDate, medicines }=req.body
+      const data={appointmentId,prescriptionDate,medicines}
+      const response = await addPrescriptionToUser(
+        data,
+        dbPrescriptionRepository
+      );
+      res
+        .status(HttpStatus.OK)
+        .json({ success: true, message: "add Prescription successfully",response });
+    } catch (error) {
+      next(error);
+    }
+  }
+  
+  
 
 
 
@@ -412,6 +440,7 @@ const doctorController = (
         addSlot,
         deleteSlot,
         userDetails,
+        addPrescription,
         
     }
 }

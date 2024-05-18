@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import Navbar from '../../components/user/Navbar/navbar';
-import Footer from '../../components/user/Footer/Footer';
-import axiosJWT from '../../utils/axiosService';
-import { USER_API } from '../../constants';
-import { useNavigate, useParams } from 'react-router-dom';
-import showToast from '../../utils/toaster';
-import { Modal, Button } from 'react-bootstrap';
+import React, { useEffect, useState } from "react";
+import Navbar from "../../components/user/Navbar/navbar";
+import Footer from "../../components/user/Footer/Footer";
+import axiosJWT from "../../utils/axiosService";
+import { USER_API } from "../../constants";
+import { useNavigate, useParams } from "react-router-dom";
+import showToast from "../../utils/toaster";
+import { Modal } from "react-bootstrap";
+import { FaFilePdf } from "react-icons/fa";
 
 const AppointmentDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -13,7 +14,9 @@ const AppointmentDetails: React.FC = () => {
   const [bookingDetails, setBookingDetails] = useState<any>(null);
   const [doctorDetails, setDoctorDetails] = useState<any>(null);
   const [showModal, setShowModal] = useState(false);
-  const [cancelReason, setCancelReason] = useState('');
+  const [showPrescriptionModal, setShowPrescriptionModal] = useState(false);
+  const [prescription, setPrescription] = useState<any | null>(null);
+  const [cancelReason, setCancelReason] = useState("");
 
   useEffect(() => {
     const fetchBookingDetails = async () => {
@@ -22,10 +25,12 @@ const AppointmentDetails: React.FC = () => {
         const bookingData = response.data.data.bookingDetails;
         setBookingDetails(bookingData);
 
-        const doctorResponse = await axiosJWT.get(`${USER_API}/doctor/${bookingData.doctorId}`);
+        const doctorResponse = await axiosJWT.get(
+          `${USER_API}/doctor/${bookingData.doctorId}`
+        );
         setDoctorDetails(doctorResponse.data.doctor);
       } catch (error) {
-        console.error('Error fetching booking details:', error);
+        console.error("Error fetching booking details:", error);
       }
     };
     fetchBookingDetails();
@@ -33,31 +38,47 @@ const AppointmentDetails: React.FC = () => {
 
   const handleCancelAppointment = async () => {
     try {
-      await axiosJWT.put(`${USER_API}/bookingdetails/${id}`, { appoinmentStatus: 'Cancelled', cancelReason });
-      setBookingDetails((prevState: any) => ({ ...prevState, appoinmentStatus: 'Cancelled' }));
+      await axiosJWT.put(`${USER_API}/bookingdetails/${id}`, {
+        appoinmentStatus: "Cancelled",
+        cancelReason,
+      });
+      setBookingDetails((prevState: any) => ({
+        ...prevState,
+        appoinmentStatus: "Cancelled",
+      }));
       showToast("Appoinment Cancelled", "success");
       setShowModal(false);
     } catch (error) {
-      console.error('Error cancelling appointment:', error);
+      console.error("Error cancelling appointment:", error);
     }
   };
 
-  const handleReschedule = () =>{
+  const handleReschedule = () => {
     if (bookingDetails.consultationType === "Online") {
       navigate(`/user/appoinmentOnline/${bookingDetails.doctorId}`);
     } else if (bookingDetails.consultationType === "Offline") {
       navigate(`/user/appoinmentOffline/${bookingDetails.doctorId}`);
     }
-  }
+  };
 
   const renderStatus = () => {
     if (bookingDetails.appoinmentStatus === "Booked") {
-      return <button onClick={() => setShowModal(true)} className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded mt-5">Cancel Appointment</button>
+      return (
+        <button
+          onClick={() => setShowModal(true)}
+          className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded mt-5"
+        >
+          Cancel Appointment
+        </button>
+      );
     } else if (bookingDetails.appoinmentStatus === "Cancelled") {
       return (
         <div className="flex justify-between items-center">
           <p className="text-red-500">Appointment Cancelled</p>
-          <button onClick={handleReschedule} className="bg-blue-800 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          <button
+            onClick={handleReschedule}
+            className="bg-blue-800 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
             Reschedule Appointment
           </button>
         </div>
@@ -66,6 +87,28 @@ const AppointmentDetails: React.FC = () => {
       return <p className="text-green-500">Consultation Completed</p>;
     }
   };
+
+  const showPrescription = async (appoinmentId: any) => {
+    const data = {
+      appoinmentId,
+    };
+
+    const response = await axiosJWT.post(`${USER_API}/fetchPrescription`, data);
+
+    if (response.data && response.data.response) {
+      setPrescription(response.data.response);
+      setShowPrescriptionModal(true);
+    } else if (response.data.status === false) {
+      showToast("No prescription found");
+    }
+  };
+
+  console.log(prescription, "checking");
+
+  function closeModal(): void {
+    setShowPrescriptionModal(false);
+    setPrescription(null);
+  }
 
   return (
     <>
@@ -77,9 +120,15 @@ const AppointmentDetails: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="bg-blue-50 p-6 rounded-lg shadow-md border border-blue-200">
               <div className="flex items-center mb-4">
-                <img src={doctorDetails.profileImage} alt={doctorDetails.doctorName} className="w-40 h-40 rounded mr-4" />
+                <img
+                  src={doctorDetails.profileImage}
+                  alt={doctorDetails.doctorName}
+                  className="w-40 h-40 rounded mr-4"
+                />
                 <div>
-                  <h2 className="text-2xl font-bold">{doctorDetails.doctorName}</h2>
+                  <h2 className="text-2xl font-bold">
+                    {doctorDetails.doctorName}
+                  </h2>
                   <p>{doctorDetails.department}</p>
                   <p className="text-green-600 font-semibold">Verified</p>
                 </div>
@@ -89,11 +138,19 @@ const AppointmentDetails: React.FC = () => {
             <div className="bg-blue-50 p-6 rounded-lg shadow-md border border-blue-200">
               <h2 className="text-2xl font-bold mb-4">Scheduled Appointment</h2>
               <div>
-                <p className='font-medium'>Date: {new Date(bookingDetails.date).toLocaleDateString()}</p>
-                <p className='font-medium'>Time: {bookingDetails.timeSlot}</p>
-                <p className='font-medium'>Patient Name: {bookingDetails.patientName}</p>
-                <p className='font-medium'>Patient Age: {bookingDetails.patientAge}</p>
-                <p className='font-medium'>Patient Gender: {bookingDetails.patientGender}</p>
+                <p className="font-medium">
+                  Date: {new Date(bookingDetails.date).toLocaleDateString()}
+                </p>
+                <p className="font-medium">Time: {bookingDetails.timeSlot}</p>
+                <p className="font-medium">
+                  Patient Name: {bookingDetails.patientName}
+                </p>
+                <p className="font-medium">
+                  Patient Age: {bookingDetails.patientAge}
+                </p>
+                <p className="font-medium">
+                  Patient Gender: {bookingDetails.patientGender}
+                </p>
                 {renderStatus()}
               </div>
             </div>
@@ -101,8 +158,28 @@ const AppointmentDetails: React.FC = () => {
             <div className="bg-blue-50 p-6 rounded-lg shadow-md border border-blue-200">
               <h2 className="text-2xl font-bold mb-4">Consultation Details</h2>
               <div>
-                <p className='font-medium'>Consultation Type: {bookingDetails.consultationType}</p>
-                <p className='font-medium'>Payment Status: {bookingDetails.paymentStatus}</p>
+                <p className="font-medium">
+                  Consultation Type: {bookingDetails.consultationType}
+                </p>
+                <p className="font-medium">
+                  Payment Status: {bookingDetails.paymentStatus}
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-blue-50 p-6 rounded-lg shadow-md border border-blue-200">
+              <h2 className="text-2xl font-bold mb-4">Prescription</h2>
+              <div>
+                <p className="text-sm text-gray-600 mb-4">
+                  Click the button below to view the prescription
+                </p>
+                <button
+                  onClick={() => showPrescription(id)}
+                  className="bg-green-800 flex hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                >
+                  <FaFilePdf className="mr-2 mt-1" />
+                  Check Prescription
+                </button>
               </div>
             </div>
           </div>
@@ -113,7 +190,9 @@ const AppointmentDetails: React.FC = () => {
           <div className="fixed top-0 left-0 flex justify-center items-center w-full h-full bg-gray-900 bg-opacity-50 z-50">
             <div className="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all max-w-lg w-full">
               <div className="bg-gray-50 px-4 py-5 sm:p-6">
-                <h3 className="text-lg font-medium text-gray-900">Reason for Cancellation</h3>
+                <h3 className="text-lg font-medium text-gray-900">
+                  Reason for Cancellation
+                </h3>
                 <div className="mt-2">
                   <textarea
                     value={cancelReason}
@@ -142,7 +221,56 @@ const AppointmentDetails: React.FC = () => {
           </div>
         )}
 
-
+        {showPrescriptionModal && (
+          <div className="bg-white p-6 rounded-lg shadow-xl">
+            {prescription ? (
+              <div className="space-y-4">
+                <h2 className="text-2xl font-semibold text-gray-800">
+                  Prescription Details
+                </h2>
+                <p className="text-gray-700">
+                  <span className="font-semibold">Doctor:</span>{" "}
+                  {doctorDetails.doctorName}
+                </p>
+                <p className="text-gray-700">
+                  <span className="font-semibold">Appointment ID:</span>
+                  {id}
+                </p>
+                <p className="text-gray-700">
+                  <span className="font-semibold">Prescription Date:</span>{" "}
+                  {new Date(prescription.prescriptionDate).toDateString()}
+                </p>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    Medicines:
+                  </h3>
+                  {prescription.medicines?.map((medicine: any, index: any) => (
+                    <li key={index} className="text-gray-500">
+                      <span className="font-semibold">
+                        Name:
+                        <span className="text-red-700">{medicine.name}</span> -
+                        Dosage:{" "}
+                        <span className="text-red-700">{medicine.dosage} </span>
+                        -Instructions :{" "}
+                        <span className="text-red-700">
+                          {medicine.instructions}
+                        </span>{" "}
+                      </span>
+                    </li>
+                  ))}
+                </div>
+                <button
+                  onClick={closeModal}
+                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition ease-in-out duration-300"
+                >
+                  Close
+                </button>
+              </div>
+            ) : (
+              <p className="text-gray-700">No Prescription added ...</p>
+            )}
+          </div>
+        )}
       </div>
       <Footer />
     </>

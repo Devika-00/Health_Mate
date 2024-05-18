@@ -12,8 +12,8 @@ import { bookingRepositoryMongodb } from "../../database/mongodb/repositories/Bo
 import bookingController from "../../../adapters/bookingController";
 import { userDbRepository } from "../../../app/interfaces/userDbRepository";
 import { userRepositoryMongodb } from "../../database/mongodb/repositories/userRepositoryMongodb";
-
-
+import { prescriptionDbRepository } from "../../../app/interfaces/prescriptionDbRepository";
+import { PrescriptionRepositoryMongodbType, prescriptionRepositoryMongodb } from "../../database/mongodb/repositories/prescriptionRepositoryMongodb";
 
 const doctorRoute = () => {
     const router = express.Router();
@@ -28,6 +28,8 @@ const doctorRoute = () => {
         doctorRepositoryMongodb,
         timeSlotDbRepository,
         timeSlotRepositoryMongodb,
+        prescriptionDbRepository,
+        prescriptionRepositoryMongodb,
         bookingDbRepository,
         bookingRepositoryMongodb,
     );
@@ -66,7 +68,7 @@ const doctorRoute = () => {
     router.get("/patients/:id",authenticateDoctor,controller.getPatientDetails);
     router.get("/doctorDetails/:id",authenticateDoctor,controller.getDoctorDetails);
     router.put("/reapply_verification/:id",authenticateDoctor,controller.getDoctorRejected)
-
+    router.post("/addPrescription",authenticateDoctor,controller.addPrescription);
 
     /*Booking Routes for booking Controller */
 

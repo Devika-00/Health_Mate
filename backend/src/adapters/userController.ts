@@ -27,8 +27,11 @@ import { getTimeSlotsByDoctorId,
          getDateSlotsByDoctorId,
          getAllTimeSlotsByDoctorId,
  } from "../app/use-cases/doctor/timeslot";
+ import { PrescriptionDbInterface } from "../app/interfaces/prescriptionDbRepository";
+import { PrescriptionRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/prescriptionRepositoryMongodb";
 import timeSlots from "../frameworks/database/mongodb/models/timeSlots";
 import { getAllTimeSlot } from "../app/use-cases/user/timeslots/get and update ";
+import { fetchPrescriptionUsecase } from "../app/use-cases/Prescription/prescriptionUseCase";
 
 
 
@@ -41,10 +44,13 @@ const userController=(
     doctorDbRepositoryImpl: doctorRepositoryMongodbType,
     timeSlotDbRepository: TimeSlotDbInterface,
     timeSlotDbRepositoryImpl: TimeSlotRepositoryMongodbType,
+    prescriptionDbRepository:PrescriptionDbInterface,
+    prescriptionDbRepositoryImpl:PrescriptionRepositoryMongodbType,
 )=>{
     const dbRepositoryUser = userDbRepository(userRepositoryImpl());
     const authService = authServiceInterface(authServiceImpl());
     const dbDoctorRepository = doctorDbRepository(doctorDbRepositoryImpl());
+    const dbPrescriptionRepository = prescriptionDbRepository(prescriptionDbRepositoryImpl());
     const dbTimeSlotRepository = timeSlotDbRepository(timeSlotDbRepositoryImpl());
 
     // Register User POST - Method
@@ -326,6 +332,23 @@ const getDateSlots = async(
 }
 }
 
+/**get Method fetch Prescription */
+const fetchPrescription = async(
+  req:Request,
+  res:Response,
+  next:NextFunction
+)=>{
+  try {
+    const {appoinmentId} = req.body;
+    const data = {appoinmentId}
+    const response = await fetchPrescriptionUsecase(data,dbPrescriptionRepository);
+    console.log(response,"checking.....");
+    res.status(HttpStatus.OK).json({succes:true,response});
+  } catch (error) {
+    next(error)
+  }
+}
+
 
 
     return {
@@ -343,6 +366,7 @@ const getDateSlots = async(
         getTimeslots,
         getDateSlots,
         getAllTimeSlots,
+        fetchPrescription
     };
     };
 

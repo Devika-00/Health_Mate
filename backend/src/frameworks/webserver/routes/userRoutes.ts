@@ -13,6 +13,8 @@ import {  timeSlotRepositoryMongodb } from "../../database/mongodb/repositories/
 import bookingController from "../../../adapters/bookingController";
 import { bookingDbRepository } from "../../../app/interfaces/bookingDbRepository";
 import { bookingRepositoryMongodb } from "../../database/mongodb/repositories/BookingRepositoryMongodb";
+import { prescriptionDbRepository } from "../../../app/interfaces/prescriptionDbRepository";
+import { prescriptionRepositoryMongodb } from "../../database/mongodb/repositories/prescriptionRepositoryMongodb";
 
 
 const userRoutes = () =>{
@@ -27,6 +29,8 @@ const userRoutes = () =>{
         doctorRepositoryMongodb,
         timeSlotDbRepository,
         timeSlotRepositoryMongodb,
+        prescriptionDbRepository,
+        prescriptionRepositoryMongodb,
 
     );
 
@@ -59,6 +63,7 @@ router.get("/doctor/:id", authenticateUser,controller.doctorDetails);
 router.patch("/profile/edit", authenticateUser, controller.updateUserInfo);
 router.get("/timeslots/:id",authenticateUser,controller.getTimeslots);
 router.get("/time-slots/:id/dates",authenticateUser,controller.getDateSlots);
+router.post("/fetchPrescription",authenticateUser,controller.fetchPrescription);
 
 
 /*  Booking Routes for booking Controller  */
