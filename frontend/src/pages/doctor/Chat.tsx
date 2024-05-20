@@ -35,7 +35,20 @@ const Chat: React.FC = () => {
         arrivalMessage && 
         currentChat?.members.includes(arrivalMessage.senderId) &&
         setMessages((prev)=>[...prev,arrivalMessage]);
+
+        if (arrivalMessage) {
+            setConversations(prevConversations => 
+                prevConversations.map(conversation => 
+                    conversation._id === currentChat?._id
+                    ? { ...conversation, lastMessage: arrivalMessage }
+                    : conversation
+                )
+            );
+        }
     },[arrivalMessage,currentChat])
+
+
+
 
     useEffect(()=>{
         socket.current.emit("addUser",doctor.id);
@@ -48,8 +61,20 @@ const Chat: React.FC = () => {
         const getConversations = async () => {
             try {
                 const response = await axiosJWT.get(`${CHAT_API}/conversations/${doctor.id}`);
-                console.log(response);
-                setConversations(response.data);
+                const conversationData = response.data;
+
+                // Fetch the last message for each conversation
+                const updatedConversations = await Promise.all(
+                    conversationData.map(async (conversation: any) => {
+                        const messagesResponse = await axiosJWT.get(`${CHAT_API}/messages/${conversation._id}`);
+                        const messages = messagesResponse.data.messages;
+                        const lastMessage = messages[messages.length - 1];
+                        return { ...conversation, lastMessage };
+                    })
+                );
+
+                setConversations(updatedConversations);
+                
             } catch (error) {
                 console.error("Error fetching conversations:", error);
             }
@@ -97,6 +122,13 @@ const Chat: React.FC = () => {
             const response = await axiosJWT.post(`${CHAT_API}/messages`, message);
             setMessages([...messages, response.data]);
             setNewMessage("");
+            setConversations(prevConversations => 
+                prevConversations.map(conversation => 
+                    conversation._id === currentChat?._id
+                    ? { ...conversation, lastMessage: response.data }
+                    : conversation
+                )
+            );
         } catch (error) {
             console.error("Error sending message:", error);
         }
@@ -137,7 +169,7 @@ const Chat: React.FC = () => {
 
                         {conversations.map((conversation, index) => (
                             <div key={index} onClick={() => handleConversationClick(conversation)}>
-                                <Conversation conversation={conversation} />
+                                <Conversation conversation={conversation}  lastMessage={conversation.lastMessage}/>
                             </div>
                         ))}
 

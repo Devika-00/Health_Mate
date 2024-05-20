@@ -15,44 +15,61 @@ const Chat: React.FC = () => {
     const [currentChat, setCurrentChat] = useState<any | null>(null);
     const [messages, setMessages] = useState<any[]>([]);
     const [newMessage, setNewMessage] = useState<string>("");
-    const [arrivalMessage, setarrivalMessage] = useState<any>(null);
+    const [arrivalMessage, setArrivalMessage] = useState<any>(null);
     const socket = useRef<any>();
     const scrollRef = useRef<HTMLDivElement>(null);
 
-
-    useEffect(()=>{
+    useEffect(() => {
         socket.current = io("ws://localhost:3000");
-        socket.current.on("getMessage",(data:any)=>{
-            console.log(data)
-            setarrivalMessage({
-                senderId:data.senderId,
-                text:data.text,
-                createdAt:Date.now(),
-            })
-        })
-    },[]);
+        socket.current.on("getMessage", (data: any) => {
+            setArrivalMessage({
+                senderId: data.senderId,
+                text: data.text,
+                createdAt: Date.now(),
+            });
+        });
+    }, []);
 
-
-    useEffect(()=>{
+    useEffect(() => {
         arrivalMessage && 
-        currentChat?.members.includes(arrivalMessage.senderId) &&
-        setMessages((prev)=>[...prev,arrivalMessage]);
-    },[arrivalMessage,currentChat])
+        currentChat?.members.includes(arrivalMessage.senderId) && 
+        setMessages((prev) => [...prev, arrivalMessage]);
 
+        if (arrivalMessage) {
+            setConversations(prevConversations => 
+                prevConversations.map(conversation => 
+                    conversation._id === currentChat?._id
+                    ? { ...conversation, lastMessage: arrivalMessage }
+                    : conversation
+                )
+            );
+        }
+    }, [arrivalMessage, currentChat]);
 
-    useEffect(()=>{
-        socket.current.emit("addUser",user.id);
-        socket.current.on("getUsers",(users: any)=>{
-            console.log(users,"hellooooo");
-        })
-    },[user]);
+    useEffect(() => {
+        socket.current.emit("addUser", user.id);
+        socket.current.on("getUsers", (users: any) => {
+            console.log(users, "hellooooo");
+        });
+    }, [user]);
 
     useEffect(() => {
         const getConversations = async () => {
             try {
                 const response = await axiosJWT.get(`${CHAT_API}/conversations/${user.id}`);
-                console.log(response);
-                setConversations(response.data);
+                const conversationData = response.data;
+
+                // Fetch the last message for each conversation
+                const updatedConversations = await Promise.all(
+                    conversationData.map(async (conversation: any) => {
+                        const messagesResponse = await axiosJWT.get(`${CHAT_API}/messages/${conversation._id}`);
+                        const messages = messagesResponse.data.messages;
+                        const lastMessage = messages[messages.length - 1];
+                        return { ...conversation, lastMessage };
+                    })
+                );
+
+                setConversations(updatedConversations);
             } catch (error) {
                 console.error("Error fetching conversations:", error);
             }
@@ -60,7 +77,6 @@ const Chat: React.FC = () => {
 
         getConversations();
     }, [user.id]);
-
 
     useEffect(() => {
         const getMessages = async () => {
@@ -87,25 +103,29 @@ const Chat: React.FC = () => {
             conversationId: currentChat?._id,
         };
 
-        const receiverId = currentChat.members.find((member:any)=> member !== user.id)
+        const receiverId = currentChat.members.find((member: any) => member !== user.id);
 
-        socket.current.emit("sendMessage",{
-            senderId:user.id,
+        socket.current.emit("sendMessage", {
+            senderId: user.id,
             receiverId,
-            text:newMessage
-        })
-    
+            text: newMessage,
+        });
+
         try {
             const response = await axiosJWT.post(`${CHAT_API}/messages`, message);
             setMessages([...messages, response.data]);
             setNewMessage("");
+            setConversations(prevConversations => 
+                prevConversations.map(conversation => 
+                    conversation._id === currentChat?._id
+                    ? { ...conversation, lastMessage: response.data }
+                    : conversation
+                )
+            );
         } catch (error) {
             console.error("Error sending message:", error);
         }
     };
-
-
-
 
     useEffect(() => {
         scrollRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -142,7 +162,7 @@ const Chat: React.FC = () => {
 
                         {conversations.map((conversation, index) => (
                             <div key={index} onClick={() => handleConversationClick(conversation)}>
-                                <Conversation conversation={conversation} />
+                                <Conversation conversation={conversation} lastMessage={conversation.lastMessage} />
                             </div>
                         ))}
 
@@ -157,7 +177,7 @@ const Chat: React.FC = () => {
                                 <>
                                     {messages.map((m, index) => (
                                         <div key={index} ref={scrollRef}>
-                                            <Message message={m} own={m.senderId === user.id}/>
+                                            <Message message={m} own={m.senderId === user.id} />
                                         </div>
                                     ))}
                                     <div className="flex items-center mt-2">
@@ -165,17 +185,18 @@ const Chat: React.FC = () => {
                                             className="w-full px-3 py-1 border border-gray-300 rounded-lg focus:outline-none ml-4 mb-5 "
                                             placeholder="Write a message..."
                                             onChange={(e) => setNewMessage(e.target.value)}
-                                            value ={newMessage}
+                                            value={newMessage}
                                         ></textarea>
-                                        <button className="ml-2 mb-5 mr-5 px-5  py-3 bg-blue-500 text-white rounded-md cursor-pointer focus:outline-none hover:bg-blue-600" onClick={handleSubmit}>
+                                        <button className="ml-2 mb-5 mr-5 px-5 py-3 bg-blue-500 text-white rounded-md cursor-pointer focus:outline-none hover:bg-blue-600" onClick={handleSubmit}>
                                             <FiSend size={18} />
                                         </button>
                                     </div>
                                 </>
-
-                            ) : (<div className="absolute top-10% text-5xl text-gray-400 cursor-default mt-52 ml-40">
-                                Open a chat to start conversation..
-                            </div>)}
+                            ) : (
+                                <div className="absolute top-10% text-5xl text-gray-400 cursor-default mt-52 ml-40">
+                                    Open a chat to start conversation..
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

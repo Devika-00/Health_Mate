@@ -10,11 +10,13 @@ interface ConversationProps {
         updatedAt: string;
         __v: number;
     };
+    lastMessage: {
+        text: string;
+    };
 }
 
-const Conversation: React.FC<ConversationProps> = ({ conversation }) => {
+const Conversation: React.FC<ConversationProps> = ({ conversation, lastMessage }) => {
     const [doctorData, setDoctorData] = useState<any>({});
-    
 
     useEffect(() => {
         const fetchDoctorData = async () => {
@@ -30,18 +32,21 @@ const Conversation: React.FC<ConversationProps> = ({ conversation }) => {
         fetchDoctorData();
     }, [conversation]);
 
-
     return (
-      <div className="bg-white rounded-lg shadow-md p-2 flex items-center mb-1">
-          <img
-              className="w-14 h-14 rounded-full object-cover mr-4"
-              src={doctorData.profileImage} // Assuming profileImage is the property for profile image
-              alt="Doctor Profile"
-          />
-          <span className="font-medium">{doctorData.doctorName}</span>
-      </div>
-  );
+        <div className="bg-white rounded-lg shadow-md p-2 flex flex-col mb-1">
+            <div className="flex items-center">
+                <img
+                    className="w-14 h-14 rounded-full object-cover mr-4"
+                    src={doctorData.profileImage} 
+                    alt="Doctor Profile"
+                />
+                <div className="flex flex-col">
+                    <span className="font-medium">{doctorData.doctorName}</span>
+                    <span className="text-gray-500 text-sm">{lastMessage?.text}</span>
+                </div>
+            </div>
+        </div>
+    );
 };
-
 
 export default Conversation;
