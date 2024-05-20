@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import axiosJWT from '../../utils/axiosService';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { DOCTOR_API, USER_API } from '../../constants';
 import { RiFileAddLine } from 'react-icons/ri';
 import showToast from '../../utils/toaster';
+import { AiOutlineFileText } from 'react-icons/ai';
 
 const PatientDetailPage = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [patient, setPatient] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setModalOpen] = useState(false);
   const [prescriptionDate, setPrescriptionDate] = useState(new Date().toISOString().split("T")[0]);
   const [doctorName, setDoctorName] = useState("");
+  const [isViewModalOpen, setViewModalOpen] = useState(false);
   const [medicines, setMedicines] = useState<{ name: string; dosage: string; instructions: string }[]>([{ name: "", dosage: "", instructions: "" }]);
+  const [prescription, setPrescription] = useState<any | null>(null);
 
   useEffect(() => {
     const fetchPatientDetails = async () => {
@@ -22,23 +25,43 @@ const PatientDetailPage = () => {
         const bookingData = response.data.data.bookingDetails;
         setPatient(bookingData);
       } catch (err) {
-        setError('Error fetching patient details.');
         console.error('Error fetching patient details:', err);
       } finally {
         setLoading(false);
       }
     };
 
+    const fetchPrescriptionDetails = async () => {
+      try {
+        const response = await axiosJWT.get(`${DOCTOR_API}/prescription/${id}`);
+        // Assuming the prescription is returned as an array
+        if (response.data.response && response.data.response.length > 0) {
+          setPrescription(response.data.response[0]);
+        }
+      } catch (err) {
+        console.error('Error fetching prescription details:', err);
+      }
+    };
+
     fetchPatientDetails();
+    fetchPrescriptionDetails();
   }, [id]);
 
   const handleAddPrescription = () => {
     setModalOpen(true);
   };
 
+  const handleViewPrescription = () => {
+    setViewModalOpen(true);
+  };
+
   const closeModal = () => {
     setModalOpen(false);
   };
+
+  const showDocumentPage = (id: string | undefined) =>{
+    navigate(`/user/documents/${id}`);
+  }
 
   const handleSave = async () => {
     const data = {
@@ -48,7 +71,7 @@ const PatientDetailPage = () => {
     };
      const response = await axiosJWT.post(`${DOCTOR_API}/addPrescription`,data);
      if(response){
-      showToast("Prescription added succesfully","success");
+      showToast("Prescription added successfully","success");
      }
 
     setModalOpen(false);
@@ -62,13 +85,8 @@ const PatientDetailPage = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="flex justify-center items-center h-screen bg-gray-100">
-        <p className="text-xl text-red-500 font-semibold">{error}</p>
-      </div>
-    );
-  }
+  console.log(prescription,"hfdsgf")
+
 
   return (
     <div className="flex justify-center items-center py-10 bg-gray-100">
@@ -109,11 +127,26 @@ const PatientDetailPage = () => {
               <p className="text-gray-900">{patient.paymentStatus}</p>
             </div>
             <div className="flex justify-center items-center mt-4 md:col-span-2">
+            {prescription ? (
+                <button
+                  className="bg-blue-900 text-white py-2 px-4 rounded-md shadow hover:bg-blue-800 flex items-center"
+                  onClick={handleViewPrescription}
+                >
+                  <AiOutlineFileText className="mr-2" /> View Prescription
+                </button>
+              ) : (
+                <button
+                  className="bg-blue-900 text-white py-2 px-4 rounded-md shadow hover:bg-blue-800 flex items-center"
+                  onClick={handleAddPrescription}
+                >
+                  <RiFileAddLine className="mr-2" /> Add Prescription
+                </button>
+              )}
               <button
-                className="bg-blue-900 text-white py-2 px-4 rounded-md shadow hover:bg-blue-800 flex items-center"
-                onClick={handleAddPrescription}
+                className="bg-blue-900 text-white py-2 px-4 rounded-md shadow hover:bg-blue-800 flex items-center ml-5"
+                onClick={() => showDocumentPage(id)}
               >
-                <RiFileAddLine className="mr-2" /> Add Prescription
+                <AiOutlineFileText className="mr-2" /> View Medical Documents
               </button>
             </div>
           </div>
@@ -121,6 +154,7 @@ const PatientDetailPage = () => {
           <p className="text-center text-gray-700">No patient details available.</p>
         )}
       </div>
+
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
           <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-2xl">
@@ -216,6 +250,63 @@ const PatientDetailPage = () => {
           </div>
         </div>
       )}
+
+
+
+{isViewModalOpen && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
+    <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-2xl">
+      <h2 className="text-2xl font-bold text-gray-900 mb-4">Prescription Details</h2>
+      {prescription ? (
+        <div>
+          <div className="mt-2">
+            <h3 className="text-lg font-semibold text-gray-700">Prescription Date</h3>
+            <p className="text-gray-900">{new Date(prescription.prescriptionDate).toLocaleDateString()}</p>
+          </div>
+          <div className="mt-2">
+            <h3 className="text-lg font-semibold text-gray-700">Medicines</h3>
+            <ul className="list-disc list-inside">
+              {prescription?.medicines?.map((medicine: any, index: number) => (
+                <li key={index} className="text-gray-900">
+                  {medicine.name} - {medicine.dosage} - {medicine.instructions}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="mt-6 flex justify-end space-x-4">
+            <button
+              onClick={() => setViewModalOpen(false)}
+              className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+            >
+              Close
+            </button>
+            <button
+              onClick={async () => {
+                try {
+                  await axiosJWT.delete(`${DOCTOR_API}/prescription/${prescription._id}`);
+                  showToast("Prescription deleted successfully", "success");
+                  setPrescription(null); // Clear the prescription after deletion
+                  setViewModalOpen(false);
+                } catch (err) {
+                  console.error('Error deleting prescription:', err);
+                  showToast("Error deleting prescription", "error");
+                }
+              }}
+              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+            >
+              Delete Prescription
+            </button>
+          </div>
+        </div>
+      ) : (
+        <p className="text-center text-gray-700">No prescription details available.</p>
+      )}
+    </div>
+  </div>
+)}
+
+
+
     </div>
   );
 }

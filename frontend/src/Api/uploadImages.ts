@@ -55,4 +55,32 @@ const uploadCertificateToCloudinary = async (certificateFile: File | null) => {
   }
 };
 
-export { uploadImagesToCloudinary, uploadCertificateToCloudinary };
+const uploadDocumentToCloudinary = async (documentFile: File | null) => {
+  try {
+    if (!documentFile) {
+      throw new Error("Document file not provided");
+    }
+
+    const formData = new FormData();
+    formData.append("file", documentFile);
+    formData.append("upload_preset", cloudinaryUploadPreset);
+
+    const response = await fetch(CLOUDINARY_UPLOAD_API, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to upload document to Cloudinary");
+    }
+
+    const data = await response.json();
+    return data.secure_url;
+  } catch (error) {
+    showToast("Error uploading document to Cloudinary: " + error, "error");
+    return null;
+  }
+};
+
+
+export { uploadImagesToCloudinary, uploadCertificateToCloudinary,uploadDocumentToCloudinary };

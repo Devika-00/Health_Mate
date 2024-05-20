@@ -42,6 +42,8 @@ const AppoinmentDetails = lazy(()=>import("../pages/user/AppoinmentDetails"));
 const AppoinmentListPage = lazy(()=>import("../pages/user/getAppoinmentsAll"));
 const Chat = lazy(()=>import("../pages/user/Chat"));
 const DoctorChat=lazy(()=>import("../pages/doctor/Chat"));
+const UploadForm = lazy(()=>import("../pages/user/labRecord"));
+const DocumentListPage = lazy(()=>import("../pages/user/documentsListPage"));
 
 export const MainRouter = () => {
     return (
@@ -72,6 +74,8 @@ export const MainRouter = () => {
                      <Route path="/payment_status/:id" element={<PaymentCompleted />} />
                      <Route path="/appoinmentDetails/:id" element={<AppoinmentDetails/>} />
                      <Route path ="/user/appoinmentlist" element={<AppoinmentListPage/>}/>
+                     <Route path ="/user/labrecord" element={<UploadForm/>}/>
+                     <Route path ="/user/documents/:id" element={<DocumentListPage/>}/>
 
                     
 

@@ -6,7 +6,11 @@ import { USER_API } from "../../constants";
 import { useNavigate, useParams } from "react-router-dom";
 import showToast from "../../utils/toaster";
 import { Modal } from "react-bootstrap";
-import { FaFilePdf } from "react-icons/fa";
+import { FaFilePdf, FaPlus, FaTimes, FaTrash } from "react-icons/fa";
+import { FaFileUpload } from "react-icons/fa";
+import { uploadDocumentToCloudinary } from "../../Api/uploadImages";
+import { AiOutlineFileText } from 'react-icons/ai';
+
 
 const AppointmentDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -15,8 +19,19 @@ const AppointmentDetails: React.FC = () => {
   const [doctorDetails, setDoctorDetails] = useState<any>(null);
   const [showModal, setShowModal] = useState(false);
   const [showPrescriptionModal, setShowPrescriptionModal] = useState(false);
+  const [showDocumentModal, setShowDocumentModal] = useState(false);
   const [prescription, setPrescription] = useState<any | null>(null);
   const [cancelReason, setCancelReason] = useState("");
+  const [documents, setDocuments] = useState<{
+    name: string;
+    documentFile: File | null;
+  }[]>([
+    {
+      name: "",
+      documentFile: null,
+    },
+  ]);
+
 
   useEffect(() => {
     const fetchBookingDetails = async () => {
@@ -103,12 +118,81 @@ const AppointmentDetails: React.FC = () => {
     }
   };
 
-  console.log(prescription, "checking");
+  const showDocument = async (id: string | undefined) =>{
+    setShowDocumentModal(true);
+  }
+  const showDocumentPage = async (id: string | undefined) =>{
+    navigate(`/user/documents/${id}`);
+  }
+
+
+
 
   function closeModal(): void {
     setShowPrescriptionModal(false);
     setPrescription(null);
   }
+
+  function closeDocumentModal(): void {
+    setShowDocumentModal(false);
+  }
+
+
+
+
+
+
+  const handleNameChange = (index: number, value: string) => {
+    const updatedDocuments = [...documents];
+    updatedDocuments[index].name = value;
+    setDocuments(updatedDocuments);
+};
+
+const handleFileChange = (index: number, file: any) => {
+    const updatedDocuments = [...documents];
+    updatedDocuments[index].documentFile = file;
+    setDocuments(updatedDocuments);
+};
+
+
+const handleSubmit = async (event: any) => {
+  event.preventDefault();
+  
+  try {
+    const documentsData = [];
+    
+    // Iterate over each document
+    for (const document of documents) {
+      const url = await uploadDocumentToCloudinary(document.documentFile);
+      documentsData.push({ name: document.name, url: url });
+    }
+    
+    // Send the array of document data to the backend
+    const response = await axiosJWT.post(`${USER_API}/uploadDocuments`, {   id: id, documents: documentsData, });
+    console.log(response,"jkjdkjkjfksjf")
+    if (response.data.sucess) {
+      showToast('Documents uploaded successfully', 'success');
+      setShowDocumentModal(false);
+      setDocuments([]);
+    } else {
+      showToast('Failed to upload documents', 'error');
+    }
+  } catch (error) {
+    console.error('Error uploading documents:', error);
+    showToast('Error uploading documents', 'error');
+  }
+};
+
+
+const addDocument = () => {
+    setDocuments([...documents, { name: '', documentFile: null }]);
+};
+
+const removeDocument = (index:number) => {
+    const updatedDocuments = [...documents];
+    updatedDocuments.splice(index, 1);
+    setDocuments(updatedDocuments);
+};
 
   return (
     <>
@@ -164,21 +248,39 @@ const AppointmentDetails: React.FC = () => {
                 <p className="font-medium">
                   Payment Status: {bookingDetails.paymentStatus}
                 </p>
-              </div>
-            </div>
-
-            <div className="bg-blue-50 p-6 rounded-lg shadow-md border border-blue-200">
-              <h2 className="text-2xl font-bold mb-4">Prescription</h2>
-              <div>
-                <p className="text-sm text-gray-600 mb-4">
-                  Click the button below to view the prescription
-                </p>
+                <h1
+                className="text-2xl font-bold mb-1 mt-4">Prescription
+                </h1>
+                <p className="mb-3 text-blue-900">Click the button to see the prescription</p>
                 <button
                   onClick={() => showPrescription(id)}
                   className="bg-green-800 flex hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
                 >
                   <FaFilePdf className="mr-2 mt-1" />
                   Check Prescription
+                </button>
+              </div>
+              
+            </div>
+
+            <div className="bg-blue-50 p-6 rounded-lg shadow-md border border-blue-200">
+              <h2 className="text-2xl font-bold mb-4">Documents</h2>
+              <div>
+                <p className="text-blue-900">Click the button to add the lab record documents </p>
+                <button
+                  onClick={() => showDocument(id)}
+                  className="bg-yellow-800 flex hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mt-3"
+                >
+                  <FaFileUpload className="mr-2 mt-1" />
+                  Add Documents
+                </button>
+                <p className="mt-3 text-blue-900">Click the view documents button to see all the lab docuemnts uploaded </p>
+                <button
+                  onClick={() => showDocumentPage(id)}
+                  className="bg-blue-800 flex hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-3"
+                >
+                  <AiOutlineFileText className="mr-2 mt-1" />
+                  view Documents
                 </button>
               </div>
             </div>
@@ -271,6 +373,75 @@ const AppointmentDetails: React.FC = () => {
             )}
           </div>
         )}
+
+
+        {showDocumentModal && (
+          <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+            <div className="bg-white rounded-lg overflow-hidden shadow-xl max-w-lg w-full p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-semibold text-gray-800">Add Documents</h2>
+                <button
+                  onClick={closeDocumentModal}
+                  className="text-gray-600 hover:text-gray-900"
+                >
+                  <FaTimes />
+                </button>
+              </div>
+              <form onSubmit={handleSubmit}>
+                {documents.map((document, index) => (
+                  <div key={index} className="mb-4">
+                    <div className="flex items-center mb-2">
+                      <input
+                        type="text"
+                        value={document.name}
+                        onChange={(e) => handleNameChange(index, e.target.value)}
+                        className="block w-full p-2 sm:text-sm border-gray-300 rounded-md"
+                        placeholder="Document Name"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeDocument(index)}
+                        className="ml-2 text-red-500 hover:text-red-700"
+                      >
+                        <FaTrash />
+                      </button>
+                    </div>
+                    <input
+                      type="file"
+                      onChange={(e) => handleFileChange(index, e.target.files?.[0])}
+                      className="block w-full text-sm text-gray-500
+                        file:mr-4 file:py-2 file:px-4
+                        file:rounded-md file:border-0
+                        file:text-sm file:font-semibold
+                        file:bg-blue-50 file:text-blue-700
+                        hover:file:bg-blue-100"
+                    />
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={addDocument}
+                  className="flex items-center mb-4 text-blue-600 hover:text-blue-800"
+                >
+                  <FaPlus className="mr-2" />
+                  Add Another Document
+                </button>
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition ease-in-out duration-300"
+                >
+                  Submit
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
+
+
+
+
+
       </div>
       <Footer />
     </>

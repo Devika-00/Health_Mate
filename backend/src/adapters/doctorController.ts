@@ -28,7 +28,7 @@ import { getPatientFullDetails, getPatients } from "../app/use-cases/doctor/doct
 import { userDbInterface } from "../app/interfaces/userDbRepository";
 import { userRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/userRepositoryMongodb";
 import { getSingleUser } from "../app/use-cases/Admin/adminRead";
-import { addPrescriptionToUser } from "../app/use-cases/Prescription/prescriptionUseCase";
+import { addPrescriptionToUser, deletePrescriptionData, fetchPrescriptionForDoctor, fetchPrescriptionUsecase } from "../app/use-cases/Prescription/prescriptionUseCase";
 const doctorController = (
     authServiceInterface:AuthServiceInterfaceType,
     authServiceImpl : AuthService,
@@ -418,6 +418,38 @@ const doctorController = (
       next(error);
     }
   }
+
+  /**get Method fetch Prescription */
+const fetchPrescription = async(
+  req:Request,
+  res:Response,
+  next:NextFunction
+)=>{
+  try {
+    const { id } = req.params;
+    const data =  id 
+    const response = await fetchPrescriptionForDoctor(data,dbPrescriptionRepository);
+    res.status(HttpStatus.OK).json({sucess:true,response});
+  } catch (error) {
+    next(error)
+  }
+}
+
+
+/**method delete - delete prescription */
+const deletePrescription = async (
+  req:Request,
+  res:Response,
+  next:NextFunction,
+)=>{
+  try {
+    const prescriptionId = req.params.id;
+    const response = await deletePrescriptionData(prescriptionId,dbPrescriptionRepository);
+    res.status(HttpStatus.OK).json({sucess:true,response});
+  } catch (error) {
+    next(error);
+  }
+}
   
   
 
@@ -441,6 +473,8 @@ const doctorController = (
         deleteSlot,
         userDetails,
         addPrescription,
+        fetchPrescription,
+        deletePrescription,
         
     }
 }

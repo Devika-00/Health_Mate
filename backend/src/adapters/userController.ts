@@ -31,7 +31,7 @@ import { getTimeSlotsByDoctorId,
 import { PrescriptionRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/prescriptionRepositoryMongodb";
 import timeSlots from "../frameworks/database/mongodb/models/timeSlots";
 import { getAllTimeSlot } from "../app/use-cases/user/timeslots/get and update ";
-import { fetchPrescriptionUsecase } from "../app/use-cases/Prescription/prescriptionUseCase";
+import { fetchPrescriptionUsecase, uploadLabDocuments,getDocuments, deleteSingleDocument } from "../app/use-cases/Prescription/prescriptionUseCase";
 
 
 
@@ -342,13 +342,64 @@ const fetchPrescription = async(
     const {appoinmentId} = req.body;
     const data = {appoinmentId}
     const response = await fetchPrescriptionUsecase(data,dbPrescriptionRepository);
-    console.log(response,"checking.....");
-    res.status(HttpStatus.OK).json({succes:true,response});
+    res.status(HttpStatus.OK).json({sucess:true,response});
   } catch (error) {
     next(error)
   }
 }
 
+
+/**post method lab record upload */
+const labRecords = async(
+  req:Request,
+  res:Response,
+  next:NextFunction
+)=>{
+  try {
+    const {documents} = req.body;
+    const {id} = req.body
+    const data = documents;
+    const appoinmentId = id;
+    const response = await uploadLabDocuments(appoinmentId,data,dbPrescriptionRepository);
+    res.status(HttpStatus.OK).json({sucess:true,response});
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**get lab records method get  */
+const fetchDocuments = async(
+  req:Request,
+  res:Response,
+  next:NextFunction
+)=>{
+  try {
+    const {id} = req.params;
+   const documents = await getDocuments(
+    id,
+    dbPrescriptionRepository,
+  )
+  res.status(HttpStatus.OK).json({success:true, documents}) 
+  } catch (error) {
+    next(error)
+  }
+}
+
+/**delete document method delete */
+const deleteDocument = async(
+  req:Request,
+  res:Response,
+  next:NextFunction,
+)=>{
+  try {
+    const id = req.params.id;
+    const response = await deleteSingleDocument(id,dbPrescriptionRepository)
+    
+    res.status(HttpStatus.OK).json({success:true, response}) 
+  } catch (error) {
+    next(error);
+  }
+}
 
 
     return {
@@ -366,7 +417,10 @@ const fetchPrescription = async(
         getTimeslots,
         getDateSlots,
         getAllTimeSlots,
-        fetchPrescription
+        fetchPrescription,
+        labRecords,
+        fetchDocuments,
+        deleteDocument,
     };
     };
 

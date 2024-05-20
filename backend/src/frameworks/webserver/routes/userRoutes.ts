@@ -64,7 +64,9 @@ router.patch("/profile/edit", authenticateUser, controller.updateUserInfo);
 router.get("/timeslots/:id",authenticateUser,controller.getTimeslots);
 router.get("/time-slots/:id/dates",authenticateUser,controller.getDateSlots);
 router.post("/fetchPrescription",authenticateUser,controller.fetchPrescription);
-
+router.post("/uploadDocuments",authenticateUser,controller.labRecords);
+router.get("/documents/:id",authenticateUser,controller.fetchDocuments);
+router.delete("/documents/:id",authenticateUser,controller.deleteDocument);
 
 /*  Booking Routes for booking Controller  */
 
