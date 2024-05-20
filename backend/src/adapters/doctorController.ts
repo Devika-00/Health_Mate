@@ -331,6 +331,7 @@ const doctorController = (
     ) => {
       try {
         const {id} = req.params;
+        console.log(id);
         const doctor = await getDoctorProfile(id,dbRepositoryDoctor);
         return res.status(HttpStatus.OK).json({ success: true, doctor });
       } catch (error) {
@@ -450,6 +451,24 @@ const deletePrescription = async (
     next(error);
   }
 }
+
+
+/**method get receiver details */
+const receiverDetails = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    console.log(req.params);
+    const {id} = req.params;
+    console.log(id);
+    const doctor = await getDoctorProfile(id,dbRepositoryDoctor);
+    return res.status(HttpStatus.OK).json({ success: true, doctor });
+  } catch (error) {
+    next(error);
+  }
+}
   
   
 
@@ -475,7 +494,7 @@ const deletePrescription = async (
         addPrescription,
         fetchPrescription,
         deletePrescription,
-        
+        receiverDetails,
     }
 }
 

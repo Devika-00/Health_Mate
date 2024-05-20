@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Navbar from "../../components/user/Navbar/navbar";
 import Footer from "../../components/user/Footer/Footer";
 import axiosJWT from "../../utils/axiosService";
-import { USER_API } from "../../constants";
+import { CHAT_API, USER_API } from "../../constants";
 import { useNavigate, useParams } from "react-router-dom";
 import showToast from "../../utils/toaster";
 import { Modal } from "react-bootstrap";
@@ -10,9 +10,13 @@ import { FaFilePdf, FaPlus, FaTimes, FaTrash } from "react-icons/fa";
 import { FaFileUpload } from "react-icons/fa";
 import { uploadDocumentToCloudinary } from "../../Api/uploadImages";
 import { AiOutlineFileText } from 'react-icons/ai';
+import { FiMessageSquare } from "react-icons/fi";
+import axios from "axios";
+import { useAppSelector } from "../../redux/store/Store";
 
 
 const AppointmentDetails: React.FC = () => {
+  const user = useAppSelector((state) => state.UserSlice);
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [bookingDetails, setBookingDetails] = useState<any>(null);
@@ -155,6 +159,8 @@ const handleFileChange = (index: number, file: any) => {
 };
 
 
+
+
 const handleSubmit = async (event: any) => {
   event.preventDefault();
   
@@ -194,6 +200,20 @@ const removeDocument = (index:number) => {
     setDocuments(updatedDocuments);
 };
 
+const handleChat = () => {
+  axios
+    .post(CHAT_API + `/conversations`, {
+      senderId: user.id,
+      recieverId: doctorDetails._id,
+    })
+    .then(({ data }) => {
+      const chatID: string = data.chats._id;
+      navigate("/user/chat");
+    })
+    .catch(() => {
+      console.log("error in sending chat");
+    });
+};
   return (
     <>
       <Navbar />
@@ -215,6 +235,15 @@ const removeDocument = (index:number) => {
                   </h2>
                   <p>{doctorDetails.department}</p>
                   <p className="text-green-600 font-semibold">Verified</p>
+                  <button
+                  onClick={() => handleChat()}
+                  className="bg-blue-800 flex hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-3"
+                >
+                  <FiMessageSquare className="mr-2 mt-1" />
+                  Chat 
+                </button>
+
+
                 </div>
               </div>
             </div>

@@ -70,7 +70,7 @@ const doctorRoute = () => {
     router.put("/reapply_verification/:id",authenticateDoctor,controller.getDoctorRejected)
     router.post("/addPrescription",authenticateDoctor,controller.addPrescription);
     router.get("/prescription/:id",authenticateDoctor,controller.fetchPrescription);
-    router.delete("/prescription/:id",authenticateDoctor,controller.deletePrescription)
+    router.delete("/prescription/:id",authenticateDoctor,controller.deletePrescription);
     /*Booking Routes for booking Controller */
 
     router.get("/bookingdetails/:id",authenticateDoctor,_bookingController.getAppoinmentList)
