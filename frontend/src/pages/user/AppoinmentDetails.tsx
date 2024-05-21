@@ -9,10 +9,13 @@ import { Modal } from "react-bootstrap";
 import { FaFilePdf, FaPlus, FaTimes, FaTrash } from "react-icons/fa";
 import { FaFileUpload } from "react-icons/fa";
 import { uploadDocumentToCloudinary } from "../../Api/uploadImages";
-import { AiOutlineFileText } from 'react-icons/ai';
+import { AiOutlineFileText, AiOutlineVideoCamera } from 'react-icons/ai';
 import { FiMessageSquare } from "react-icons/fi";
 import axios from "axios";
 import { useAppSelector } from "../../redux/store/Store";
+
+import { ZIM } from "zego-zim-web";
+import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
 
 
 const AppointmentDetails: React.FC = () => {
@@ -35,6 +38,16 @@ const AppointmentDetails: React.FC = () => {
       documentFile: null,
     },
   ]);
+
+  const userID = user.id; 
+const userName = user.name;
+const appID = 1631866234;
+const serverSecret = 'ef643f6bf95ef4488775c1cd2d944227';
+//@ts-ignore
+const TOKEN = ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret,null, userID, userName);
+
+const zp = ZegoUIKitPrebuilt.create(TOKEN);
+zp.addPlugins({ ZIM });
 
 
   useEffect(() => {
@@ -113,12 +126,13 @@ const AppointmentDetails: React.FC = () => {
     };
 
     const response = await axiosJWT.post(`${USER_API}/fetchPrescription`, data);
+    console.log(response,"hsdhsajdhjas");
 
     if (response.data && response.data.response) {
       setPrescription(response.data.response);
       setShowPrescriptionModal(true);
-    } else if (response.data.status === false) {
-      showToast("No prescription found");
+    } else {
+      showToast("No prescription added by the doctor","error");
     }
   };
 
@@ -235,6 +249,7 @@ const handleChat = () => {
                   </h2>
                   <p>{doctorDetails.department}</p>
                   <p className="text-green-600 font-semibold">Verified</p>
+                  <div className="flex">
                   <button
                   onClick={() => handleChat()}
                   className="bg-blue-800 flex hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-3"
@@ -242,6 +257,7 @@ const handleChat = () => {
                   <FiMessageSquare className="mr-2 mt-1" />
                   Chat 
                 </button>
+                  </div>
 
 
                 </div>

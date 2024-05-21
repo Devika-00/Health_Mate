@@ -4,10 +4,15 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { DOCTOR_API, USER_API } from '../../constants';
 import { RiFileAddLine } from 'react-icons/ri';
 import showToast from '../../utils/toaster';
-import { AiOutlineFileText } from 'react-icons/ai';
+import { AiOutlineFileText, AiOutlineVideoCamera } from 'react-icons/ai';
+import { FiMessageSquare } from 'react-icons/fi';
+import { ZIM } from "zego-zim-web";
+import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
+import { useAppSelector } from '../../redux/store/Store';
 
 const PatientDetailPage = () => {
   const { id } = useParams<{ id: string }>();
+  const doctor = useAppSelector((state) => state.DoctorSlice);
   const navigate = useNavigate();
   const [patient, setPatient] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -17,6 +22,33 @@ const PatientDetailPage = () => {
   const [isViewModalOpen, setViewModalOpen] = useState(false);
   const [medicines, setMedicines] = useState<{ name: string; dosage: string; instructions: string }[]>([{ name: "", dosage: "", instructions: "" }]);
   const [prescription, setPrescription] = useState<any | null>(null);
+
+  const userID = doctor.id; 
+const userName = doctor.name;
+const appID = 1631866234;
+const serverSecret = 'ef643f6bf95ef4488775c1cd2d944227';
+//@ts-ignore
+const TOKEN = ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret,null, userID, userName);
+
+const zp = ZegoUIKitPrebuilt.create(TOKEN);
+zp.addPlugins({ ZIM });
+
+function invite() {
+  const targetUser = {
+       userID:patient.userId,
+       userName:patient.patientName
+   };
+  zp.sendCallInvitation({
+   callees: [targetUser],
+   callType: ZegoUIKitPrebuilt.InvitationTypeVideoCall,
+   timeout: 60, // Timeout duration (second). 60s by default, range from [1-600s].
+  }).then((res) => {
+   console.warn(res);
+  })
+  .catch((err) => {
+  console.warn(err);
+  });
+}
 
   useEffect(() => {
     const fetchPatientDetails = async () => {
@@ -126,6 +158,25 @@ const PatientDetailPage = () => {
               <h2 className="font-bold text-gray-700">Payment Status</h2>
               <p className="text-gray-900">{patient.paymentStatus}</p>
             </div>
+            <div className="p-4 bg-gray-50 rounded-lg shadow-inner">
+              <h2 className="font-bold text-gray-700">Chat with Patient</h2>
+              <button
+                  className="bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-800 flex items-center mt-3"
+                  onClick={handleViewPrescription}
+                >
+                  <FiMessageSquare className="mr-2" /> Chat
+                </button>
+            </div>
+            <div className="p-4 bg-gray-50 rounded-lg shadow-inner">
+              <h2 className="font-bold text-gray-700">Join the Call</h2>
+              <button
+                  className="bg-green-500 text-white py-2 px-4 rounded-md shadow hover:bg-green-800 flex items-center mt-3"
+                  onClick={invite}
+                >
+                  <AiOutlineVideoCamera className="mr-2" /> Video Call
+                </button>
+            </div>
+            
             <div className="flex justify-center items-center mt-4 md:col-span-2">
             {prescription ? (
                 <button
