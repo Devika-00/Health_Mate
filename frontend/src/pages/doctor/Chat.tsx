@@ -156,7 +156,7 @@ const Chat: React.FC = () => {
   return (
     <>
       <Navbar />
-      <div className="h-screen flex">
+      <div className="h-[664px] flex">
         {/* Chat Menu */}
         <div className="w-1/4 bg-gray-200">
           <div className="p-4 h-full flex flex-col">
@@ -203,7 +203,7 @@ const Chat: React.FC = () => {
               {currentChat ? (
                 <>
                   {messages.map((m, index) => (
-                    <div key={index} ref={scrollRef}>
+                    <div className="flex-1" key={index} ref={scrollRef}>
                       <Message message={m} own={m.senderId === doctor.id}  receiverProfilePicture={receiverData?.profilePicture} receiverName={receiverData?.name} />
                     </div>
                   ))}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axiosJWT from '../../utils/axiosService';
 import { useNavigate, useParams } from 'react-router-dom';
-import { DOCTOR_API, USER_API } from '../../constants';
+import { CHAT_API, DOCTOR_API, USER_API } from '../../constants';
 import { RiFileAddLine } from 'react-icons/ri';
 import showToast from '../../utils/toaster';
 import { AiOutlineFileText, AiOutlineVideoCamera } from 'react-icons/ai';
@@ -9,6 +9,8 @@ import { FiMessageSquare } from 'react-icons/fi';
 import { ZIM } from "zego-zim-web";
 import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
 import { useAppSelector } from '../../redux/store/Store';
+import axios from 'axios';
+import { JSX } from 'react/jsx-runtime';
 
 const PatientDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -55,6 +57,7 @@ function invite() {
       try {
         const response = await axiosJWT.get(`${USER_API}/bookingdetails/${id}`);
         const bookingData = response.data.data.bookingDetails;
+        console.log(bookingData,"haiiiiiiiiiiiii");
         setPatient(bookingData);
       } catch (err) {
         console.error('Error fetching patient details:', err);
@@ -117,8 +120,28 @@ function invite() {
     );
   }
 
-  console.log(prescription,"hfdsgf")
 
+  console.log(patient.userId,"ijisjdijds");
+
+  const handleChat = () => {
+    axios
+      .post(CHAT_API + `/conversations`, {
+        senderId: doctor.id,
+        recieverId: patient.userId,
+      })
+      .then(({ data }) => {
+        console.log(data,"dataaaaaaaa")
+        navigate("/doctor/chat");
+      })
+      .catch(() => {
+        console.log("error in sending chat");
+      });
+  };
+
+
+  function Booked(arg0: JSX.Element) {
+    throw new Error('Function not implemented.');
+  }
 
   return (
     <div className="flex justify-center items-center py-10 bg-gray-100">
@@ -158,51 +181,61 @@ function invite() {
               <h2 className="font-bold text-gray-700">Payment Status</h2>
               <p className="text-gray-900">{patient.paymentStatus}</p>
             </div>
-            <div className="p-4 bg-gray-50 rounded-lg shadow-inner">
-              <h2 className="font-bold text-gray-700">Chat with Patient</h2>
-              <button
-                  className="bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-800 flex items-center mt-3"
-                  onClick={handleViewPrescription}
-                >
-                  <FiMessageSquare className="mr-2" /> Chat
-                </button>
-            </div>
-            <div className="p-4 bg-gray-50 rounded-lg shadow-inner">
-              <h2 className="font-bold text-gray-700">Join the Call</h2>
-              <button
-                  className="bg-green-500 text-white py-2 px-4 rounded-md shadow hover:bg-green-800 flex items-center mt-3"
-                  onClick={invite}
-                >
-                  <AiOutlineVideoCamera className="mr-2" /> Video Call
-                </button>
-            </div>
+            {patient.appoinmentStatus === 'Booked' ? (
+              <>
+                <div className="p-4 bg-gray-50 rounded-lg shadow-inner">
+                  <h2 className="font-bold text-gray-700">Chat with Patient</h2>
+                  <button
+                    className="bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-800 flex items-center mt-3"
+                    onClick={handleChat}
+                  >
+                    <FiMessageSquare className="mr-2" /> Chat
+                  </button>
+                </div>
+                <div className="p-4 bg-gray-50 rounded-lg shadow-inner">
+                  <h2 className="font-bold text-gray-700">Join the Call</h2>
+                  <button
+                    className="bg-green-500 text-white py-2 px-4 rounded-md shadow hover:bg-green-800 flex items-center mt-3"
+                    onClick={invite}
+                  >
+                    <AiOutlineVideoCamera className="mr-2" /> Video Call
+                  </button>
+                </div>
+                <div className="flex justify-center items-center mt-4 md:col-span-2">
+                  {prescription ? (
+                    <button
+                      className="bg-blue-900 text-white py-2 px-4 rounded-md shadow hover:bg-blue-800 flex items-center"
+                      onClick={handleViewPrescription}
+                    >
+                      <AiOutlineFileText className="mr-2" /> View Prescription
+                    </button>
+                  ) : (
+                    <button
+                      className="bg-blue-900 text-white py-2 px-4 rounded-md shadow hover:bg-blue-800 flex items-center"
+                      onClick={handleAddPrescription}
+                    >
+                      <RiFileAddLine className="mr-2" /> Add Prescription
+                    </button>
+                  )}
+                  <button
+                    className="bg-blue-900 text-white py-2 px-4 rounded-md shadow hover:bg-blue-800 flex items-center ml-5"
+                    onClick={() => showDocumentPage(id)}
+                  >
+                    <AiOutlineFileText className="mr-2" /> View Medical Documents
+                  </button>
+                </div>
+              </>
+            ) : (
+              
+              <>
+              <p className='text-red-500 text-md font-bold '>Appointment cancelled</p>
+              <p className='text-red-500 text-md font-bold '>Reason: {patient.appoinmentCancelReason}</p>
+              </>
             
-            <div className="flex justify-center items-center mt-4 md:col-span-2">
-            {prescription ? (
-                <button
-                  className="bg-blue-900 text-white py-2 px-4 rounded-md shadow hover:bg-blue-800 flex items-center"
-                  onClick={handleViewPrescription}
-                >
-                  <AiOutlineFileText className="mr-2" /> View Prescription
-                </button>
-              ) : (
-                <button
-                  className="bg-blue-900 text-white py-2 px-4 rounded-md shadow hover:bg-blue-800 flex items-center"
-                  onClick={handleAddPrescription}
-                >
-                  <RiFileAddLine className="mr-2" /> Add Prescription
-                </button>
-              )}
-              <button
-                className="bg-blue-900 text-white py-2 px-4 rounded-md shadow hover:bg-blue-800 flex items-center ml-5"
-                onClick={() => showDocumentPage(id)}
-              >
-                <AiOutlineFileText className="mr-2" /> View Medical Documents
-              </button>
-            </div>
+            )}
           </div>
-        ) : (
-          <p className="text-center text-gray-700">No patient details available.</p>
+        ) : ( 
+          <p className="text-center text-gray-700 ">No patient details available.</p>
         )}
       </div>
 

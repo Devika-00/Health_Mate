@@ -158,7 +158,7 @@ const Chat: React.FC = () => {
   return (
     <>
       <Navbar />
-      <div className="h-screen flex">
+      <div className="h-[664px] flex">
         {/* Chat Menu */}
         <div className="w-1/4 bg-gray-200">
           <div className="p-4 h-full flex flex-col">
@@ -201,23 +201,15 @@ const Chat: React.FC = () => {
         {/* Chat Box */}
         <div className="w-3/4 bg-gray-100">
           <div className="flex flex-col h-full">
-            <div className="h-full overflow-y-scroll pr-4">
+            <div className="h-full flex flex-col overflow-y-scroll pr-4">
               {currentChat ? (
                 <>
                   {messages.map((m, index) => (
-                    <div key={index} ref={scrollRef}>
+                    <div className="flex-1"  key={index} ref={scrollRef}>
                       <Message message={m} own={m.senderId === user.id} receiverProfilePicture={receiverData?.profileImage} receiverName={receiverData?.doctorName} />
                     </div>
                   ))}
-                </>
-              ) : (
-                <div className="absolute top-10% text-5xl text-gray-400 cursor-default mt-52 ml-40">
-                  Open a chat to start conversation..
-                </div>
-              )}
-            </div>
-
-            <div className="flex items-center mt-2">
+                  <div className="flex items-center">
               <textarea
                 className="w-full px-3 py-1 border border-gray-300 rounded-lg focus:outline-none ml-4 mb-5 "
                 placeholder="Write a message..."
@@ -231,6 +223,16 @@ const Chat: React.FC = () => {
                 <FiSend size={18} />
               </button>
             </div>
+                </>
+                
+              ) : (
+                <div className="absolute top-10% text-5xl text-gray-400 cursor-default mt-52 ml-40">
+                  Open a chat to start conversation..
+                </div>
+              )}
+            </div>
+
+            
           </div>
         </div>
       </div>

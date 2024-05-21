@@ -37,9 +37,9 @@ const uploadCertificateToCloudinary = async (certificateFile: File | null) => {
     const formData = new FormData();
     formData.append("file", certificateFile);
     formData.append("upload_preset", cloudinaryUploadPreset);
-
+    
     const response = await fetch(CLOUDINARY_UPLOAD_API, {
-      method: "POST",
+      method: "POST",       
       body: formData,
     });
 

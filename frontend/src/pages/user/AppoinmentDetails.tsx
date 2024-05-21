@@ -189,7 +189,7 @@ const handleSubmit = async (event: any) => {
     
     // Send the array of document data to the backend
     const response = await axiosJWT.post(`${USER_API}/uploadDocuments`, {   id: id, documents: documentsData, });
-    console.log(response,"jkjdkjkjfksjf")
+    console.log(response,"jkjdkjkjfksjf");
     if (response.data.sucess) {
       showToast('Documents uploaded successfully', 'success');
       setShowDocumentModal(false);
@@ -221,7 +221,6 @@ const handleChat = () => {
       recieverId: doctorDetails._id,
     })
     .then(({ data }) => {
-      const chatID: string = data.chats._id;
       navigate("/user/chat");
     })
     .catch(() => {
@@ -258,8 +257,6 @@ const handleChat = () => {
                   Chat 
                 </button>
                   </div>
-
-
                 </div>
               </div>
             </div>
@@ -312,21 +309,21 @@ const handleChat = () => {
               <h2 className="text-2xl font-bold mb-4">Documents</h2>
               <div>
                 <p className="text-blue-900">Click the button to add the lab record documents </p>
-                <button
+                <p
                   onClick={() => showDocument(id)}
-                  className="bg-yellow-800 flex hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mt-3"
+                  className="text-orange-800 hover:text-orange-700 cursor-pointer underline mt-3 flex items-center font-bold text-md"
                 >
                   <FaFileUpload className="mr-2 mt-1" />
                   Add Documents
-                </button>
+                </p>
                 <p className="mt-3 text-blue-900">Click the view documents button to see all the lab docuemnts uploaded </p>
-                <button
+                <p
                   onClick={() => showDocumentPage(id)}
-                  className="bg-blue-800 flex hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-3"
+                  className="text-blue-800 hover:text-blue-700 cursor-pointer underline mt-3 flex items-center font-bold text-md"
                 >
                   <AiOutlineFileText className="mr-2 mt-1" />
-                  view Documents
-                </button>
+                  View Document
+                </p>
               </div>
             </div>
           </div>

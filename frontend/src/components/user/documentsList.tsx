@@ -8,10 +8,15 @@ import axiosJWT from "../../utils/axiosService";
 import { useParams } from "react-router-dom";
 import { USER_API } from "../../constants";
 import showToast from "../../utils/toaster"; // Assuming you have a toast utility for notifications
+import { useAppSelector } from "../../redux/store/Store";
+
+
+
 
 const DocumentList = () => {
   const { id } = useParams<{ id: string }>();
   const [documents, setDocuments] = useState<any[]>([]);
+  const user = useAppSelector((state) => state.UserSlice);
 
   useEffect(() => {
     const fetchDocuments = async () => {
@@ -46,12 +51,14 @@ const DocumentList = () => {
             key={index}
             className="relative border rounded-lg shadow-lg overflow-hidden"
           >
-            <button
-              className="absolute top-2 right-2 text-red-600 hover:text-red-800"
-              onClick={() => handleDelete(document._id)}
-            >
-              <AiOutlineClose className="text-2xl" />
-            </button>
+            {user.role === "user" && (
+              <button
+                className="absolute top-2 right-2 text-red-600 hover:text-red-800"
+                onClick={() => handleDelete(document._id)}
+              >
+                <AiOutlineClose className="text-2xl" />
+              </button>
+            )}
             <div className="p-4 bg-gray-200">
               <h2 className="text-lg font-semibold mb-2">
                 {document.fileName}
