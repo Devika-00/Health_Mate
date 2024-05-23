@@ -20,8 +20,8 @@ const PublicRouteUser: FC = () => {
   }
 
   export const PublicRouteAdmin: FC = () => {
-    const { isAuthenticated, role } = useAppSelector((state) => state.UserSlice );
-    if (role === "user") {
+    const { isAuthenticated, role } = useAppSelector((state) => state.AdminSlice );
+    if (role === "admin") {
       return isAuthenticated ? <Navigate to={"/admin"} replace /> : <Outlet />;
     }
     return <Outlet/>

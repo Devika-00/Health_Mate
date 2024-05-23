@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { validateLogin } from "../../utils/validation";
 import { ADMIN_API } from "../../constants";
 import { useAppDispatch } from "../../redux/store/Store";
-import { setUser } from "../../redux/slices/UserSlice";
+import { setAdmin } from '../../redux/slices/AdminSlice';
 
 
 
@@ -27,9 +27,11 @@ const AdminLoginForm: React.FC = () => {
         axios
           .post(ADMIN_API + "/login", { email, password })
           .then(({ data }) => {
+            const access_token = data.accessToken
             const { name, role } = data.admin;
+            localStorage.setItem('access_token', access_token);
             showToast(data.message, "success");
-            dispatch(setUser({ isAuthenticated: true, name, role }));
+            dispatch(setAdmin({ isAuthenticated: true, name, role }));
             navigate("/admin");
           })
           .catch(({ response }) => {

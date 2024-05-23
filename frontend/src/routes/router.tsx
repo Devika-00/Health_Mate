@@ -1,6 +1,6 @@
 import {Suspense, lazy} from "react";
 import { Routes, Route } from "react-router-dom";
-import PublicRoute, { PublicRouteDoctor } from "./PublicRoutes";
+import PublicRoute, { PublicRouteAdmin, PublicRouteDoctor } from "./PublicRoutes";
 import ProtectedRoute, {
     AdminProtectedRoute,
     DoctorProtectedRoute} from "./ProtectedRoute"
@@ -101,7 +101,7 @@ export const MainRouter = () => {
                     </Route>
 
                     {/*Admin Routes*/}
-                    <Route path="" element={<PublicRoute />}>
+                    <Route path="" element={<PublicRouteAdmin />}>
                     <Route path="/admin/login" element={<AdminLogin/>}/>
                     </Route>
 

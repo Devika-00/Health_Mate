@@ -23,13 +23,13 @@ export default () =>{
     );
 
     router.post("/login", controller.adminLogin);
-    router.get("/users", controller.getAllUser);
-    router.get("/doctors", controller.getAllTheDoctors);
-    router.patch("/block_user/:id", controller.userBlock);
-    router.patch("/block_doctor/:id", controller.doctorBlock);
-    router.get("/doctors/:id", controller.doctorDetails);
-    router.patch("/verify_doctor/:id", controller.VerifyDoctor);
-    router.patch("/verify_doctor_rejection/:id",controller.rejectionDoctor);
+    router.get("/users",authenticateAdmin, controller.getAllUser);
+    router.get("/doctors",authenticateAdmin, controller.getAllTheDoctors);
+    router.patch("/block_user/:id",authenticateAdmin, controller.userBlock);
+    router.patch("/block_doctor/:id",authenticateAdmin, controller.doctorBlock);
+    router.get("/doctors/:id",authenticateAdmin, controller.doctorDetails);
+    router.patch("/verify_doctor/:id",authenticateAdmin, controller.VerifyDoctor);
+    router.patch("/verify_doctor_rejection/:id",authenticateAdmin,controller.rejectionDoctor);
     
 
     return router;

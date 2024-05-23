@@ -27,7 +27,7 @@ export const DoctorProtectedRoute: FC = () => {
 };
 
 export const AdminProtectedRoute: FC = () => {
-  const { isAuthenticated, role } = useAppSelector((state) => state.UserSlice);
+  const { isAuthenticated, role } = useAppSelector((state) => state.AdminSlice);
 
   return isAuthenticated !== null && role === "admin" ? (
     <Outlet />
