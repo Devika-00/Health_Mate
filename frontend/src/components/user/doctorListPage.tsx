@@ -242,6 +242,7 @@ const DoctorListingPage: React.FC = () => {
             selected={selectedDate}
             onChange={handleDateChange}
             className="rounded-md px-4 py-2 w-full pl-10 "
+            minDate={new Date()}
             placeholderText="Select Date"
           />
           <div className="absolute top-3 left-2 text-gray-700">

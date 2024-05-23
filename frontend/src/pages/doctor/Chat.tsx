@@ -199,7 +199,7 @@ const Chat: React.FC = () => {
         {/* Chat Box */}
         <div className="w-3/4 bg-gray-100">
           <div className="flex flex-col h-full">
-            <div className="h-full overflow-y-scroll pr-4">
+            <div className="h-full flex flex-col overflow-y-scroll pr-4">
               {currentChat ? (
                 <>
                   {messages.map((m, index) => (
@@ -207,14 +207,7 @@ const Chat: React.FC = () => {
                       <Message message={m} own={m.senderId === doctor.id}  receiverProfilePicture={receiverData?.profilePicture} receiverName={receiverData?.name} />
                     </div>
                   ))}
-                </>
-              ) : (
-                <div className="absolute top-10% text-5xl text-gray-400 cursor-default mt-52 ml-40">
-                  Open a chat to start conversation..
-                </div>
-              )}
-            </div>
-            <div className="flex items-center mt-2">
+                   <div className="flex items-center mt-2">
               <textarea
                 className="w-full px-3 py-1 border border-gray-300 rounded-lg focus:outline-none ml-4 mb-5 "
                 placeholder="Write a message..."
@@ -227,6 +220,13 @@ const Chat: React.FC = () => {
               >
                 <FiSend size={18} />
               </button>
+            </div>
+                </>
+              ) : (
+                <div className="absolute top-10% text-5xl text-gray-400 cursor-default mt-52 ml-40">
+                  Open a chat to start conversation..
+                </div>
+              )}
             </div>
           </div>
         </div>
