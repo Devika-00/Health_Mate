@@ -79,6 +79,11 @@ export const doctorRepositoryMongodb = () =>{
         available: true,
       }).select('doctorId');
       doctorIds = dateFilteredTimeSlots.map((slot: any) => slot.doctorId.toString());
+      
+      // If no doctor IDs are found for the selected date, return an empty result
+      if (doctorIds.length === 0) {
+        return { total: 0, doctors: [] };
+      }
     }
   
     // Find doctor IDs with available time slots at the selected time slot
@@ -95,6 +100,11 @@ export const doctorRepositoryMongodb = () =>{
       } else {
         doctorIds = timeFilteredDoctorIds;
       }
+  
+      // If doctor IDs list becomes empty after filtering by time slot, return an empty result
+      if (doctorIds.length === 0) {
+        return { total: 0, doctors: [] };
+      }
     }
   
     // Add doctor IDs to the query if there are any filtered by date/time slot
@@ -109,7 +119,6 @@ export const doctorRepositoryMongodb = () =>{
   
     return { total, doctors };
   };
-  
 
   const verifyDoctor = async (token: string) =>
     await Doctor.findOneAndUpdate(
