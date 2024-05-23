@@ -1,6 +1,7 @@
 import { doctorEntityType, googleSignInUserEntityType } from "../../../../entities/doctorEntity";
 import { DoctorInterface } from "../../../../types/doctorInterface";
 import Doctor from "../models/doctor";
+import timeSlots from "../models/timeSlots";
 
 export const doctorRepositoryMongodb = () =>{
     const getDoctorById = async (id: string) =>
@@ -56,36 +57,56 @@ export const doctorRepositoryMongodb = () =>{
     page: number;
     limit: number;
   }) => {
-    let query: Record<string, any> = {}; 
-
+    let query: Record<string, any> = {};
+  
     if (searchQuery) {
-      query.doctorName = { $regex: searchQuery, $options: "i" };
+      query.doctorName = { $regex: searchQuery, $options: 'i' };
     }
-
+  
     if (department) {
       query.department = department;
     }
-
+  
+    // Initialize an array to hold doctor IDs matching date and/or time slot criteria
+    let doctorIds: string[] = [];
+  
+    // Find doctor IDs with available time slots on the selected date
     if (selectedDate) {
       const date = new Date(selectedDate);
-      query = {
-        ...query,
-        $or: [
-          { startDate: { $lte: date }, endDate: { $gte: date } },
-          {
-            slotTime: selectedTimeSlot
-              ? { $in: [selectedTimeSlot] }
-              : { $exists: true },
-          },
-        ],
-      };
+      const dateFilteredTimeSlots = await timeSlots.find({
+        startDate: { $lte: date },
+        endDate: { $gte: date },
+        available: true,
+      }).select('doctorId');
+      doctorIds = dateFilteredTimeSlots.map((slot: any) => slot.doctorId.toString());
     }
-
+  
+    // Find doctor IDs with available time slots at the selected time slot
+    if (selectedTimeSlot) {
+      const timeFilteredTimeSlots = await timeSlots.find({
+        slotTime: selectedTimeSlot,
+        available: true,
+      }).select('doctorId');
+      const timeFilteredDoctorIds = timeFilteredTimeSlots.map((slot: any) => slot.doctorId.toString());
+  
+      // Combine doctor IDs if both date and time slot filters are provided
+      if (selectedDate) {
+        doctorIds = doctorIds.filter(id => timeFilteredDoctorIds.includes(id));
+      } else {
+        doctorIds = timeFilteredDoctorIds;
+      }
+    }
+  
+    // Add doctor IDs to the query if there are any filtered by date/time slot
+    if (doctorIds.length > 0) {
+      query._id = { $in: doctorIds };
+    }
+  
     const total = await Doctor.countDocuments(query);
     const doctors = await Doctor.find(query)
       .skip((page - 1) * limit)
       .limit(limit);
-
+  
     return { total, doctors };
   };
   
