@@ -243,18 +243,38 @@ const userController=(
    * METHOD:GET
    * Retrieve all the doctors from db
    */
-const doctorPage = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const doctors = await getDoctors(dbDoctorRepository);
-    return res.status(HttpStatus.OK).json({ success: true, doctors });
-  } catch (error) {
-    next(error);
-  }
-};
+  const doctorPage = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { searchQuery, department, selectedDate, selectedTimeSlot} = req.query;
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 8;
+      
+
+      const searchQueryStr = searchQuery as string | undefined;
+      const departmentStr = department as string | undefined;
+      const selectedDateStr = selectedDate as string | undefined;
+      const selectedTimeSlotStr = selectedTimeSlot as string | undefined;
+      
+      
+      const doctors = await getDoctors({
+        searchQuery: searchQueryStr,
+        department: departmentStr,
+        selectedDate: selectedDateStr,
+        selectedTimeSlot: selectedTimeSlotStr,
+        page,
+        limit,
+      }, dbDoctorRepository);
+
+      return res.status(200).json({ success: true, ...doctors });
+    } catch (error) {
+      next(error);
+    }
+  };
+  
 
 
  /*

@@ -8,8 +8,36 @@ import { doctorVerificationRejectedEmailPage } from "../../../utils/doctorVerifi
 export const getUsers = async (userDbRepository: ReturnType<userDbInterface>) =>
   await userDbRepository.getAllUsers();
 
-export const getDoctors = async (doctorDbRepository: ReturnType<doctorDbInterface>) =>
+export const getAllDoctors = async (doctorDbRepository: ReturnType<doctorDbInterface>) =>
   await doctorDbRepository.getAllDoctors();
+
+export const getDoctors = async (
+  {
+    searchQuery,
+    department,
+    selectedDate,
+    selectedTimeSlot,
+    page,
+    limit
+  }: {
+    searchQuery?: string;
+    department?: string;
+    selectedDate?: string;
+    selectedTimeSlot?: string;
+    page: number;
+    limit: number;
+  },
+  doctorDbRepository: ReturnType<doctorDbInterface>
+) => {
+  return await doctorDbRepository.getFilteredDoctors({
+    searchQuery,
+    department,
+    selectedDate,
+    selectedTimeSlot,
+    page,
+    limit
+  });
+};
 
 export const getSingleDoctor = async ( id: string, doctorDbRepository: ReturnType<doctorDbInterface>) =>
   await doctorDbRepository.getDoctorById(id);

@@ -2,6 +2,15 @@ import { doctorEntityType, googleSignInUserEntityType } from "../../entities/doc
 import { doctorRepositoryMongodbType } from "../../frameworks/database/mongodb/repositories/doctorRepositoryMongodb";
 import { DoctorInterface } from "../../types/doctorInterface";
 
+interface DoctorFilterParams {
+  searchQuery?: string;
+  department?: string;
+  selectedDate?: string;
+  selectedTimeSlot?: string;
+  page: number;
+  limit: number;
+}
+
 export const doctorDbRepository = (
     repository:ReturnType<doctorRepositoryMongodbType>
 )=>{
@@ -16,6 +25,24 @@ export const doctorDbRepository = (
   const updateDoctorBlock = async (id: string, status: boolean) =>{
       await repository.updateDoctorBlock(id, status);
   }
+
+  // Update the function signature to use the defined type
+const getFilteredDoctors = async ({
+  searchQuery,
+  department,
+  selectedDate,
+  selectedTimeSlot,
+  page,
+  limit,
+}: DoctorFilterParams) => 
+  await repository.getFilteredDoctors({
+    searchQuery,
+    department,
+    selectedDate,
+    selectedTimeSlot,
+    page,
+    limit,
+  });
     
 
   const getDoctorByemail = async (email: string) =>
@@ -47,7 +74,7 @@ export const doctorDbRepository = (
         getDoctorByIdUpdate,
         getDoctorByIdUpdateRejected,
         getRejectedDoctorById,
-
+        getFilteredDoctors,
     }
 }
 

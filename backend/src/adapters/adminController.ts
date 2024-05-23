@@ -7,6 +7,7 @@ import {getUsers,
   getSingleDoctor,
   getDoctor,
   getDoctorRejected,
+  getAllDoctors,
 } from "../app/use-cases/Admin/adminRead";
 import { AuthServiceInterfaceType } from "../app/service-interface/authServiceInterface";
 import { userDbInterface } from "../app/interfaces/userDbRepository";
@@ -81,13 +82,13 @@ const getAllUser = async (
    * METHOD:GET
    * Retrieve all the doctors from db
    */
-const getAllDoctors = async (
+const getAllTheDoctors = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const doctors = await getDoctors(dbDoctorRepository);
+    const doctors = await getAllDoctors(dbDoctorRepository);
     return res.status(HttpStatus.OK).json({ success: true, doctors });
   } catch (error) {
     next(error);
@@ -190,7 +191,7 @@ const getAllDoctors = async (
             adminLogin,
             getAllUser,
             userBlock,
-            getAllDoctors,
+            getAllTheDoctors,
             doctorBlock,
             doctorDetails,
             VerifyDoctor,

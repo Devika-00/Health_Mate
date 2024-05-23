@@ -39,6 +39,55 @@ export const doctorRepositoryMongodb = () =>{
   const updateDoctorBlock = async (id: string, status: boolean) => {
     await Doctor.findByIdAndUpdate(id, { isBlocked: status });
   }
+
+  
+  const getFilteredDoctors = async ({
+    searchQuery,
+    department,
+    selectedDate,
+    selectedTimeSlot,
+    page,
+    limit,
+  }: {
+    searchQuery?: string;
+    department?: string;
+    selectedDate?: string;
+    selectedTimeSlot?: string;
+    page: number;
+    limit: number;
+  }) => {
+    let query: Record<string, any> = {}; 
+
+    if (searchQuery) {
+      query.doctorName = { $regex: searchQuery, $options: "i" };
+    }
+
+    if (department) {
+      query.department = department;
+    }
+
+    if (selectedDate) {
+      const date = new Date(selectedDate);
+      query = {
+        ...query,
+        $or: [
+          { startDate: { $lte: date }, endDate: { $gte: date } },
+          {
+            slotTime: selectedTimeSlot
+              ? { $in: [selectedTimeSlot] }
+              : { $exists: true },
+          },
+        ],
+      };
+    }
+
+    const total = await Doctor.countDocuments(query);
+    const doctors = await Doctor.find(query)
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    return { total, doctors };
+  };
   
 
   const verifyDoctor = async (token: string) =>
@@ -77,6 +126,7 @@ export const doctorRepositoryMongodb = () =>{
     getDoctorByIdUpdateRejected,
     getDoctorByIdUpdate,
     getRejectedDoctorById,
+    getFilteredDoctors,
 
 
   }
