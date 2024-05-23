@@ -82,6 +82,15 @@ const AppointmentOnlineBookingPage: React.FC = () => {
     fetchBookings();
   }, [id]);
 
+  
+  function stripDate(dateString: any) {
+    const date = new Date(dateString);
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
+  }
+
 
   const stripePromise = loadStripe('pk_test_51PD7KTSIzXVKkSTfUhacmtu4D3bCdX2OCgy7mCYS0JJVvro7cM8QwwIoQVHcBlCEg41UUlqIplqs0avKVML03Bnc00iATAKl4Y');
 
@@ -90,12 +99,12 @@ const AppointmentOnlineBookingPage: React.FC = () => {
       const appointmentData = {
         doctorId: id,
         patientDetails: existingPatientDetails || patientDetails,
-        consultationType: 'Offline',
+        consultationType: 'Onfline',
         fee: 400,
         paymentStatus: 'Pending',
         appoinmentStatus:'Booked',
         appoinmentCancelReason:'',
-        date: selectedDate,
+        date: stripDate(selectedDate),
         timeSlot: selectedTimeSlot,
       };
       const response = await axiosJWT.post(`${USER_API}/appointments`, appointmentData);
@@ -106,11 +115,13 @@ const AppointmentOnlineBookingPage: React.FC = () => {
           sessionId:response.data.id,
         });
         if (result?.error) console.error(result.error);
-      }
+      
       const bookingId = response.data.booking.bookingId;
       Navigate({
         to: `${USER_API}/payment_status/${bookingId}?success=true`
-      });
+      });}else{
+        showToast(response.data.message,"error")
+      }
     }catch (error) {
       console.error('Error booking appointment:', error);
       showToast('Error booking appointment. Please try again later.', 'error');
@@ -191,7 +202,7 @@ const AppointmentOnlineBookingPage: React.FC = () => {
               <p>{doctor.department}</p>
               <p className="text-green-600 font-semibold"> Verified </p>
               <div className="text-gray-800 bg-blue-100 p-4 rounded-md mt-5 font-bold">
-                <p className="mb-2">Consultation: Offline</p>
+                <p className="mb-2">Consultation: Online</p>
                 <p>Fee: 400/-</p>
               </div>
             </div>

@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 import store, { persistor } from "./redux/store/Store";
 import { PersistGate } from "redux-persist/integration/react";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import ZegoCloud from './utils/zegoService';
 
 
 
