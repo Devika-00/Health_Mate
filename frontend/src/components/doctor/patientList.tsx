@@ -63,23 +63,37 @@ const AppointmentDetails: React.FC = () => {
           </div>
         </div>   
 
-          {filteredAppointments.length === 0 ? (
-            <p className="text-xl">You have no appointments booked.</p>
-          ):(
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        {filteredAppointments.length === 0 ? (
+          <p className="text-xl">You have no appointments booked.</p>
+        ) : (
+          <table className="table-auto w-full">
+            <thead>
+              <tr>
+                <th className="px-4 py-2">Patient Name</th>
+                <th className="px-4 py-2">Age</th>
+                <th className="px-4 py-2">Date</th>
+                <th className="px-4 py-2">Time</th>
+                <th className="px-4 py-2">Details</th>
+              </tr>
+            </thead>
+            <tbody>
               {filteredAppointments.map(bookingDetail => (
-                <div className="bg-blue-50 p-6 rounded-lg shadow-md border border-blue-200 cursor-pointer" key={bookingDetail._id}>
-                  <Link to={`/patient-details/${bookingDetail._id}`}>
-                    <p className="text-xl font-bold mb-2">{bookingDetail.patientName}</p>
-                    <p className="mb-2">Age: {bookingDetail.patientAge}</p>
-                    <p className="mb-2">Date: {new Date(bookingDetail.date).toLocaleDateString()}</p>
-                    <p className="mb-2">Time: {bookingDetail.timeSlot}</p>
-                  </Link>
-                </div>
+                <tr key={bookingDetail._id}
+                className="hover:bg-gray-200 cursor-pointer transition duration-300">
+                  <td className="border px-4 py-2">{bookingDetail.patientName}</td>
+                  <td className="border px-4 py-2">{bookingDetail.patientAge}</td>
+                  <td className="border px-4 py-2">{new Date(bookingDetail.date).toLocaleDateString()}</td>
+                  <td className="border px-4 py-2">{bookingDetail.timeSlot}</td>
+                  <td className="border px-4 py-2">
+                    <Link to={`/patient-details/${bookingDetail._id}`} className="text-blue-500 hover:underline">
+                      View Details
+                    </Link>
+                  </td>
+                </tr>
               ))}
-            </div>
-          )}
-
+            </tbody>
+          </table>
+        )}
       </div>
     </>
   );

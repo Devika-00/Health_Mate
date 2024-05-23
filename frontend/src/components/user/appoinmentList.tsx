@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios'; // You might need to adjust this import based on your project setup
-import { USER_API } from '../../constants';
 import axiosJWT from '../../utils/axiosService';
+import { USER_API } from '../../constants';
 
 const AppointmentsListPage = () => {
-  const [appointments, setAppointments] = useState([]);
+  const [appoinments, setAppointments] = useState<any[]>([]);
 
   useEffect(() => {
     // Fetch appointments data from API
     const fetchAppointments = async () => {
       try {
-        const response = await axiosJWT.get(`${USER_API}/allAppoinments`); 
+        const response = await axiosJWT.get(`${USER_API}/allAppoinments`);
         setAppointments(response.data.bookings.bookingDetails);
       } catch (error) {
         console.error('Error fetching appointments:', error);
@@ -21,24 +20,43 @@ const AppointmentsListPage = () => {
     fetchAppointments();
   }, []);
 
+  const formatDate = (dateString: string) => {
+    const options:any = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Appointments List</h1>
 
-      {appointments.length === 0 ? (
+      {appoinments.length === 0 ? (
         <p className="text-xl">You have no appointments booked.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {appointments.map((appointment:any) => (
-            <Link to={`/appoinmentDetails/${appointment._id}`} key={appointment._id}>
-              <div className="border rounded-lg shadow-md p-4 cursor-pointer transition duration-300 transform hover:scale-105">
-                <h2 className="text-xl font-bold mb-2">{appointment.patientName}</h2>
-                <p className="text-gray-600">Age: {appointment.patientAge}</p>
-                <p className="text-gray-600">Date: {appointment.date}</p>
-                <p className="text-gray-600">Time: {appointment.timeSlot}</p>
-              </div>
-            </Link>
-          ))}
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white border border-gray-300">
+            <thead>
+              <tr className="w-full bg-gray-800 text-white">
+                <th className="py-2 px-4 border-b">Name</th>
+                <th className="py-2 px-4 border-b">Age</th>
+                <th className="py-2 px-4 border-b">Date</th>
+                <th className="py-2 px-4 border-b">Time Slot</th>
+              </tr>
+            </thead>
+            <tbody>
+              {appoinments.map((appointment: any) => (
+                <tr
+                  key={appointment._id}
+                  className="hover:bg-gray-200 cursor-pointer transition duration-300"
+                  onClick={() => window.location.href = `/appoinmentDetails/${appointment._id}`}
+                >
+                  <td className="py-2 px-4 border-b text-center">{appointment.patientName}</td>
+                  <td className="py-2 px-4 border-b text-center">{appointment.patientAge}</td>
+                  <td className="py-2 px-4 border-b text-center">{formatDate(appointment.date)}</td>
+                  <td className="py-2 px-4 border-b text-center">{appointment.timeSlot}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
