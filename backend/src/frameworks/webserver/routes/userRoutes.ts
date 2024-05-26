@@ -67,7 +67,7 @@ router.post("/fetchPrescription",authenticateUser,controller.fetchPrescription);
 router.post("/uploadDocuments",authenticateUser,controller.labRecords);
 router.get("/documents/:id",authenticateUser,controller.fetchDocuments);
 router.delete("/documents/:id",authenticateUser,controller.deleteDocument);
-
+router.get("/fetchWallet/:id",authenticateUser,controller.getWallet);
 /*  Booking Routes for booking Controller  */
 
 router.post("/appointments",authenticateUser,_bookingController.BookAppoinment);

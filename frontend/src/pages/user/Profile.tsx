@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Navbar from '../../components/user/Navbar/navbar';
 import Footer from '../../components/user/Footer/Footer';
 import { Link } from 'react-router-dom';
-import { BsChatSquareDots } from 'react-icons/bs'; 
+import { BsChatSquareDots, BsWallet } from 'react-icons/bs'; 
 import useProfile from "../../hooks/userProfile";
 import { MdOutlineModeEdit } from "react-icons/md";
 
@@ -25,11 +25,12 @@ const Profile: React.FC = () => {
       <h2 className="text-4xl font-bold mt-6 text-center text-blue-900">Profile</h2>
       <div className="flex flex-col items-center justify-center h-screen bg-white">
         <div className="flex flex-col items-center w-2/5 justify-center mb-10 mt-12 bg-blue-900 rounded-lg p-6 shadow-lg text-white relative">
-          {/* Chat icon */}
-          {/* <Link to="/chat" className="absolute top-4 right-4 bg-white rounded-full p-2">
-            <BsChatSquareDots className="h-8 w-8 mt-1 text-blue-900" />
-          </Link> */}
-          {/* Profile Image */}
+           {/* Wallet button */}
+           <Link to="/user/wallet" className="absolute top-4 right-4 bg-gray-100 hover:bg-blue-100 rounded-md p-2 flex items-center">
+            <BsWallet className="h-7 w-7 text-blue-900" />
+            <span className="ml-2 text-blue-900">Wallet</span>
+          </Link>
+          
           <div className="relative mb-4">
             <img src={
                   imagePreview

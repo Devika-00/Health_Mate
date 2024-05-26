@@ -37,6 +37,9 @@ export const bookingDbRepository = (
   const changeBookingstatusPayment = async(id:string)=>
     await repository.changeBookingstatusPayment(id)
 
+  const changeWallet = async(fee:number,userId:string)=>
+    await repository.changeWalletMoney(fee,userId);
+
     return {
         createBooking,
         getAllPatients,
@@ -48,6 +51,7 @@ export const bookingDbRepository = (
         changeBookingstatus,
         getAllBookingByDoctorId,
         changeBookingstatusPayment,
+        changeWallet,
     }
   }
 

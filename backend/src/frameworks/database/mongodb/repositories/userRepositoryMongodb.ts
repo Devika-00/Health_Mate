@@ -2,6 +2,7 @@ import { userEntityType,googleSignInUserEntityType } from "../../../../entities/
 import { UserInterface } from "../../../../types/userInterface";
 import OTPModel from "../models/OTPmodel";
 import User from "../models/user";
+import wallet from "../models/wallet";
 
 
 export const userRepositoryMongodb = () =>{
@@ -27,6 +28,8 @@ export const userRepositoryMongodb = () =>{
         return newUser;
     };
 
+    const addWallet = async (userId: string) => await wallet.create({ userId });
+
     const AddOTP = async (OTP: string, userId: string)=>{
         await OTPModel.create({OTP, userId});
     };
@@ -35,6 +38,11 @@ export const userRepositoryMongodb = () =>{
 
     const deleteOtpUser = async (userId: string) =>await OTPModel.deleteOne({ userId });
 
+    const getWalletUser = async (userId:string) => {
+       const response = await wallet.findOne({userId:userId}); 
+        return response;
+
+    }
 
     const updateUserInfo = async (id: string, updateData:Record<string,any>)=>await User.findByIdAndUpdate(id,updateData,{new:true});
 
@@ -74,6 +82,8 @@ export const userRepositoryMongodb = () =>{
         getAllUsers,
         registerGoogleSignedUser,
         updateUserBlock,
+        addWallet,
+        getWalletUser,
 
     };
 

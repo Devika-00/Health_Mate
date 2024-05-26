@@ -46,6 +46,7 @@ const Chat = lazy(()=>import("../pages/user/Chat"));
 const DoctorChat=lazy(()=>import("../pages/doctor/Chat"));
 const UploadForm = lazy(()=>import("../pages/user/labRecord"));
 const DocumentListPage = lazy(()=>import("../pages/user/documentsListPage"));
+const WalletPage = lazy(()=>import("../pages/user/wallet"));
 
 export const MainRouter = () => {
     return (
@@ -79,6 +80,7 @@ export const MainRouter = () => {
                      <Route path="/user/online-consultation" element={<OnlineDoctors/>}/>
                      <Route path="/user/offline-consultation" element={<OfflineDoctors/>}/>
                      <Route path="/user/chat" element={<Chat/>}/>
+                     <Route path="/user/wallet" element={<WalletPage/>}/>
                      </Route>
                     
 

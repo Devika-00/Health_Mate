@@ -17,3 +17,13 @@ export const   updateUser = async (
 ) => await userRepository.updateProfile(userID, updateData);
 
 
+export const getWalletUser = async (
+  userId:string,
+  userRepository: ReturnType<userDbInterface>
+)=> {
+const amount =  userRepository.getWallet(userId);
+console.log(amount,"amountttt");
+return amount;
+} 
+
+

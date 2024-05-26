@@ -154,7 +154,23 @@ export const createPayment = async (
     bookingRepository:ReturnType<BookingDbRepositoryInterface>
   )=>{
     const changeStatus = await bookingRepository.changeBookingstatus(appoinmentStatus,cancelReason,id);
-     return changeStatus;
+
+     // Retrieve the booking entity by its ID
+  const booking = await bookingRepository.getBookingById(id);
+console.log(booking,"ghfghfjg");
+  // Get the fee from the booking entity
+  //@ts-ignore
+  const fee:any = booking?.fee;
+   //@ts-ignore
+  const UserId = booking?.userId;
+
+  // Change the wallet amount using the fee
+     //@ts-ignore
+  const changeWalletAmount = await bookingRepository.changeWallet(fee,UserId);
+
+     return {changeStatus,
+      changeWalletAmount
+     };
   }
 
   /**doctor use cases */

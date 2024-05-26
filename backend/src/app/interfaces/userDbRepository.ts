@@ -31,8 +31,14 @@ export const userDbRepository = (
     const verifyAndResetPassword = async (verificationCode: string,password: string) =>await repository.findVerificationCodeAndUpdate(verificationCode, password);
 
     const getAllUsers = async () => await repository.getAllUsers();
+
+    const getWallet = async (userId:string) =>await repository.getWalletUser(userId);
     
     const registerGoogleSignedUser = async (user: googleSignInUserEntityType) =>await repository.registerGoogleSignedUser(user);
+
+    const addWallet = async (userID: string) =>
+        await repository.addWallet(userID);
+    
 
     return {
         getUserbyEmail,
@@ -47,6 +53,8 @@ export const userDbRepository = (
         getAllUsers,
         registerGoogleSignedUser,
         updateUserBlock,
+        addWallet,
+        getWallet,
 
     };
 };

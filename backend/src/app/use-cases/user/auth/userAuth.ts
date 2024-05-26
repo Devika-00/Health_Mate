@@ -36,6 +36,8 @@ export const userRegister = async (
     //create a new User 
     const createdUser: UserInterface = await userRepository.addUser(userEntity);
     console.log(createdUser);
+
+    const wallet = await userRepository.addWallet(createdUser.id);
     
     const OTP = authService.generateOTP();  //generate otp
     const emailSubject = "Account verification";
@@ -179,6 +181,7 @@ export const authenticateGoogleSignInUser = async (
       googleSignInUser
     );
     const userId = createdUser._id as unknown as string;
+    const wallet = await userDbRepository.addWallet(userId);
 
     const  accessToken  = authService.createTokens(
       userId,

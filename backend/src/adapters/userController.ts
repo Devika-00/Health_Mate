@@ -11,6 +11,7 @@ import {
   
 } from "../app/use-cases/user/auth/userAuth";
 import {getUserProfile,
+        getWalletUser,
         updateUser} from "../app/use-cases/user/read & update/profile";
 import { userDbInterface } from "../app/interfaces/userDbRepository";
 import { GoogleResponseType } from "../types/googleResponseType";
@@ -207,7 +208,7 @@ const userController=(
   ) => {
     try {
       const userId = req.user;
-      console.log(userId,'userid')
+      console.log(userId,'userid confirminggg')
       const user  = await getUserProfile(
         userId,
         dbRepositoryUser
@@ -218,6 +219,29 @@ const userController=(
       next(error);
     }
   };
+
+
+/**
+   * * METHOD :GET
+   * * Retrieve  user wallet
+   */
+const getWallet = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const {id} = req.params;
+    
+    const getWallet = await getWalletUser(id,dbRepositoryUser);
+    res.status(200).json({ success: true, getWallet});
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
   /**
    * * METHOD :PATCH
    * * update user profile
@@ -441,6 +465,7 @@ const deleteDocument = async(
         labRecords,
         fetchDocuments,
         deleteDocument,
+        getWallet,
     };
     };
 

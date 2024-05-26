@@ -3,6 +3,7 @@ import { BookingEntityType } from "../../../../entities/bookingEntity";
 import Booking from "../models/Booking";
 import { Types } from "mongoose";
 import { get } from "mongoose";
+import wallet from "../models/wallet";
 
 
 export const bookingRepositoryMongodb = () => {
@@ -66,6 +67,24 @@ export const bookingRepositoryMongodb = () => {
       return await Booking.findByIdAndUpdate(id, { paymentStatus: "Success" });
     };
     
+    const changeWalletMoney = async (fee:number,userId:string)=>{
+      const walletData = await wallet.findOne({userId:userId});
+
+      if (!walletData) {
+        throw new Error('Wallet not found for the user');
+      }
+
+       // Calculate the new balance
+       //@ts-ignore
+    const newBalance = walletData.balance + fee;
+
+    // Update the wallet with the new balance
+    //@ts-ignore
+    walletData?.balance = newBalance;
+    //@ts-ignore
+    await walletData.save();  
+    }
+
     
     return{
         createBooking,
@@ -78,6 +97,7 @@ export const bookingRepositoryMongodb = () => {
         changeBookingStatus,
         getAllBookingByDoctorId,
         changeBookingstatusPayment,
+        changeWalletMoney,
     }    
 
 }
