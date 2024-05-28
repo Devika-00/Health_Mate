@@ -126,8 +126,8 @@ function invite() {
   const handleChat = () => {
     axios
       .post(CHAT_API + `/conversations`, {
-        senderId: doctor.id,
-        recieverId: patient.userId,
+        senderId: patient.userId,
+        recieverId: doctor.id,
       })
       .then(({ data }) => {
         console.log(data,"dataaaaaaaa")

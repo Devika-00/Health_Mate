@@ -15,7 +15,7 @@ const Chat: React.FC = () => {
   const [currentChat, setCurrentChat] = useState<any | null>(null);
   const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState<string>("");
-  const [arrivalMessage, setarrivalMessage] = useState<any>(null);
+  const [arrivalMessage, setArrivalMessage] = useState<any>(null);
   const [receiverData, setReceiverData] = useState<string | null>(null);
   const socket = useRef<any>();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -23,34 +23,61 @@ const Chat: React.FC = () => {
   useEffect(() => {
     socket.current = io("ws://localhost:3000");
     socket.current.on("getMessage", (data: any) => {
-      setarrivalMessage({
+      setArrivalMessage({
         senderId: data.senderId,
         text: data.text,
         createdAt: Date.now(),
       });
     });
+
+    socket.current.on("updateLastMessage", (data: any) => {
+      setConversations((prevConversations) => {
+        const updatedConversations = prevConversations.map((conversation) =>
+          conversation._id === data.conversationId
+            ? { ...conversation, lastMessage: data.lastMessage }
+            : conversation
+        );
+
+        // Sort the conversations by the updatedAt field of the lastMessage
+        updatedConversations.sort((a, b) =>
+          new Date(b.lastMessage.createdAt).getTime() -
+          new Date(a.lastMessage.createdAt).getTime()
+        );
+
+        return updatedConversations;
+      });
+    });
   }, []);
 
-  useEffect(() => {
-    arrivalMessage &&
-      currentChat?.members.includes(arrivalMessage.senderId) &&
-      setMessages((prev) => [...prev, arrivalMessage]);
+  console.log(arrivalMessage,"kkkkkkkk");
+  console.log(conversations,"llllllllllll");
 
+  useEffect(() => {
     if (arrivalMessage) {
-      setConversations((prevConversations) =>
-        prevConversations.map((conversation) =>
+      if (currentChat?.members.includes(arrivalMessage.senderId)) {
+        setMessages((prev) => [...prev, arrivalMessage]);
+      }
+      setConversations((prevConversations) => {
+        const updatedConversations = prevConversations.map((conversation) =>
           conversation._id === currentChat?._id
             ? { ...conversation, lastMessage: arrivalMessage }
             : conversation
-        )
-      );
+        );
+
+        // Sort the conversations by the updatedAt field of the lastMessage
+        updatedConversations.sort((a, b) =>
+          new Date(b.lastMessage.createdAt).getTime() -
+          new Date(a.lastMessage.createdAt).getTime()
+        );
+
+        return updatedConversations;
+      });
     }
   }, [arrivalMessage, currentChat]);
 
   useEffect(() => {
     socket.current.emit("addUser", doctor.id);
     socket.current.on("getUsers", (doctors: any) => {
-      console.log(doctors, "hellooooo");
     });
   }, [doctor]);
 
@@ -72,6 +99,12 @@ const Chat: React.FC = () => {
             const lastMessage = messages[messages.length - 1];
             return { ...conversation, lastMessage };
           })
+        );
+
+        // Sort the conversations by the updatedAt field of the lastMessage
+        updatedConversations.sort((a, b) =>
+          new Date(b.lastMessage.createdAt).getTime() -
+          new Date(a.lastMessage.createdAt).getTime()
         );
 
         setConversations(updatedConversations);
@@ -100,19 +133,41 @@ const Chat: React.FC = () => {
 
   const handleConversationClick = async (conversation: any) => {
     setCurrentChat(conversation);
+
     // Fetch receiver details
     const id = conversation.members.find(
-        (member: any) => member !== doctor.id
+      (member: any) => member !== doctor.id
     );
 
     try {
-        const response = await axiosJWT.get(`${DOCTOR_API}/user/${id}`);
-        console.log(response, "response"); // Check response in console
-        setReceiverData(response.data.user); // Assuming the profile picture URL is stored in `profilePicture`
+      const response = await axiosJWT.get(`${DOCTOR_API}/user/${id}`);
+      console.log(response, "response"); // Check response in console
+      setReceiverData(response.data.user); // Assuming the profile picture URL is stored in `profilePicture`
     } catch (error) {
-        console.error("Error fetching receiver details:", error);
-        // Handle error: Log or display error message
+      console.error("Error fetching receiver details:", error);
+      // Handle error: Log or display error message
     }
+
+    // Update last message when the conversation is opened
+    const lastMessageResponse = await axiosJWT.get(
+      `${CHAT_API}/messages/${conversation._id}`
+    );
+    const lastMessageData = lastMessageResponse.data.messages.slice(-1)[0];
+    setConversations((prevConversations) => {
+      const updatedConversations = prevConversations.map((conv) =>
+        conv._id === conversation._id
+          ? { ...conv, lastMessage: lastMessageData }
+          : conv
+      );
+
+      // Sort the conversations by the updatedAt field of the lastMessage
+      updatedConversations.sort((a, b) =>
+        new Date(b.lastMessage.createdAt).getTime() -
+        new Date(a.lastMessage.createdAt).getTime()
+      );
+
+      return updatedConversations;
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -131,19 +186,28 @@ const Chat: React.FC = () => {
       senderId: doctor.id,
       receiverId,
       text: newMessage,
+      conversationId: currentChat?._id,
     });
 
     try {
       const response = await axiosJWT.post(`${CHAT_API}/messages`, message);
       setMessages([...messages, response.data]);
       setNewMessage("");
-      setConversations((prevConversations) =>
-        prevConversations.map((conversation) =>
+      setConversations((prevConversations) => {
+        const updatedConversations = prevConversations.map((conversation) =>
           conversation._id === currentChat?._id
             ? { ...conversation, lastMessage: response.data }
             : conversation
-        )
-      );
+        );
+
+        // Sort the conversations by the updatedAt field of the lastMessage
+        updatedConversations.sort((a, b) =>
+          new Date(b.lastMessage.createdAt).getTime() -
+          new Date(a.lastMessage.createdAt).getTime()
+        );
+
+        return updatedConversations;
+      });
     } catch (error) {
       console.error("Error sending message:", error);
     }
@@ -152,7 +216,6 @@ const Chat: React.FC = () => {
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
   return (
     <>
       <Navbar />
@@ -177,7 +240,7 @@ const Chat: React.FC = () => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  d="M15 15l5.79 5.79M4 11a7 7 0 017-7 7 7 0 017 7 7 7 0 01-7 7 7 7 0 01-7-7z"
+                  d="M15 15l5.79 5.79M4 11a7 7 0 017-7 7 7 0 017 7 7 7 0 01-7 7z"
                 />
               </svg>
             </div>
@@ -204,23 +267,28 @@ const Chat: React.FC = () => {
                 <>
                   {messages.map((m, index) => (
                     <div className="flex-1" key={index} ref={scrollRef}>
-                      <Message message={m} own={m.senderId === doctor.id}  receiverProfilePicture={receiverData?.profilePicture} receiverName={receiverData?.name} />
+                      <Message
+                        message={m}
+                        own={m.senderId === doctor.id}
+                        receiverProfilePicture={receiverData?.profilePicture}
+                        receiverName={receiverData?.name}
+                      />
                     </div>
                   ))}
-                   <div className="flex items-center mt-2">
-              <textarea
-                className="w-full px-3 py-1 border border-gray-300 rounded-lg focus:outline-none ml-4 mb-5 "
-                placeholder="Write a message..."
-                onChange={(e) => setNewMessage(e.target.value)}
-                value={newMessage}
-              ></textarea>
-              <button
-                className="ml-2 mb-5 mr-5 px-5  py-3 bg-blue-500 text-white rounded-md cursor-pointer focus:outline-none hover:bg-blue-600"
-                onClick={handleSubmit}
-              >
-                <FiSend size={18} />
-              </button>
-            </div>
+                  <div className="flex items-center mt-2">
+                    <textarea
+                      className="w-full px-3 py-1 border border-gray-300 rounded-lg focus:outline-none ml-4 mb-5"
+                      placeholder="Write a message..."
+                      onChange={(e) => setNewMessage(e.target.value)}
+                      value={newMessage}
+                    ></textarea>
+                    <button
+                      className="ml-2 mb-5 mr-5 px-5 py-3 bg-blue-500 text-white rounded-md cursor-pointer focus:outline-none hover:bg-blue-600"
+                      onClick={handleSubmit}
+                    >
+                      <FiSend size={18} />
+                    </button>
+                  </div>
                 </>
               ) : (
                 <div className="absolute top-10% text-5xl text-gray-400 cursor-default mt-52 ml-40">

@@ -12,6 +12,8 @@ interface ConversationProps {
     };
     lastMessage: {
         text: string;
+        senderId: string;
+        createdAt: string;
     };
 }
 
@@ -24,7 +26,6 @@ const Conversation: React.FC<ConversationProps> = ({ conversation,lastMessage })
             try {
                 const userId = conversation.members[0];
                 const response = await axiosJWT.get(`${DOCTOR_API}/user/${userId}`);
-                console.log(response,"usersssss");
                 setUserData(response.data.user);
             } catch (error) {
                 console.error("Error fetching doctor data:", error);
@@ -32,8 +33,8 @@ const Conversation: React.FC<ConversationProps> = ({ conversation,lastMessage })
         };
 
         fetchDoctorData();
-    }, [conversation]);
-    console.log(userData);
+    }, [conversation,lastMessage]);
+   
 
     return (
         <div className="bg-white rounded-lg shadow-md p-2 flex flex-col mb-1">
