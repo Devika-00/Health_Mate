@@ -7,6 +7,8 @@ import { useAppSelector } from "../../redux/store/Store";
 import axiosJWT from "../../utils/axiosService";
 import { CHAT_API, DOCTOR_API, USER_API } from "../../constants";
 import { io } from "socket.io-client";
+import { useSocket } from "../../Context/SocketContext";
+
 
 const Chat: React.FC = () => {
   const user = useAppSelector((state) => state.UserSlice);
@@ -17,12 +19,13 @@ const Chat: React.FC = () => {
   const [newMessage, setNewMessage] = useState<string>("");
   const [arrivalMessage, setArrivalMessage] = useState<any>(null);
   const [receiverData, setReceiverData] = useState<string | null>(null); 
-  const socket = useRef<any>();
+  // const socket = useRef<any>();
   const scrollRef = useRef<HTMLDivElement>(null);
+  const socket = useSocket()
 
   useEffect(() => {
-    socket.current = io("ws://localhost:3000");
-    socket.current.on("getMessage", (data: any) => {
+    // socket? = io("ws://localhost:3000");
+    socket?.on("getMessage", (data: any) => {
       setArrivalMessage({
         senderId: data.senderId,
         text: data.text,
@@ -47,9 +50,12 @@ const Chat: React.FC = () => {
     }
   }, [arrivalMessage, currentChat]);
 
+
+  console.log(arrivalMessage,"dfdfsdfsdfsd");
+
   useEffect(() => {
-    socket.current.emit("addUser", user.id);
-    socket.current.on("getUsers", (users: any) => {
+    socket?.emit("addUser", user.id);
+    socket?.on("getUsers", (users: any) => {
       console.log(users, "hellooooo");
     });
   }, [user]);
@@ -127,10 +133,11 @@ const Chat: React.FC = () => {
       (member: any) => member !== user.id
     );
 
-    socket.current.emit("sendMessage", {
+    socket?.emit("sendMessage", {
       senderId: user.id,
       receiverId,
       text: newMessage,
+      conversationId: currentChat?._id,
     });
 
     try {

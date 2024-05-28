@@ -36,10 +36,11 @@ const socketConfig = (io: Server) => {
       io.to(user?.socketId).emit("getMessage", {
         senderId,
         text,
+        conversationId,
       });
 
       // Emit an event to update the last message
-      io.emit("updateLastMessage", { conversationId, lastMessage: { text, senderId, createdAt: Date.now() } });
+      io.emit("updateLastMessage", { conversationId: conversationId, lastMessage: { text, senderId, createdAt: Date.now() } });
     });
 
     // When a user disconnects

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Conversation from "../../chat/Doctor/Conversation";
 import Message from "../../chat/Doctor/Message";
 import Navbar from "../../components/doctor/Navbar/navbar";
@@ -7,6 +7,7 @@ import { useAppSelector } from "../../redux/store/Store";
 import axiosJWT from "../../utils/axiosService";
 import { CHAT_API, DOCTOR_API } from "../../constants";
 import { io } from "socket.io-client";
+import { useSocket } from "../../Context/SocketContext";
 
 const Chat: React.FC = () => {
   const doctor = useAppSelector((state) => state.DoctorSlice);
@@ -17,12 +18,13 @@ const Chat: React.FC = () => {
   const [newMessage, setNewMessage] = useState<string>("");
   const [arrivalMessage, setArrivalMessage] = useState<any>(null);
   const [receiverData, setReceiverData] = useState<string | null>(null);
-  const socket = useRef<any>();
+  // const socket = useRef<any>();
+  const socket = useSocket();
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    socket.current = io("ws://localhost:3000");
-    socket.current.on("getMessage", (data: any) => {
+    // socket? = io("ws://localhost:3000");
+    socket?.on("getMessage", (data: any) => {
       setArrivalMessage({
         senderId: data.senderId,
         text: data.text,
@@ -30,7 +32,10 @@ const Chat: React.FC = () => {
       });
     });
 
-    socket.current.on("updateLastMessage", (data: any) => {
+    socket?.on("updateLastMessage", (data: any) => {
+      console.log(data, "data");
+      
+
       setConversations((prevConversations) => {
         const updatedConversations = prevConversations.map((conversation) =>
           conversation._id === data.conversationId
@@ -49,8 +54,8 @@ const Chat: React.FC = () => {
     });
   }, []);
 
-  console.log(arrivalMessage,"kkkkkkkk");
-  console.log(conversations,"llllllllllll");
+  // console.log(arrivalMessage,"kkkkkkkk");
+  // console.log(conversations,"llllllllllll");
 
   useEffect(() => {
     if (arrivalMessage) {
@@ -76,8 +81,8 @@ const Chat: React.FC = () => {
   }, [arrivalMessage, currentChat]);
 
   useEffect(() => {
-    socket.current.emit("addUser", doctor.id);
-    socket.current.on("getUsers", (doctors: any) => {
+    socket?.emit("addUser", doctor.id);
+    socket?.on("getUsers", (doctors: any) => {
     });
   }, [doctor]);
 
@@ -182,7 +187,7 @@ const Chat: React.FC = () => {
       (member: any) => member !== doctor.id
     );
 
-    socket.current.emit("sendMessage", {
+    socket?.emit("sendMessage", {
       senderId: doctor.id,
       receiverId,
       text: newMessage,
