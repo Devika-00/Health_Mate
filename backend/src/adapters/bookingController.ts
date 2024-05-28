@@ -8,7 +8,7 @@ import { TimeSlotRepositoryMongodbType } from "../frameworks/database/mongodb/re
 import { BookingDbRepositoryInterface} from "../app/interfaces/bookingDbRepository";
 import { BookingRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/BookingRepositoryMongodb";
 import { BookingEntityType } from "../entities/bookingEntity";
-import { appoinmentBooking, changeAppoinmentstaus, checkIsBooked, createPayment, getBookingByBookingId, getBookingByDoctorId, getBookingByUserId, updateBookingStatus, updateBookingStatusPayment } from "../app/use-cases/user/Booking/bookingUser";
+import { appoinmentBooking, changeAppoinmentstaus, changeWallet, checkIsBooked, createPayment, getBookingByBookingId, getBookingByDoctorId, getBookingByUserId, getWalletBalance, updateBookingStatus, updateBookingStatusPayment } from "../app/use-cases/user/Booking/bookingUser";
 import { HttpStatus } from "../types/httpStatus";
 import { getUserById } from "../app/use-cases/user/auth/userAuth";
 
@@ -83,6 +83,92 @@ const bookingController=(
         }
 
     }
+
+
+    
+  /**wallet payment */
+
+  const walletPayment = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const data = req.body;
+      const userId = req.user;
+
+      const checkBooking:any = await checkIsBooked(
+        data,
+        userId,
+        dbBookingRepository,
+      )
+
+      if(checkBooking){
+        res.status(HttpStatus.OK).json({
+          success: false,
+          message: "slot already booked select another slot",
+        });
+      }else {
+
+        const walletBalance = await getWalletBalance(userId,dbBookingRepository)
+
+        const requiredAmount = data.fee;
+
+        if(walletBalance >= requiredAmount){
+          
+          const createBooking = await appoinmentBooking(
+              data,
+              userId,
+              dbBookingRepository,
+              dbDoctorRepository,
+              
+          );
+          res.status(HttpStatus.OK).json({
+            success: true,
+            message: "Booking successfully",
+            createBooking,
+          });
+        }else{
+          res.status(HttpStatus.OK).json({
+            success: false,
+            message: "Insufficient balance in wallet",
+          });
+        }
+      }
+    } catch (error) {
+      next(error);
+    }
+  };
+
+
+ /**update the wallet  */
+ const changeWalletAmount = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { bookingId, fees } = req.body;
+
+    
+    
+    const updateWallet = await changeWallet(
+      bookingId,
+      fees,
+      dbBookingRepository
+    );
+    res.status(HttpStatus.OK).json({
+      success: true,
+      message: "Bookings details fetched successfully",
+    });
+
+  } catch (error) {
+    next(error)
+
+  }
+}
+
+
 
      /**
    * *METHOD :PATCH
@@ -252,6 +338,8 @@ const bookingController=(
 
 
 
+
+
     return {BookAppoinment,
         updatePaymentStatus,
         getBookingDetails,
@@ -259,6 +347,8 @@ const bookingController=(
         getAllAppoinments,
         cancelAppoinment,
         getAppoinmentList,
+        walletPayment,
+        changeWalletAmount,
         }
    
 }

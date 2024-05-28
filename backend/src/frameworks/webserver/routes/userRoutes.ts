@@ -73,6 +73,8 @@ router.get("/fetchWallet/:id",authenticateUser,controller.getWallet);
 router.post("/appointments",authenticateUser,_bookingController.BookAppoinment);
 router.get("/allAppoinments",authenticateUser,_bookingController.getAllAppoinments);
 router.patch("/payment/status/:id",authenticateUser,_bookingController.updatePaymentStatus);
+router.post("/walletPayment",authenticateUser,_bookingController.walletPayment);
+router.put("/updateWallet",authenticateUser,_bookingController.changeWalletAmount);
 router.get("/bookingdetails/:id",authenticateUser,_bookingController.getBookingDetails);
 router.get("/bookings/:id",authenticateUser,_bookingController.getAllBookingDetails);
 router.put("/bookingdetails/:id",authenticateUser,_bookingController.cancelAppoinment);

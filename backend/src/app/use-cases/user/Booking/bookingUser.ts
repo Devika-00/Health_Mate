@@ -157,7 +157,7 @@ export const createPayment = async (
 
      // Retrieve the booking entity by its ID
   const booking = await bookingRepository.getBookingById(id);
-console.log(booking,"ghfghfjg");
+  console.log(booking,"ghfghfjg");
   // Get the fee from the booking entity
   //@ts-ignore
   const fee:any = booking?.fee;
@@ -172,6 +172,36 @@ console.log(booking,"ghfghfjg");
       changeWalletAmount
      };
   }
+
+
+  export const getWalletBalance = async (
+    userId:any,
+    bookingRepository:ReturnType<BookingDbRepositoryInterface>
+  )=>{
+    const balance = await bookingRepository.getBalanceAmount(userId);
+    return balance;
+  }
+
+
+
+  export const changeWallet = async (
+    bookingId:string,
+    fees:any,
+    bookingRepository:ReturnType<BookingDbRepositoryInterface>
+  )=>{
+
+     // Retrieve the booking entity by its ID
+  const booking = await bookingRepository.getBookingById(bookingId);
+
+     //@ts-ignore
+    const UserId  = booking?.userId;
+    
+    const changeupdated = await bookingRepository.changeTheWalletAmount(fees,UserId)
+  }
+
+
+ 
+
 
   /**doctor use cases */
 

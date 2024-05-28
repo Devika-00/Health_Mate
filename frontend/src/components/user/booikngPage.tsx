@@ -16,6 +16,7 @@ import { RootState } from '../../redux/reducer/reducer';
 
 const AppointmentBookingPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [doctor, setDoctor] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
@@ -96,7 +97,7 @@ const AppointmentBookingPage: React.FC = () => {
 
   const stripePromise = loadStripe('pk_test_51PD7KTSIzXVKkSTfUhacmtu4D3bCdX2OCgy7mCYS0JJVvro7cM8QwwIoQVHcBlCEg41UUlqIplqs0avKVML03Bnc00iATAKl4Y');
 
-  const handleBookAppointment = async () => {
+  const handleOnlinePayment = async () => {
     try {
       const appointmentData = {
         doctorId: id,
@@ -130,6 +131,38 @@ const AppointmentBookingPage: React.FC = () => {
       showToast('Error booking appointment. Please try again later.', 'error');
     }
   };
+
+  const handleWalletPayment = async () => {
+    try {
+      const appointmentData = {
+        doctorId: id,
+        patientDetails: existingPatientDetails || patientDetails,
+        consultationType: 'Offline',
+        fee: 400,
+        paymentStatus: 'Pending',
+        appoinmentStatus: 'Booked',
+        appoinmentCancelReason: '',
+        date: stripDate(selectedDate),
+        timeSlot: selectedTimeSlot,
+      };
+  
+      const response = await axiosJWT.post(`${USER_API}/walletPayment`, appointmentData);
+      console.log(response, "ooooooooooooooo");
+  
+      if (response.data.success) {
+        const bookingId = response.data.createBooking._id;
+
+         // Update wallet amount before navigating
+         const updateWalletResponse = await axiosJWT.put(`${USER_API}/updateWallet`, { bookingId, fees: 400 });
+         navigate(`/payment_status/${bookingId}?success=true`);
+      } else {
+        showToast(response.data.message, "error");
+      }
+    } catch (error) {
+    console.log(error);
+    }
+  };
+
 
   const handleNextStepBookAppointment = () => {
     if (selectedTimeSlot) {
@@ -191,6 +224,7 @@ const AppointmentBookingPage: React.FC = () => {
   const handleTimeSlotSelection = (slot: string) => {
     setSelectedTimeSlot(selectedTimeSlot === slot ? null : slot);
   };
+
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -393,15 +427,21 @@ const AppointmentBookingPage: React.FC = () => {
 
       <div className="flex justify-start ml-8 mt-8">
           {existingPatientDetails ? (
+            <>
             <button
-              onClick={handleBookAppointment}
-              disabled={timeSlots.length === 0}
-              className={`bg-blue-950 text-white py-2 px-4 rounded-lg ${
-                timeSlots.length === 0 ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-            >
-              Book an Appointment
-            </button>
+            onClick={handleOnlinePayment}
+            disabled={timeSlots.length === 0}
+            className={`bg-blue-950 text-white py-2 px-4 rounded-lg ${timeSlots.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+            online Payment
+          </button>
+          <button
+            onClick={handleWalletPayment}
+            disabled={timeSlots.length === 0}
+            className={`bg-blue-950 ml-5 text-white py-2 px-4 rounded-lg ${timeSlots.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+              Wallet Payment
+            </button></>
           ):(
             <button
               onClick={handleNextStepBookAppointment}
@@ -410,7 +450,7 @@ const AppointmentBookingPage: React.FC = () => {
                 timeSlots.length === 0 ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
-              Next
+              Book an appoinment
             </button>
           )}
           </div> 

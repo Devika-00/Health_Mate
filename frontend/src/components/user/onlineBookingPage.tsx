@@ -15,6 +15,7 @@ import { RootState } from '../../redux/reducer/reducer';
 
 const AppointmentOnlineBookingPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [doctor, setDoctor] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
@@ -99,8 +100,8 @@ const AppointmentOnlineBookingPage: React.FC = () => {
       const appointmentData = {
         doctorId: id,
         patientDetails: existingPatientDetails || patientDetails,
-        consultationType: 'Onfline',
-        fee: 400,
+        consultationType: 'Online',
+        fee: 300,
         paymentStatus: 'Pending',
         appoinmentStatus:'Booked',
         appoinmentCancelReason:'',
@@ -127,6 +128,40 @@ const AppointmentOnlineBookingPage: React.FC = () => {
       showToast('Error booking appointment. Please try again later.', 'error');
     }
   };
+
+
+  const handleWalletPayment = async () => {
+    try {
+      const appointmentData = {
+        doctorId: id,
+        patientDetails: existingPatientDetails || patientDetails,
+        consultationType: 'Online',
+        fee: 400,
+        paymentStatus: 'Pending',
+        appoinmentStatus: 'Booked',
+        appoinmentCancelReason: '',
+        date: stripDate(selectedDate),
+        timeSlot: selectedTimeSlot,
+      };
+  
+      const response = await axiosJWT.post(`${USER_API}/walletPayment`, appointmentData);
+      console.log(response, "ooooooooooooooo");
+  
+      if (response.data.success) {
+        const bookingId = response.data.createBooking._id;
+
+         // Update wallet amount before navigating
+         const updateWalletResponse = await axiosJWT.put(`${USER_API}/updateWallet`, { bookingId, fees: 300 });
+         console.log(updateWalletResponse,"jjjjjjj");
+         navigate(`/payment_status/${bookingId}?success=true`);
+      } else {
+        showToast(response.data.message, "error");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
 
   const handleNextStepBookAppointment = () => {
     if (selectedTimeSlot) {
@@ -203,7 +238,7 @@ const AppointmentOnlineBookingPage: React.FC = () => {
               <p className="text-green-600 font-semibold"> Verified </p>
               <div className="text-gray-800 bg-blue-100 p-4 rounded-md mt-5 font-bold">
                 <p className="mb-2">Consultation: Online</p>
-                <p>Fee: 400/-</p>
+                <p>Fee: 300/-</p>
               </div>
             </div>
           </div>
@@ -384,15 +419,19 @@ const AppointmentOnlineBookingPage: React.FC = () => {
 
       <div className="flex justify-start ml-8 mt-8">
           {existingPatientDetails ? (
-            <button
-              onClick={handleBookAppointment}
-              disabled={timeSlots.length === 0}
-              className={`bg-blue-950 text-white py-2 px-4 rounded-lg ${
-                timeSlots.length === 0 ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-            >
-              Book an Appointment
-            </button>
+            <><button
+            onClick={handleBookAppointment}
+            disabled={timeSlots.length === 0}
+            className={`bg-blue-950 text-white py-2 px-4 rounded-lg ${timeSlots.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+            Online Payment
+          </button><button
+            onClick={handleWalletPayment}
+            disabled={timeSlots.length === 0}
+            className={`bg-blue-950 ml-5 text-white py-2 px-4 rounded-lg ${timeSlots.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+              Wallet Payment
+            </button></>
           ):(
             <button
               onClick={handleNextStepBookAppointment}
@@ -401,7 +440,7 @@ const AppointmentOnlineBookingPage: React.FC = () => {
                 timeSlots.length === 0 ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
-              Next
+              Book an Appointment
             </button>
           )}
           </div> 

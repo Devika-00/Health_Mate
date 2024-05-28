@@ -161,6 +161,7 @@ const doctorController = (
         
         const {id} = req.params;
         const user = await getSingleUser(id,dbRepositoryUser);
+        console.log(user,"comingg");
         return res.status(HttpStatus.OK).json({ success: true, user });
       } catch (error) {
         next(error);

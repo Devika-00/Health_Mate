@@ -33,7 +33,7 @@ const Conversation: React.FC<ConversationProps> = ({ conversation,lastMessage })
 
         fetchDoctorData();
     }, [conversation]);
-
+    console.log(userData);
 
     return (
         <div className="bg-white rounded-lg shadow-md p-2 flex flex-col mb-1">

@@ -32,6 +32,10 @@ const Conversation: React.FC<ConversationProps> = ({ conversation, lastMessage }
         fetchDoctorData();
     }, [conversation]);
 
+    console.log(doctorData,"checking");
+
+    
+
     return (
         <div className="bg-white rounded-lg shadow-md p-2 flex flex-col mb-1">
             <div className="flex items-center">

@@ -85,6 +85,28 @@ export const bookingRepositoryMongodb = () => {
     await walletData.save();  
     }
 
+
+    const changeTheWallet = async(fees:any,UserId:any)=>{
+      const walletData = await wallet.findOne({userId:UserId});
+
+      if(!walletData){
+        throw new Error("Wallet not found");
+      }
+
+      const newBalance = walletData.balance-fees;
+      //@ts-ignore
+      walletData?.balance= newBalance;
+      await walletData.save()
+    }
+
+    const getWalletBalance = async(userId:any)=>{
+      const walletData = await wallet.findOne({userId:userId});
+
+      const balanceAmount = walletData?.balance;
+
+      return balanceAmount;
+    }
+
     
     return{
         createBooking,
@@ -98,6 +120,8 @@ export const bookingRepositoryMongodb = () => {
         getAllBookingByDoctorId,
         changeBookingstatusPayment,
         changeWalletMoney,
+        changeTheWallet,
+        getWalletBalance,
     }    
 
 }
