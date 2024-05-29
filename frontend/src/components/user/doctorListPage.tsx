@@ -11,8 +11,7 @@ const DoctorListingPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchActive, setSearchActive] = useState<boolean>(false);
   const [selectedDepartment, setSelectedDepartment] = useState<string>("");
-  const [selectedConsultationType, setSelectedConsultationType] =
-    useState<string>("");
+  const [selectedConsultationType, setSelectedConsultationType] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>("");
   const [departments, setDepartments] = useState<string[]>([
@@ -46,7 +45,6 @@ const DoctorListingPage: React.FC = () => {
           },
         });
 
-
         setDoctors(response.data.doctors);
         setTotalPages(response.data.total);
       } catch (error) {
@@ -72,9 +70,7 @@ const DoctorListingPage: React.FC = () => {
     setSearchActive(!searchActive);
   };
 
-  const handleDepartmentChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
+  const handleDepartmentChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedDepartment(event.target.value);
   };
 
@@ -82,10 +78,16 @@ const DoctorListingPage: React.FC = () => {
     setSelectedDate(date);
   };
 
-  const handleTimeSlotChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
+  const handleTimeSlotChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedTimeSlot(event.target.value);
+  };
+
+  const handleClearFilters = () => {
+    setSearchQuery("");
+    setSelectedDepartment("");
+    setSelectedDate(null);
+    setSelectedTimeSlot("");
+    setCurrentPage(1); // reset to first page
   };
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
@@ -94,11 +96,7 @@ const DoctorListingPage: React.FC = () => {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Find a Doctor</h1>
       <div className="flex items-center mb-4">
-        <div
-          className={`border border-${
-            searchActive ? "gray-300" : "gray-500"
-          } shadow-lg flex items-center relative rounded-md w-80`}
-        >
+        <div className={`border border-${searchActive ? "gray-300" : "gray-500"} shadow-lg flex items-center relative rounded-md w-80`}>
           <input
             type="text"
             placeholder="Search"
@@ -113,9 +111,7 @@ const DoctorListingPage: React.FC = () => {
             <FaSearch />
           </div>
         </div>
-        <div
-          className={`border border-gray-500 shadow-lg rounded-md w-80 ml-4`}
-        >
+        <div className="border border-gray-500 shadow-lg rounded-md w-80 ml-4">
           <select
             className="rounded-md px-4 py-2 w-full"
             value={selectedDepartment}
@@ -145,11 +141,11 @@ const DoctorListingPage: React.FC = () => {
             <option value="4:30 PM - 5:30 PM">4:30 PM - 5:30 PM</option>
           </select>
         </div>
-        <div className="border border-gray-500 shadow-lg rounded-md ml-3 w-40 relative ">
+        <div className="border border-gray-500 shadow-lg rounded-md ml-3 w-40 relative">
           <DatePicker
             selected={selectedDate}
             onChange={handleDateChange}
-            className="rounded-md px-4 py-2 w-full pl-10 "
+            className="rounded-md px-4 py-2 w-full pl-10"
             minDate={new Date()}
             placeholderText="Select Date"
           />
@@ -157,6 +153,14 @@ const DoctorListingPage: React.FC = () => {
             <FaCalendarAlt />
           </div>
         </div>
+        {/* Change Start: Clear Filters Button */}
+        <button
+          className="ml-4 bg-blue-900 hover:bg-blue-800 text-white rounded-md px-4 py-2"
+          onClick={handleClearFilters}
+        >
+          Clear Filters
+        </button>
+        {/* Change End */}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {doctors.map((doctor) => (
@@ -183,40 +187,41 @@ const DoctorListingPage: React.FC = () => {
       <div className="mt-10 flex justify-center">
         <ul className="flex pl-0 list-none rounded my-2">
           {Array.from({ length: totalPages }, (_, index) => (
-             (index  <= totalPages/8) &&
-            <li key={index}>
-              <button
-                className={`${
-                  currentPage === index + 1
-                    ? "bg-blue-900 text-white"
-                    : "text-blue-900 hover:text-blue-700"
-                } cursor-pointer px-3 py-2`}
-                onClick={() => paginate(index + 1)}
-              >
-                {index + 1}
-              </button>
-            </li>
+            (index <= totalPages / 8) && (
+              <li key={index}>
+                <button
+                  className={`${
+                    currentPage === index + 1
+                      ? "bg-blue-900 text-white"
+                      : "text-blue-900 hover:text-blue-700"
+                  } cursor-pointer px-3 py-2`}
+                  onClick={() => paginate(index + 1)}
+                >
+                  {index + 1}
+                </button>
+              </li>
+            )
           ))}
         </ul>
       </div>
       <div className="flex justify-center mt-4">
-  {currentPage > 1 && (
-    <button
-      className="bg-blue-900 text-white py-2 px-4 rounded"
-      onClick={() => paginate(currentPage - 1)}
-    >
-      Previous Page
-    </button>
-  )}
-  {doctors.length === itemsPerPage && (
-    <button
-      className="bg-blue-900 text-white py-2 px-4 rounded ml-4"
-      onClick={() => paginate(currentPage + 1)}
-    >
-      Next Page
-    </button>
-  )}
-</div>
+        {currentPage > 1 && (
+          <button
+            className="bg-blue-900 text-white py-2 px-4 rounded"
+            onClick={() => paginate(currentPage - 1)}
+          >
+            Previous Page
+          </button>
+        )}
+        {doctors.length === itemsPerPage && (
+          <button
+            className="bg-blue-900 text-white py-2 px-4 rounded ml-4"
+            onClick={() => paginate(currentPage + 1)}
+          >
+            Next Page
+          </button>
+        )}
+      </div>
     </div>
   );
 };

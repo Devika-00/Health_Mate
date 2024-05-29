@@ -267,22 +267,24 @@ const AppointmentOnlineBookingPage: React.FC = () => {
           </div>
 
           {timeSlots.length > 0 ? (
-            <div className="max-w-md mx-auto">
-              <h1 className="text-2xl font-bold mb-4 ">Schedule Time Slots</h1>
-              <div className="grid grid-cols-2 gap-4">
-                {timeSlots.map((slot, index) => (
-                  <button
-                    key={index}
-                    className={`w-full border rounded-md py-2 px-4 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:ring-offset-2 focus:ring-offset-gray-100 ${
-                      selectedTimeSlot === slot ? ' border-blue-900' : 'border-gray-300'
-                    }`}
-                    onClick={() => handleTimeSlotSelection(slot)}
-                  >
-                    {slot}
-                  </button>
-                ))}
-              </div>
+            <div className="max-w-md mx-auto lg:mx-0 lg:mr-auto lg:w-1/3">
+            <h1 className="text-2xl font-bold mb-4">Schedule Time Slots</h1>
+            <div className="grid grid-cols-2 gap-4">
+              {timeSlots.map((slot, index) => (
+                <button
+                  key={index}
+                  className={`w-full rounded-md py-3 border border-bg-blue-900 px-4 text-sm font-medium ${
+                    selectedTimeSlot === slot
+                      ? 'bg-blue-900 text-white'
+                      : 'bg-white text-gray-700 hover:bg-gray-200'
+                  } shadow-md`}
+                  onClick={() => handleTimeSlotSelection(slot)}
+                >
+                  {slot}
+                </button>
+              ))}
             </div>
+          </div>
           ) : (
             <><p className="text-red-600 mt-4 text-lg">The doctor is on leave </p><p className="text-red-600 mt-4">No slots scheduled for the selected date.</p></>
           )}
@@ -417,7 +419,7 @@ const AppointmentOnlineBookingPage: React.FC = () => {
         )}
       </div>
 
-      <div className="flex justify-start ml-8 mt-8">
+      <div className="flex justify-start  mt-8">
           {existingPatientDetails ? (
             <><button
             onClick={handleBookAppointment}
