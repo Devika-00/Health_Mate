@@ -12,6 +12,16 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/reducer/reducer';
 
+const dayLabels = [
+  { day: 0, label: "Sunday" },
+  { day: 1, label: "Monday" },
+  { day: 2, label: "Tuesday" },
+  { day: 3, label: "Wednesday" },
+  { day: 4, label: "Thursday" },
+  { day: 5, label: "Friday" },
+  { day: 6, label: "Saturday" },
+];
+
 
 const AppointmentOnlineBookingPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -57,8 +67,11 @@ const AppointmentOnlineBookingPage: React.FC = () => {
       if (selectedDate) {
         try {
           const response = await axiosJWT.get(`${USER_API}/timeslots/${id}?date=${selectedDate.toISOString()}`);
+
           if (response.data.timeSlots.length > 0) {
-            setTimeSlots(response.data.timeSlots[0].slotTime);
+            const selectedDay = selectedDate.getDay();
+            const timeSlotsForDay = response.data.timeSlots[0].slots.find((slot: any) => slot.day === selectedDay);
+            setTimeSlots(timeSlotsForDay ? timeSlotsForDay.times.map((time: any) => `${time.start} - ${time.end}`) : []);
           } else {
             setTimeSlots([]);
           }
@@ -136,7 +149,7 @@ const AppointmentOnlineBookingPage: React.FC = () => {
         doctorId: id,
         patientDetails: existingPatientDetails || patientDetails,
         consultationType: 'Online',
-        fee: 400,
+        fee: 300,
         paymentStatus: 'Pending',
         appoinmentStatus: 'Booked',
         appoinmentCancelReason: '',
@@ -403,14 +416,13 @@ const AppointmentOnlineBookingPage: React.FC = () => {
         </div>
       )}
 
-      <div className="mt-8 ml-8">
+      <div className="mt-8">
         {existingPatientDetails ? (
           <div className="grid grid-cols-2 gap-4">
             <div className="border border-gray-500 p-4 rounded-md">
               <h2 className=' font-bold mb-3 text-lg'>Patient Details</h2>
               <p>Name: {existingPatientDetails.patientName}</p>
               <p>Age: {existingPatientDetails.patientAge}</p>
-              <p>Phone Number: {existingPatientDetails.patientNumber}</p>
               <p>Gender: {existingPatientDetails.patientGender}</p>
             </div>
           </div>

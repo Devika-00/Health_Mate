@@ -1,105 +1,125 @@
-import React, { useEffect, useState } from "react";
-import moment from "moment";
-import "react-big-calendar/lib/css/react-big-calendar.css";
+import React, { useState } from "react";
+import axios from "axios";
 import { toast } from "react-toastify";
-import SmallCalendar from "../celender/SmallCalender";
 import Swal from "sweetalert2";
-import { useSelector } from "react-redux";
-import "./c.css";
-import Button from "@mui/material/Button";
-import axiosJWT from "../../../utils/axiosService";
-import { useNavigate } from "react-router-dom";
-import DoctorSlice from "../../../redux/slices/DoctorSlice";
-import { RootState } from "../../../redux/reducer/reducer";
 import { DOCTOR_API } from "../../../constants";
 import showToast from "../../../utils/toaster";
-import { error } from "console";
+import axiosJWT from "../../../utils/axiosService";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/reducer/reducer";
+import { RRule, RRuleSet, rrulestr } from 'rrule';
+
+interface TimeSlot {
+  start: string;
+  end: string;
+}
+
+interface SelectedTimeSlots {
+  [key: number]: TimeSlot[];
+}
 
 const DoctorCalendar: React.FC = () => {
-  const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(null);
-  const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null);
-  const [alreadyScheduledSlotes, setAlreadyScheduledSlotes] = useState<any[]>([]);
-  const [selectedSlots, setSelectedSlots] = useState<any[]>([]);
-  const [selectedTimeSlots, setSelectedTimeSlots] = useState<string[]>([]);
+  const [selectedStartDate, setSelectedStartDate] = useState<string | null>(null);
+  const [selectedEndDate, setSelectedEndDate] = useState<string | null>(null);
+  const [selectedDays, setSelectedDays] = useState<number[]>([]);
+  const [selectedSlots, setSelectedSlots] = useState<TimeSlot[]>([]);
+  const [selectedTimeSlots, setSelectedTimeSlots] = useState<SelectedTimeSlots>({});
   const doctor = useSelector((state: RootState) => state.DoctorSlice);
-  const navigate = useNavigate();
 
+  const daysOfWeek = [
+    { day: 0, label: "Sunday" },
+    { day: 1, label: "Monday" },
+    { day: 2, label: "Tuesday" },
+    { day: 3, label: "Wednesday" },
+    { day: 4, label: "Thursday" },
+    { day: 5, label: "Friday" },
+    { day: 6, label: "Saturday" },
+  ];
 
-  const doctorId:any=doctor.id;
+  const generateTimeSlots = (): TimeSlot[] => {
+    const slots: TimeSlot[] = [];
+    for (let i = 9; i <= 17; i++) {
+      const startHour = i > 12 ? i - 12 : i;
+      const endHour = i + 1 > 12 ? i - 11 : i + 1;
+      const period = i >= 12 ? "PM" : "AM";
+      const nextPeriod = i + 1 >= 12 ? "PM" : "AM";
+      slots.push({ start: `${startHour}:00 ${period}`, end: `${endHour}:00 ${nextPeriod}` });
+    }
+    return slots;
+  };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axiosJWT.post(`${DOCTOR_API}/getTimeSlots`, doctorId);
-        if (response) {
-          setAlreadyScheduledSlotes(response.data.timeSlots);
-        }
-      } catch (error) {
-        console.log(error, "error");
+  const timeSlots = generateTimeSlots();
+
+  const handleSlotSelect = (slot: TimeSlot) => {
+    setSelectedSlots((prev) => {
+      if (prev.some((s) => s.start === slot.start && s.end === slot.end)) {
+        return prev.filter((s) => s.start !== slot.start || s.end !== slot.end);
+      } else {
+        return [...prev, slot];
       }
-    };
-    fetchData();
-  }, [navigate]);
+    });
+  };
 
-  const handleDeleteForScheduledSlot = async (slotId: string) => {
-    try {
-      const response = await axiosJWT.delete(`${DOCTOR_API}/deleteSlot/${slotId}`);
-      if(response){
-       showToast("Delete Succesfully","success");
+  const handleDaySelect = (day: number) => {
+    setSelectedDays((prev) => {
+      if (prev.includes(day)) {
+        return prev.filter((d) => d !== day);
+      } else {
+        return [...prev, day];
       }
-    } catch (error) {}
+    });
   };
 
   const handleConfirmSlots = () => {
-    if (selectedStartDate && selectedEndDate && selectedSlots.length > 0) {
-      const newSlots = selectedSlots.map((slot) => {
-        const newSlot = `${moment(slot.start).format("h:mm A")} - ${moment(
-          slot.end
-        ).format("h:mm A")}`;
-        return newSlot;
+    if (selectedStartDate && selectedEndDate && selectedSlots.length > 0 && selectedDays.length > 0) {
+      const updatedSlots: SelectedTimeSlots = { ...selectedTimeSlots };
+      const rule = new RRule({
+        freq: RRule.WEEKLY,
+        dtstart: new Date(selectedStartDate),
+        until: new Date(selectedEndDate),
+        byweekday: selectedDays,
+      });
+      const dates = rule.all();
+
+      dates.forEach((date) => {
+        const day = date.getDay();
+        if (!updatedSlots[day]) {
+          updatedSlots[day] = [];
+        }
+        selectedSlots.forEach((slot) => {
+          if (!updatedSlots[day].some((s) => s.start === slot.start && s.end === slot.end)) {
+            updatedSlots[day].push(slot);
+          }
+        });
       });
 
-      const filteredNewSlots = newSlots.filter(
-        (newSlot) => !selectedTimeSlots.includes(newSlot)
-      );
-
-      setSelectedSlots((prevSlots) =>
-        prevSlots.filter((prevSlot) => !filteredNewSlots.includes(prevSlot))
-      );
-
-      setSelectedTimeSlots((prevSlots) => [...prevSlots, ...filteredNewSlots]);
+      setSelectedTimeSlots(updatedSlots);
+      setSelectedSlots([]);
+      setSelectedDays([]);
     } else {
-      toast.warn("Please select a start date, end date, and time slots.");
+      toast.warn("Please select start date, end date, days, and time slots.");
     }
   };
 
-  const timeSlots: { start: Date; end: Date }[] = [];
+  const handleDelete = (day: number, index: number) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const updatedTimeSlots: SelectedTimeSlots = { ...selectedTimeSlots };
+        updatedTimeSlots[day].splice(index, 1);
+        if (updatedTimeSlots[day].length === 0) {
+          delete updatedTimeSlots[day];
+        }
+        setSelectedTimeSlots(updatedTimeSlots);
 
-  const startTime = new Date(2023, 3, 1, 9, 0); // 9 AM
-  const endTime = new Date(2023, 3, 1, 18, 0); // 6 PM
-
-  let currentTime = startTime;
-  while (currentTime < endTime) {
-    const slotStart = new Date(currentTime);
-    const slotEnd = new Date(currentTime);
-    slotEnd.setMinutes(slotStart.getMinutes() + 60); // 1 hour slot for consultation
-
-    if (slotEnd <= endTime) {
-      timeSlots.push({ start: slotStart, end: slotEnd });
-    }
-
-    currentTime = new Date(slotEnd);
-    currentTime.setMinutes(currentTime.getMinutes() + 15); // 15 minutes break
-  }
-
-  const handleSlotSelect = (slot: any) => {
-    setSelectedSlots((prevSlots) => {
-      if (prevSlots.some((s) => s.start.getTime() === slot.start.getTime())) {
-        return prevSlots.filter(
-          (s) => s.start.getTime() !== slot.start.getTime()
-        );
-      } else {
-        return [...prevSlots, slot];
+        Swal.fire("Deleted!", "Your time slot has been deleted.", "success");
       }
     });
   };
@@ -114,194 +134,112 @@ const DoctorCalendar: React.FC = () => {
         slotTime: selectedTimeSlots,
       };
       const response = await axiosJWT.post(`${DOCTOR_API}/addSlot`, slotsData);
-      if (slotsData.slotTime.length == 0) {
-        showToast("Add Atleast One Slot","error");
-      } else {
-        if (response) {
-          showToast("Slot Added Succesfully","success");
-          setSelectedSlots([]);
-          setSelectedEndDate(null);
-          setSelectedStartDate(null);
-        }
+      if (response) {
+        showToast("Slots added successfully!", "success");
+        setSelectedSlots([]);
+        setSelectedEndDate(null);
+        setSelectedStartDate(null);
+        setSelectedDays([]);
+        setSelectedTimeSlots({});
       }
     } catch (error) {
-      console.error("Error in saving the slots to the backend:", error);
+      toast.error("Failed to save slots. Please try again.");
     }
   };
 
-  const handleDelete = (index: any) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result: any) => {
-      if (result.isConfirmed) {
-        // Remove the slot from selectedTimeSlots
-        const updatedTimeSlots = [...selectedTimeSlots];
-        updatedTimeSlots.splice(index, 1);
-        setSelectedTimeSlots(updatedTimeSlots);
-  
-        // Remove the slot from selectedSlots
-        const updatedSlots = [...selectedSlots];
-        updatedSlots.splice(index, 1);
-        setSelectedSlots(updatedSlots);
-  
-        Swal.fire("Deleted!", "Your time slot has been deleted.", "success");
-      } else {
-        Swal.fire("Error", "Deletion failed. Please try again.", "error");
-      }
-    });
-  };
-  
-
   return (
-    <div className="">
-      <div className="mx-auto p-4 flex bg-blue-100">
-        <div className="w-1/2 pr-8 pl-8   flex justify-center items-center  ">
+    <div className="container mx-auto p-4">
+      <div className="flex flex-col md:flex-row bg-blue-100">
+        <div className="w-full md:w-1/2 p-4">
           <div className="mb-4">
-            <div className="mb-4 p-10">
-              <SmallCalendar
-                selectedStartDate={selectedStartDate}
-                selectedEndDate={selectedEndDate}
-                setSelectedStartDate={setSelectedStartDate}
-                setSelectedEndDate={setSelectedEndDate}
-              />
-              <div className="p-4">
-                <h2 className="text-lg font-bold mb-2">Select Time Slots</h2>
-                <div className="space-y-2 p-6 ">
-                  {timeSlots.map((slot, index) => (
-                    <button
-                      key={index}
-                      className={`checkbox-button ${
-                        selectedSlots.some(
-                          (s) => s.start.getTime() === slot.start.getTime()
-                        ) && "selected"
-                      }`}
-                      onClick={() => handleSlotSelect(slot)}
-                    >
-                      <span className="text-xl">
-                        {moment(slot.start).format("h:mm A")} -{" "}
-                        {moment(slot.end).format("h:mm A")}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>    
-            </div>
-            <div className=" rounded-lg  text-center">
-              <button
-                className="bg-blue-950 hover:bg-blue-900 text-white font-bold py-2 px-8 rounded "
-                onClick={handleConfirmSlots}
-              >
-                Save Date And Time
-              </button>
+            <label className="block mb-2">Start Date:</label>
+            <input
+              type="date"
+              className="w-full p-2 border rounded"
+              value={selectedStartDate || ""}
+              onChange={(e) => setSelectedStartDate(e.target.value)}
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block mb-2">End Date:</label>
+            <input
+              type="date"
+              className="w-full p-2 border rounded"
+              value={selectedEndDate || ""}
+              onChange={(e) => setSelectedEndDate(e.target.value)}
+            />
+          </div>
+          <div className="mb-4">
+            <h2 className="text-lg font-bold mb-2">Select Days</h2>
+            <div className="grid grid-cols-3 gap-2">
+              {daysOfWeek.map((day) => (
+                <button
+                  key={day.day}
+                  className={`p-2 border rounded ${selectedDays.includes(day.day) ? "bg-blue-500 text-white" : "bg-white"}`}
+                  onClick={() => handleDaySelect(day.day)}
+                >
+                  {day.label}
+                </button>
+              ))}
             </div>
           </div>
-        </div>
-
-        <div className="w-1/2 pl-4 p-10">
-          <h2 className="text-xl font-semibold mb-2 text-rose-800">
-            Selected Date:
-          </h2>
-          {selectedStartDate && selectedEndDate ? (
-            <p className="mb-4">
-              {`${moment(selectedStartDate).format("MMM D, YYYY")} - ${moment(
-                selectedEndDate
-              ).format("MMM D, YYYY")}`}
-            </p>
-          ) : (
-            "No date Scheduled"
-          )}
-
-          <div className="overflow-x-auto ">
-            <table className="table-auto w-full border-collapse">
-              <thead>
-                <tr>
-                  <th className="px-4 py-2 text-rose-500 text-center">
-                    Time Slot
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {selectedTimeSlots.map((slot, index) => (
-                  <tr key={index} className="border-t">
-                    <td className="px-4 py-2 text-center">{slot}</td>
-
-                    <td className="px-4 py-2 flex items-center">
-                      <button
-                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4 rounded"
-                        onClick={() => handleDelete(index)}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
+          {selectedDays.length > 0 && (
+            <div className="mb-4">
+              <h2 className="text-lg font-bold mb-2">Select Time Slots</h2>
+              <div className="grid grid-cols-2 gap-2">
+                {timeSlots.map((slot, index) => (
+                  <button
+                    key={index}
+                    className={`p-2 border rounded ${selectedSlots.some((s) => s.start === slot.start && s.end === slot.end) ? "bg-blue-500 text-white" : "bg-white"}`}
+                    onClick={() => handleSlotSelect(slot)}
+                  >
+                    {slot.start} - {slot.end}
+                  </button>
                 ))}
-              </tbody>
-            </table>
-          </div>
-          <br />
-          <br />
-          <div className="flex justify-center">
-            <button
-              className="bg-blue-950 hover:bg-blue-900 text-white font-bold py-2 px-8 rounded"
-              onClick={handleConfirmAvailableSlots}
-            >
-              Confirm Your Available Slots
+              </div>
+            </div>
+          )}
+          <div className="text-center">
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleConfirmSlots}>
+              Save Slots
             </button>
           </div>
         </div>
-      </div>
-
-      <div className="w-auto  h-auto p-10">
-        <div className="flex justify-between items-center text-center">
-          <h2 className="text-xl font-bold text-gray-800  p-10">
-            Already Scheduled Slots
-          </h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {alreadyScheduledSlotes && alreadyScheduledSlotes.map((slot) => (
-         <div
-         key={slot._id}
-         className="bg-blue-100 shadow-md rounded-lg p-6 pt-9 relative"
-         >
-              <div className="  flex justify-end ">
-                <div className="text-center">
-                <Button variant="outlined" color="error">
-                <button onClick={() => handleDeleteForScheduledSlot(slot._id)}>Delete</button>
-                </Button>
+        <div className="w-full md:w-1/2 p-4">
+          <h2 className="text-xl font-semibold mb-4">Selected Slots</h2>
+          {Object.keys(selectedTimeSlots).length === 0 ? (
+            <p>No slots selected.</p>
+          ) : (
+            <div>
+              {Object.entries(selectedTimeSlots).map(([day, slots]) => (
+                <div key={day} className="mb-4">
+                  <h3 className="font-bold">{daysOfWeek.find((d) => d.day.toString() === day)?.label}</h3>
+                  <ul>
+                    {slots.map((slot: any, index: any) => (
+                      <li key={index} className="flex justify-between items-center">
+                        <span>{slot.start} - {slot.end}</span>
+                        <button
+                          className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 mb-1 px-2 rounded"
+                          onClick={() => handleDelete(Number(day), index)}
+                        >
+                          Delete
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              </div>
-              <p className="text-black mb-2">
-                Start Date:{" "}
-                <strong className="text-red-900 text-xl">
-                  {moment(slot.startDate).format("MMM D, YYYY")}
-                </strong>
-              </p>
-              <p className="text-black mb-2">
-                End Date:
-                <strong className="text-red-900 text-xl">
-                  {" "}
-                  {moment(slot.endDate).format("MMM D, YYYY")}
-                </strong>
-              </p>
-              <div className="mt-4">
-                <p className="text-gray-600 font-semibold">Slot Times:</p>
-                <ul className="list-disc list-inside">
-                  {slot.slotTime.map((time: string, index: number) => (
-                    <li key={index} className="text-gray-600">
-                      {time}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              ))}
             </div>
-          ))}
+          )}
         </div>
+      </div>
+      <div className="flex justify-center mt-4">
+        <button
+          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+          onClick={handleConfirmAvailableSlots}
+        >
+          Confirm Available Slots
+        </button>
       </div>
     </div>
   );

@@ -13,6 +13,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/reducer/reducer';
 
 
+const dayLabels = [
+  { day: 0, label: "Sunday" },
+  { day: 1, label: "Monday" },
+  { day: 2, label: "Tuesday" },
+  { day: 3, label: "Wednesday" },
+  { day: 4, label: "Thursday" },
+  { day: 5, label: "Friday" },
+  { day: 6, label: "Saturday" },
+];
+
+
+
 
 const AppointmentBookingPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -58,8 +70,11 @@ const AppointmentBookingPage: React.FC = () => {
       if (selectedDate) {
         try {
           const response = await axiosJWT.get(`${USER_API}/timeslots/${id}?date=${selectedDate.toISOString()}`);
+
           if (response.data.timeSlots.length > 0) {
-            setTimeSlots(response.data.timeSlots[0].slotTime);
+            const selectedDay = selectedDate.getDay();
+            const timeSlotsForDay = response.data.timeSlots[0].slots.find((slot: any) => slot.day === selectedDay);
+            setTimeSlots(timeSlotsForDay ? timeSlotsForDay.times.map((time: any) => `${time.start} - ${time.end}`) : []);
           } else {
             setTimeSlots([]);
           }

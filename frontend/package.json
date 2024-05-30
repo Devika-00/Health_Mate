@@ -43,6 +43,7 @@
     "react-router-dom": "^6.22.3",
     "react-toastify": "^10.0.5",
     "redux-persist": "^6.0.0",
+    "rrule": "^2.8.1",
     "socket.io-client": "^4.7.5",
     "sweetalert2": "^11.10.8",
     "tailwind-merge": "^2.2.2",

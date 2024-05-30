@@ -45,7 +45,8 @@ export const bookingDbRepository = (
   }
 
   const getBalanceAmount = async(userId:any)=>{
-    await repository.getWalletBalance(userId);
+    const balance = await repository.getWalletBalance(userId);
+    return balance
   }
 
     return {

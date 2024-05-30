@@ -103,7 +103,6 @@ export const bookingRepositoryMongodb = () => {
       const walletData = await wallet.findOne({userId:userId});
 
       const balanceAmount = walletData?.balance;
-
       return balanceAmount;
     }
 

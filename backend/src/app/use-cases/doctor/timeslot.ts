@@ -3,6 +3,7 @@ import { HttpStatus } from "../../../types/httpStatus";
 import { TimeSlotDbInterface } from "../../../app/interfaces/timeSlotDbRepository";
 import { TimeSlotDataInterface } from "../../../types/timeSlotInterface";
 import CustomError from "../../../utils/customError";
+import timeSlots from "../../../frameworks/database/mongodb/models/timeSlots";
 
 export const addTimeSlot = async (
   data: any, 

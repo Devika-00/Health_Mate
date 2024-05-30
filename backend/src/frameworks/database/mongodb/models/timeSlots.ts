@@ -8,27 +8,37 @@ const timeSlotSchema = new mongoose.Schema({
   },
   startDate: {
     type: Date,
-    required: true
+    required: true,
   },
   endDate: {
     type: Date,
-    required: true
+    required: true,
   },
-  slotTime: {
-    type: [String], 
-    required: true
-  },
-
-  
+  slots: [{
+    day: {
+      type: Number,
+      required: true,
+      min: 0,
+      max: 6,
+    },
+    times: [{
+      start: {
+        type: String,
+        required: true,
+      },
+      end: {
+        type: String,
+        required: true,
+      }
+    }],
+  }],
   available: {
     type: Boolean,
-    default: true
-  }
-
-
+    default: true,
+  },
 });
 
-timeSlotSchema.index({ doctor: 1, startDate: 1, endDate: 1 }, { unique: true });
-
+// Index to ensure unique time slots for a doctor within a given date range
+timeSlotSchema.index({ doctorId: 1, startDate: 1, endDate: 1 }, { unique: true });
 
 export default mongoose.model('TimeSlot', timeSlotSchema);

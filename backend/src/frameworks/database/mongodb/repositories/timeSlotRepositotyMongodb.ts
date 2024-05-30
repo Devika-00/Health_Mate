@@ -1,15 +1,41 @@
 import { TimeSlotEntityType } from "../../../../entities/timeSlotEntity";
 import TimeSlot from "../models/timeSlots";
 
+const transformSlotTime = (slotTime:any) => {
+  return Object.entries(slotTime).map(([day, times]) => ({
+    day: parseInt(day, 10),
+    //@ts-ignore
+    times: times.map(time => ({
+      start: time.start,
+      end: time.end,
+    })),
+  }));
+};
+
 export const timeSlotRepositoryMongodb = () => {
-  const addTimeSlots = async (doctorId:string,startDate:string,endDate:string,slotTime:[]) =>
-    await TimeSlot.create({
-      doctorId: doctorId,
-      startDate:startDate,
-      endDate:endDate,
-      slotTime:slotTime,
-      isAvailable:true,
-    });
+  const addTimeSlots = async (doctorId:string, startDate:string, endDate:string, slotTime:string) => {
+    console.log(slotTime, "Received slot data");
+    const transformedSlotTime = transformSlotTime(slotTime);
+    console.log(transformedSlotTime, "Transformed slot data");
+    try {
+      const newTimeSlot = await TimeSlot.create({
+        doctorId: doctorId,
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
+        slots: transformedSlotTime,
+        available: true,
+      });
+      console.log("Time slot added successfully:", newTimeSlot);
+      return newTimeSlot;
+    } catch (error) {
+      console.error("Failed to add time slot:", error);
+      throw error;
+    }
+  };
+  
+
+
+
 
    const getSlotByTime = async (
     doctorId: string,

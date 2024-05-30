@@ -110,7 +110,7 @@ const bookingController=(
         });
       }else {
 
-        const walletBalance = await getWalletBalance(userId,dbBookingRepository)
+        const walletBalance:any|null = await getWalletBalance(userId,dbBookingRepository)
 
         const requiredAmount = data.fee;
 

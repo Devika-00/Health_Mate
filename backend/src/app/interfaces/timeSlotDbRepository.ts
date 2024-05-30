@@ -4,8 +4,9 @@ import { TimeSlotEntityType } from "../../entities/timeSlotEntity";
 export const timeSlotDbRepository = (
   repository: ReturnType<TimeSlotRepositoryMongodbType>
 ) => {
-  const addtimeSlot = async (doctorId:string, startDate:string,endDate:string,slotTime:[]) =>
+  const addtimeSlot = async (doctorId:string, startDate:string,endDate:string,slotTime:any) =>{
     await repository.addTimeSlots(doctorId,startDate,endDate,slotTime);
+  }
   
 
   const isTimeSlotExist = async (
