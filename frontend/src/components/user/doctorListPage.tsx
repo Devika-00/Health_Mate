@@ -6,6 +6,25 @@ import { FaCalendarAlt, FaSearch } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
+// Interface for TimeSlot
+interface TimeSlot {
+  start: string;
+  end: string;
+}
+
+// Function to generate time slots
+const generateTimeSlots = (): TimeSlot[] => {
+  const slots: TimeSlot[] = [];
+  for (let i = 9; i <= 17; i++) {
+    const startHour = i > 12 ? i - 12 : i;
+    const endHour = i + 1 > 12 ? i - 11 : i + 1;
+    const period = i >= 12 ? "PM" : "AM";
+    const nextPeriod = i + 1 >= 12 ? "PM" : "AM";
+    slots.push({ start: `${startHour}:00 ${period}`, end: `${endHour}:00 ${nextPeriod}` });
+  }
+  return slots;
+};
+
 const DoctorListingPage: React.FC = () => {
   const [doctors, setDoctors] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -29,7 +48,10 @@ const DoctorListingPage: React.FC = () => {
   const [itemsPerPage] = useState<number>(8);
   const [totalPages, setTotalPages] = useState<number>(0);
 
-  console.log(doctors);
+
+
+  const timeSlots = generateTimeSlots();
+
 
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -132,13 +154,11 @@ const DoctorListingPage: React.FC = () => {
             onChange={handleTimeSlotChange}
           >
             <option value="">Select Time Slot</option>
-            <option value="9:00 AM - 10:00 AM">9:00 AM - 10:00 AM</option>
-            <option value="11:30 AM - 12:30 PM">11:30 AM - 12:30 PM</option>
-            <option value="10:15 AM - 11:15 AM">10:15 AM - 11:15 AM</option>
-            <option value="12:45 PM - 1:45 PM">12:45 PM - 1:45 PM</option>
-            <option value="3:15 PM - 4:15 PM">3:15 PM - 4:15 PM</option>
-            <option value="2:00 PM - 3:00 PM">2:00 PM - 3:00 PM</option>
-            <option value="4:30 PM - 5:30 PM">4:30 PM - 5:30 PM</option>
+            {timeSlots.map((slot, index) => (
+              <option key={index} value={`${slot.start} - ${slot.end}`}>
+                {slot.start} - {slot.end}
+              </option>
+            ))}
           </select>
         </div>
         <div className="border border-gray-500 shadow-lg rounded-md ml-3 w-40 relative">

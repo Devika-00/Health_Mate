@@ -87,25 +87,38 @@ export const doctorRepositoryMongodb = () =>{
     }
   
     // Find doctor IDs with available time slots at the selected time slot
-    if (selectedTimeSlot) {
-      const timeFilteredTimeSlots = await timeSlots.find({
-        slotTime: selectedTimeSlot,
-        available: true,
-      }).select('doctorId');
-      const timeFilteredDoctorIds = timeFilteredTimeSlots.map((slot: any) => slot.doctorId.toString());
-  
-      // Combine doctor IDs if both date and time slot filters are provided
-      if (selectedDate) {
-        doctorIds = doctorIds.filter(id => timeFilteredDoctorIds.includes(id));
-      } else {
-        doctorIds = timeFilteredDoctorIds;
-      }
-  
-      // If doctor IDs list becomes empty after filtering by time slot, return an empty result
-      if (doctorIds.length === 0) {
-        return { total: 0, doctors: [] };
-      }
-    }
+    // Find doctor IDs with available time slots at the selected time slot
+  if (selectedTimeSlot) {
+  const [startTime, endTime] = selectedTimeSlot.split(' - ');
+
+  // Find time slots that match the selected time slot
+  const timeFilteredTimeSlots = await timeSlots.find({
+    available: true,
+    'slots.times.start': startTime,
+    'slots.times.end': endTime,
+  }).select('doctorId');
+
+  const timeFilteredDoctorIds = timeFilteredTimeSlots.map((slot: any) => slot.doctorId.toString());
+
+  // Combine doctor IDs if both date and time slot filters are provided
+  if (selectedDate) {
+    const dayOfWeek = new Date(selectedDate).getDay();
+    const dateFilteredTimeSlots = await timeSlots.find({
+      available: true,
+      'slots.day': dayOfWeek,
+    }).select('doctorId');
+
+    const dateFilteredDoctorIds = dateFilteredTimeSlots.map((slot: any) => slot.doctorId.toString());
+    doctorIds = doctorIds.filter(id => timeFilteredDoctorIds.includes(id) && dateFilteredDoctorIds.includes(id));
+  } else {
+    doctorIds = timeFilteredDoctorIds;
+  }
+
+  // If doctor IDs list becomes empty after filtering by time slot, return an empty result
+  if (doctorIds.length === 0) {
+    return { total: 0, doctors: [] };
+  }
+}
   
     // Add doctor IDs to the query if there are any filtered by date/time slot
     if (doctorIds.length > 0) {
