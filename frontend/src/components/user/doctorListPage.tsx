@@ -30,7 +30,6 @@ const DoctorListingPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchActive, setSearchActive] = useState<boolean>(false);
   const [selectedDepartment, setSelectedDepartment] = useState<string>("");
-  const [selectedConsultationType, setSelectedConsultationType] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>("");
   const [departments, setDepartments] = useState<string[]>([
@@ -173,14 +172,12 @@ const DoctorListingPage: React.FC = () => {
             <FaCalendarAlt />
           </div>
         </div>
-        {/* Change Start: Clear Filters Button */}
         <button
           className="ml-4 bg-blue-900 hover:bg-blue-800 text-white rounded-md px-4 py-2"
           onClick={handleClearFilters}
         >
           Clear Filters
         </button>
-        {/* Change End */}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {doctors.map((doctor) => (
