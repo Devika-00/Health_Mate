@@ -10,7 +10,7 @@ import {
     authenticateGoogleSignInUser,
   
 } from "../app/use-cases/user/auth/userAuth";
-import {getUserProfile,
+import {WalletTransactions, getUserProfile,
         getWalletUser,
         updateUser} from "../app/use-cases/user/read & update/profile";
 import { userDbInterface } from "../app/interfaces/userDbRepository";
@@ -235,6 +235,27 @@ const getWallet = async (
     
     const getWallet = await getWalletUser(id,dbRepositoryUser);
     res.status(200).json({ success: true, getWallet});
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**Method Get fetch transactions */
+
+const getTransactions = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.user;
+    const transaction = await WalletTransactions(userId, dbRepositoryUser);
+    console.log(transaction,"kkkkkkkkkkkkk");
+    res.status(200).json({
+      success: true,
+      transaction,
+      message: "Transactions fetched successfully",
+    });
   } catch (error) {
     next(error);
   }
@@ -466,6 +487,7 @@ const deleteDocument = async(
         fetchDocuments,
         deleteDocument,
         getWallet,
+        getTransactions,
     };
     };
 

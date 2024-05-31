@@ -1,6 +1,7 @@
 import { userEntityType,googleSignInUserEntityType } from "../../../../entities/userEntity";
 import { UserInterface } from "../../../../types/userInterface";
 import OTPModel from "../models/OTPmodel";
+import transations from "../models/transations";
 import User from "../models/user";
 import wallet from "../models/wallet";
 
@@ -68,6 +69,11 @@ export const userRepositoryMongodb = () =>{
           isVerified: user.email_verified(),
           authenticationMethod:user.authenticationMethod(),
         });
+
+    const getAllTransaction = async (userId:any) =>{
+        const transactions = await transations.find({userId:userId});
+        return transactions;
+    }    
     
     return {
         getUserbyEmail,
@@ -84,6 +90,7 @@ export const userRepositoryMongodb = () =>{
         updateUserBlock,
         addWallet,
         getWalletUser,
+        getAllTransaction,
 
     };
 

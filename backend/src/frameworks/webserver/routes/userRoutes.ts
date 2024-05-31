@@ -20,7 +20,7 @@ import { prescriptionRepositoryMongodb } from "../../database/mongodb/repositori
 const userRoutes = () =>{
     const router = express.Router();
 
-    const controller = userController(
+    const controller:any = userController(
         authServiceInterface,
         authService,
         userDbRepository,
@@ -68,6 +68,8 @@ router.post("/uploadDocuments",authenticateUser,controller.labRecords);
 router.get("/documents/:id",authenticateUser,controller.fetchDocuments);
 router.delete("/documents/:id",authenticateUser,controller.deleteDocument);
 router.get("/fetchWallet/:id",authenticateUser,controller.getWallet);
+router.get("/transactions", authenticateUser, controller.getTransactions);
+
 /*  Booking Routes for booking Controller  */
 
 router.post("/appointments",authenticateUser,_bookingController.BookAppoinment);

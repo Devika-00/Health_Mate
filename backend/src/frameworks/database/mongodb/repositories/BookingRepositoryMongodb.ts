@@ -4,6 +4,7 @@ import Booking from "../models/Booking";
 import { Types } from "mongoose";
 import { get } from "mongoose";
 import wallet from "../models/wallet";
+import Transactions  from "../models/transations";
 
 
 export const bookingRepositoryMongodb = () => {
@@ -106,6 +107,34 @@ export const bookingRepositoryMongodb = () => {
       return balanceAmount;
     }
 
+
+    const  amountDebit = async(userId:any,Amount:any)=>{
+      const WalletId = await wallet.findOne({userId:userId});
+
+      const walletTransaction = await Transactions.create({
+        walletId:WalletId,
+        userId:userId,
+        amount:Amount,
+        type:"Debit",
+        Description:"Wallet Payment"
+      });
+    }
+
+
+
+    const amountCredit = async(fee:any,UserId:any)=>{
+      const WalletId = await wallet.findOne({userId:UserId});
+
+      const walletTransaction = await Transactions.create({
+        walletId:WalletId,
+        userId:UserId,
+        amount:fee,
+        type:"Credit",
+        Description:"Refund Amound"
+      });
+
+    }
+
     
     return{
         createBooking,
@@ -121,6 +150,8 @@ export const bookingRepositoryMongodb = () => {
         changeWalletMoney,
         changeTheWallet,
         getWalletBalance,
+        amountDebit,
+        amountCredit,
     }    
 
 }

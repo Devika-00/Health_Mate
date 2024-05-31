@@ -26,4 +26,12 @@ console.log(amount,"amountttt");
 return amount;
 } 
 
+export const WalletTransactions = async (
+  userId: string,
+  userRepository: ReturnType<userDbInterface>
+) => {
+  const transactions = await userRepository.getTransactions(userId);
+  return transactions;
+};
+
 

@@ -39,6 +39,10 @@ export const userDbRepository = (
     const addWallet = async (userID: string) =>
         await repository.addWallet(userID);
     
+    const getTransactions = async (userId:any) =>{
+       const response = await repository.getAllTransaction(userId);
+       return response;
+    }
 
     return {
         getUserbyEmail,
@@ -55,6 +59,7 @@ export const userDbRepository = (
         updateUserBlock,
         addWallet,
         getWallet,
+        getTransactions,
 
     };
 };

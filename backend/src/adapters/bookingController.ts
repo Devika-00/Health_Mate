@@ -8,7 +8,7 @@ import { TimeSlotRepositoryMongodbType } from "../frameworks/database/mongodb/re
 import { BookingDbRepositoryInterface} from "../app/interfaces/bookingDbRepository";
 import { BookingRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/BookingRepositoryMongodb";
 import { BookingEntityType } from "../entities/bookingEntity";
-import { appoinmentBooking, changeAppoinmentstaus, changeWallet, checkIsBooked, createPayment, getBookingByBookingId, getBookingByDoctorId, getBookingByUserId, getWalletBalance, updateBookingStatus, updateBookingStatusPayment } from "../app/use-cases/user/Booking/bookingUser";
+import { appoinmentBooking, changeAppoinmentstaus, changeWallet, checkIsBooked, createPayment, getBookingByBookingId, getBookingByDoctorId, getBookingByUserId, getWalletBalance, updateBookingStatus, updateBookingStatusPayment, walletDebit } from "../app/use-cases/user/Booking/bookingUser";
 import { HttpStatus } from "../types/httpStatus";
 import { getUserById } from "../app/use-cases/user/auth/userAuth";
 
@@ -123,6 +123,9 @@ const bookingController=(
               dbDoctorRepository,
               
           );
+
+          const walletTransaction = await walletDebit(userId,requiredAmount,dbBookingRepository);
+
           res.status(HttpStatus.OK).json({
             success: true,
             message: "Booking successfully",
@@ -222,6 +225,7 @@ const bookingController=(
         id,
         dbBookingRepository
       );
+
       res
         .status(HttpStatus.OK)
         .json({ success: true, message: "Cancel Appoinment" });

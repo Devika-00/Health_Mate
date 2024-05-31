@@ -155,18 +155,17 @@ export const createPayment = async (
   )=>{
     const changeStatus = await bookingRepository.changeBookingstatus(appoinmentStatus,cancelReason,id);
 
-     // Retrieve the booking entity by its ID
   const booking = await bookingRepository.getBookingById(id);
   console.log(booking,"ghfghfjg");
-  // Get the fee from the booking entity
   //@ts-ignore
   const fee:any = booking?.fee;
    //@ts-ignore
   const UserId = booking?.userId;
 
-  // Change the wallet amount using the fee
      //@ts-ignore
   const changeWalletAmount = await bookingRepository.changeWallet(fee,UserId);
+
+  const walletTransaction = await bookingRepository.creditAmount(fee,UserId);
 
      return {changeStatus,
       changeWalletAmount
@@ -180,6 +179,14 @@ export const createPayment = async (
   )=>{
     const balance = await bookingRepository.getBalanceAmount(userId);
     return balance;
+  }
+
+  export const walletDebit = async (
+    userId:any,
+    Amount:any,
+    bookingRepository:ReturnType<BookingDbRepositoryInterface>
+  )=>{
+    const debit = await bookingRepository.debitAmount(userId,Amount);
   }
 
 

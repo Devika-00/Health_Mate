@@ -260,12 +260,7 @@ export const updateUser = async (
   userRepository: ReturnType<userDbInterface>
 ) => await userRepository.updateProfile(userID, updateData);
 
-export const WalletTransactions = async (
-  userId: string,
-  userRepository: ReturnType<userDbInterface>
-) => {
-  const user = await userRepository.getUserbyId(userId);
-};
+
 
 export const getUserById = async (
   id: string,
