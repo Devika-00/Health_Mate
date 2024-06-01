@@ -32,7 +32,7 @@ const OfflineDoctors: React.FC = () => {
   const [selectedDepartment, setSelectedDepartment] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>('');
-  const [departments, setDepartments] = useState<string[]>([
+  const [departments] = useState<string[]>([
     "Cardiologist",
     "Neurologist",
     "Dermatologist",
@@ -45,9 +45,8 @@ const OfflineDoctors: React.FC = () => {
   ]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage] = useState<number>(8);
-  const [totalPages, setTotalPages] = useState<number>(0);
+  const [totalDoctors, setTotalDoctors] = useState<number>(0);
 
-  
   const timeSlots = generateTimeSlots();
 
   useEffect(() => {
@@ -64,8 +63,12 @@ const OfflineDoctors: React.FC = () => {
           },
         });
 
-        setDoctors(response.data.doctors);
-        setTotalPages(response.data.total);
+        const filteredDoctors = response.data.doctors.filter((doctor: any) =>
+          doctor.consultationType === "offline" || doctor.consultationType === "both"
+        );
+
+        setDoctors(filteredDoctors);
+        setTotalDoctors(filteredDoctors.length);
       } catch (error) {
         console.error("Error fetching doctors:", error);
       }
@@ -80,7 +83,6 @@ const OfflineDoctors: React.FC = () => {
     currentPage,
     itemsPerPage,
   ]);
-
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
@@ -109,7 +111,6 @@ const OfflineDoctors: React.FC = () => {
     setSelectedTimeSlot("");
     setCurrentPage(1); // reset to first page
   };
-
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
@@ -163,7 +164,7 @@ const OfflineDoctors: React.FC = () => {
             <FaCalendarAlt />
           </div>
         </div>
-         <button
+        <button
           className="ml-4 bg-blue-900 hover:bg-blue-800 text-white rounded-md px-4 py-2"
           onClick={handleClearFilters}
         >
@@ -186,22 +187,32 @@ const OfflineDoctors: React.FC = () => {
       </div>
       <div className="mt-10 flex justify-center">
         <ul className="flex pl-0 list-none rounded my-2">
-          {Array.from({ length: totalPages }, (_, index) => (
-            (index <= totalPages / 8) && (
-              <li key={index}>
-                <button
-                  className={`${
-                    currentPage === index + 1
-                      ? "bg-blue-900 text-white"
-                      : "text-blue-900 hover:text-blue-700"
-                  } cursor-pointer px-3 py-2`}
-                  onClick={() => paginate(index + 1)}
-                >
-                  {index + 1}
-                </button>
-              </li>
-            )
-          ))}
+          <li>
+            <button
+              className={`${
+                currentPage === 1
+                  ? "bg-blue-900 text-white"
+                  : "text-blue-900 hover:text-blue-700"
+              } cursor-pointer px-3 py-2`}
+              onClick={() => paginate(1)}
+            >
+              1
+            </button>
+          </li>
+          {totalDoctors > itemsPerPage && (
+            <li>
+              <button
+                className={`${
+                  currentPage === 2
+                    ? "bg-blue-900 text-white"
+                    : "text-blue-900 hover:text-blue-700"
+                } cursor-pointer px-3 py-2`}
+                onClick={() => paginate(2)}
+              >
+                2
+              </button>
+            </li>
+          )}
         </ul>
       </div>
       <div className="flex justify-center mt-4">
@@ -213,7 +224,7 @@ const OfflineDoctors: React.FC = () => {
             Previous Page
           </button>
         )}
-        {doctors.length === itemsPerPage && (
+        {doctors.length === itemsPerPage && totalDoctors > itemsPerPage && (
           <button
             className="bg-blue-900 text-white py-2 px-4 rounded ml-4"
             onClick={() => paginate(currentPage + 1)}
