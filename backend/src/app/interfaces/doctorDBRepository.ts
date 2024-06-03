@@ -57,6 +57,8 @@ const getFilteredDoctors = async ({
   const updateProfile = async (doctorID:string, doctorData : Record<string,any>)=>await repository.updateDoctorInfo(doctorID,doctorData);
 
   const getAllDoctors = async () => await repository.getAllDoctors();
+  
+  const getAllAppoinments = async () => await repository.getAllAppoinments();
 
   const getRejectedDoctorById = async (id: string) =>await repository.getRejectedDoctorById(id);
  
@@ -75,6 +77,7 @@ const getFilteredDoctors = async ({
         getDoctorByIdUpdateRejected,
         getRejectedDoctorById,
         getFilteredDoctors,
+        getAllAppoinments,
     }
 }
 

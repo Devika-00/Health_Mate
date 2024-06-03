@@ -11,6 +11,9 @@ export const getUsers = async (userDbRepository: ReturnType<userDbInterface>) =>
 export const getAllDoctors = async (doctorDbRepository: ReturnType<doctorDbInterface>) =>
   await doctorDbRepository.getAllDoctors();
 
+export const getAllTheAppoinments = async (doctorDbRepository: ReturnType<doctorDbInterface>) =>
+  await doctorDbRepository.getAllAppoinments();
+
 export const getDoctors = async (
   {
     searchQuery,

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const AdminSidebar: React.FC = () => {
   return (
-    <div className="bg-gray-800 text-white w-64 py-4 px-6 h-full flex flex-col">
+    <div className="bg-gray-800 text-white w-64 py-4 px-6 h-screen flex flex-col">
       <h1 className="text-2xl font-bold mb-8">HEALTH MATE</h1>
       <ul className="space-y-2">
         <li>
@@ -37,14 +37,6 @@ const AdminSidebar: React.FC = () => {
             Users
           </Link>
         </li>
-        </li>
-        <li>
-          <Link
-            to="/admin/profile"
-            className="block py-2 px-4 rounded-md hover:bg-gray-700"
-          >
-            Profile
-          </Link>
         </li>
       </ul>
     </div>

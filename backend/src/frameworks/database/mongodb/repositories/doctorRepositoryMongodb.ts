@@ -1,5 +1,6 @@
 import { doctorEntityType, googleSignInUserEntityType } from "../../../../entities/doctorEntity";
 import { DoctorInterface } from "../../../../types/doctorInterface";
+import Booking from "../models/Booking";
 import Doctor from "../models/doctor";
 import timeSlots from "../models/timeSlots";
 
@@ -143,6 +144,8 @@ export const doctorRepositoryMongodb = () =>{
 
     const getAllDoctors = async () => await Doctor.find({ isVerified: true }); 
 
+    const getAllAppoinments = async () => await Booking.find({ appoinmentStatus: "Booked" }); 
+
     const registerGoogleSignedDoctor = async (doctor: googleSignInUserEntityType) =>
       await Doctor.create({
         doctorName: doctor.doctorName(),
@@ -170,6 +173,7 @@ export const doctorRepositoryMongodb = () =>{
     getDoctorByIdUpdate,
     getRejectedDoctorById,
     getFilteredDoctors,
+    getAllAppoinments,
 
 
   }

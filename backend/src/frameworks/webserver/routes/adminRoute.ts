@@ -25,6 +25,7 @@ export default () =>{
     router.post("/login", controller.adminLogin);
     router.get("/users",authenticateAdmin, controller.getAllUser);
     router.get("/doctors",authenticateAdmin, controller.getAllTheDoctors);
+    router.get("/appoinments",authenticateAdmin, controller.getAllAppoinments);
     router.patch("/block_user/:id",authenticateAdmin, controller.userBlock);
     router.patch("/block_doctor/:id",authenticateAdmin, controller.doctorBlock);
     router.get("/doctors/:id",authenticateAdmin, controller.doctorDetails);

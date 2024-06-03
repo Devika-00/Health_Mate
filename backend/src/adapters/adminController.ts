@@ -8,6 +8,7 @@ import {getUsers,
   getDoctor,
   getDoctorRejected,
   getAllDoctors,
+  getAllTheAppoinments,
 } from "../app/use-cases/Admin/adminRead";
 import { AuthServiceInterfaceType } from "../app/service-interface/authServiceInterface";
 import { userDbInterface } from "../app/interfaces/userDbRepository";
@@ -86,6 +87,21 @@ const getAllTheDoctors = async (
   try {
     const doctors = await getAllDoctors(dbDoctorRepository);
     return res.status(HttpStatus.OK).json({ success: true, doctors });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**method get fetch all appoinments */
+
+const getAllAppoinments = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const appoinments = await getAllTheAppoinments(dbDoctorRepository);
+    return res.status(HttpStatus.OK).json({ success: true, appoinments });
   } catch (error) {
     next(error);
   }
@@ -192,6 +208,7 @@ const getAllTheDoctors = async (
             doctorDetails,
             VerifyDoctor,
             rejectionDoctor,
+            getAllAppoinments
           }
 
 }  
