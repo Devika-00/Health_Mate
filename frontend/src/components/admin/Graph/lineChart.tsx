@@ -30,14 +30,15 @@ ChartJS.register(
 interface LineGraphProps {
   doctors: any[];
   users: any[];
-  appoinments: any[];
+  appointments: any[];
 }
 
-const LineGraph: React.FC<LineGraphProps> = ({ doctors, users, appoinments }) => {
+const LineGraph: React.FC<LineGraphProps> = ({ doctors, users, appointments }) => {
   const [labels, setLabels] = useState<string[]>([]);
   const [appointmentsData, setAppointmentsData] = useState<number[]>([]);
   const [usersData, setUsersData] = useState<number[]>([]);
   const [doctorsData, setDoctorsData] = useState<number[]>([]);
+  const [view, setView] = useState<'monthly' | 'yearly'>('monthly');
 
   useEffect(() => {
     const generateMonthlyCounts = (data: any[], key: string) => {
@@ -50,17 +51,57 @@ const LineGraph: React.FC<LineGraphProps> = ({ doctors, users, appoinments }) =>
       return counts;
     };
 
+    const generateYearlyCounts = (data: any[], key: string) => {
+      const counts: Record<string, number> = {};
+      data.forEach(item => {
+        const date = new Date(item[key]);
+        const year = date.getFullYear();
+        counts[year] = (counts[year] || 0) + 1;
+      });
+      return counts;
+    };
+
     const monthlyLabels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     
-    const doctorsMonthlyCounts = generateMonthlyCounts(doctors, 'createdAt');
-    const usersMonthlyCounts = generateMonthlyCounts(users, 'createdAt');
-    const appointmentsMonthlyCounts = generateMonthlyCounts(appoinments, 'createdAt');
+    if (view === 'monthly') {
+      const doctorsMonthlyCounts = generateMonthlyCounts(doctors, 'createdAt');
+      const usersMonthlyCounts = generateMonthlyCounts(users, 'createdAt');
+      const appointmentsMonthlyCounts = generateMonthlyCounts(appointments, 'createdAt');
 
-    setLabels(monthlyLabels);
-    setDoctorsData(doctorsMonthlyCounts);
-    setUsersData(usersMonthlyCounts);
-    setAppointmentsData(appointmentsMonthlyCounts);
-  }, [doctors, users, appoinments]);
+      setLabels(monthlyLabels);
+      setDoctorsData(doctorsMonthlyCounts);
+      setUsersData(usersMonthlyCounts);
+      setAppointmentsData(appointmentsMonthlyCounts);
+    } else {
+      const doctorsYearlyCounts = generateYearlyCounts(doctors, 'createdAt');
+      const usersYearlyCounts = generateYearlyCounts(users, 'createdAt');
+      const appointmentsYearlyCounts = generateYearlyCounts(appointments, 'createdAt');
+
+      const years = Array.from(new Set([
+        ...Object.keys(doctorsYearlyCounts),
+        ...Object.keys(usersYearlyCounts),
+        ...Object.keys(appointmentsYearlyCounts),
+      ])).map(year => parseInt(year, 10));
+
+      const minYear = Math.min(...years);
+      const maxYear = Math.max(...years);
+
+      const yearlyLabels:any = [];
+      for (let year = minYear - 2; year <= maxYear + 2; year++) {
+        yearlyLabels.push(year.toString());
+      }
+
+      const completeYearlyCounts = (counts: Record<string, number>) => {
+        const completeCounts = yearlyLabels.map((year: any) => counts[year] || 0);
+        return completeCounts;
+      };
+
+      setLabels(yearlyLabels);
+      setDoctorsData(completeYearlyCounts(doctorsYearlyCounts));
+      setUsersData(completeYearlyCounts(usersYearlyCounts));
+      setAppointmentsData(completeYearlyCounts(appointmentsYearlyCounts));
+    }
+  }, [doctors, users, appointments, view]);
 
   const data = {
     labels,
@@ -92,7 +133,7 @@ const LineGraph: React.FC<LineGraphProps> = ({ doctors, users, appoinments }) =>
     ],
   };
 
-  const maxCount = Math.max(...appointmentsData, ...usersData, ...doctorsData) + 2;
+  const maxCount = Math.max(...appointmentsData, ...usersData, ...doctorsData) + 3;
 
   const options: any = {
     responsive: true,
@@ -101,7 +142,7 @@ const LineGraph: React.FC<LineGraphProps> = ({ doctors, users, appoinments }) =>
         type: 'category',
         title: {
           display: true,
-          text: 'Months',
+          text: view === 'monthly' ? 'Months' : 'Years',
           color: '#333',
           font: {
             size: 14
@@ -155,6 +196,20 @@ const LineGraph: React.FC<LineGraphProps> = ({ doctors, users, appoinments }) =>
   return (
     <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-3xl mt-6">
       <h2 className="text-lg font-bold mb-4">Graph Overview</h2>
+      <div className="flex mb-4">
+        <button 
+          className={`mr-2 p-2 rounded ${view === 'monthly' ? 'bg-blue-900 text-white' : 'bg-gray-200'}`} 
+          onClick={() => setView('monthly')}
+        >
+          Monthly
+        </button>
+        <button 
+          className={`p-2 rounded ${view === 'yearly' ? 'bg-blue-900 text-white' : 'bg-gray-200'}`} 
+          onClick={() => setView('yearly')}
+        >
+          Yearly
+        </button>
+      </div>
       <div className="h-112">
         <Line data={data} options={options} />
       </div>

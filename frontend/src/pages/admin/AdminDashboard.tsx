@@ -9,7 +9,7 @@ import { ADMIN_API } from '../../constants';
 const Dashboard: React.FC = () => {
   const [doctors, setDoctors] = useState<[]>([]);
   const [users, setUsers] = useState<[]>([]);
-  const [appoinments, setAppoinments] = useState<[]>([]);
+  const [appointments, setAppointments] = useState<[]>([]);
 
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -34,48 +34,48 @@ const Dashboard: React.FC = () => {
       }
     };
 
-    const fetchAppoinments = async () => {
+    const fetchAppointments = async () => {
       try {
         const response = await axiosJWT.get(`${ADMIN_API}/appoinments`);
         if (Array.isArray(response.data.appoinments)) {
-          setAppoinments(response.data.appoinments);
+          setAppointments(response.data.appoinments);
         }
       } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error('Error fetching appointments:', error);
       }
     };
 
     fetchDoctors();
     fetchUsers();
-    fetchAppoinments();
+    fetchAppointments();
   }, []);
 
   return (
     <div className="flex h-screen">
       <AdminSidebar />
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col flex-grow">
         <AdminHeader />
-        <div className="p-6 flex flex-col flex-grow">
+        <div className="p-6 flex flex-col flex-grow overflow-auto">
           <h1 className="text-2xl font-bold mb-1">Dashboard</h1>
           <div className="grid grid-cols-3 gap-6 ">
-             {/* Card 1: Doctors Count */}
-             <div className="bg-white shadow-md rounded-lg p-6 bg-yellow-100">
-              <h2 className="text-lg font-bold ">Doctors Count</h2>
+            {/* Card 1: Doctors Count */}
+            <div className="bg-white shadow-md rounded-lg p-6 bg-yellow-100">
+              <h2 className="text-lg font-bold">Doctors Count</h2>
               <p className="text-3xl font-bold">{doctors.length}</p>
             </div>
-            {/* Card 2: Patients Count */}
+            {/* Card 2: Users Count */}
             <div className="bg-white shadow-md rounded-lg p-6 bg-red-200">
-              <h2 className="text-lg font-bold ">Users Count</h2>
+              <h2 className="text-lg font-bold">Users Count</h2>
               <p className="text-3xl font-bold">{users.length}</p>
             </div>
             {/* Card 3: Appointments Count */}
             <div className="bg-white shadow-md rounded-lg p-6 bg-blue-300">
-              <h2 className="text-lg font-bold ">Appointments</h2>
-              <p className="text-3xl font-bold">{appoinments.length}</p>
+              <h2 className="text-lg font-bold">Appointments</h2>
+              <p className="text-3xl font-bold">{appointments.length}</p>
             </div>
           </div>
           <div className="flex justify-between mt-1">
-            <LineGraph doctors={doctors} users={users} appoinments={appoinments} />
+            <LineGraph doctors={doctors} users={users} appointments={appointments} />
             <DonutChart />
           </div>
         </div>
