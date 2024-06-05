@@ -39,8 +39,11 @@ const DoctorCalendar: React.FC = () => {
   const [selectedSlots, setSelectedSlots] = useState<TimeSlot[]>([]);
   const [scheduledSlots, setScheduledSlots] = useState<ScheduledSlot[]>([]);
   const [selectedTimeSlots, setSelectedTimeSlots] = useState<SelectedTimeSlots>({});
+  const [editingSlot, setEditingSlot] = useState<{ day: number, index: number } | null>(null);
+  const [editedTimeSlot, setEditedTimeSlot] = useState<TimeSlot | null>(null);
+
   const doctor = useSelector((state: RootState) => state.DoctorSlice);
- 
+
   const daysOfWeek = [
     { day: 0, label: "Sunday" },
     { day: 1, label: "Monday" },
@@ -106,6 +109,7 @@ const DoctorCalendar: React.FC = () => {
   const handleConfirmSlots = () => {
     if (selectedStartDate && selectedEndDate && selectedSlots.length > 0 && selectedDays.length > 0) {
       const updatedSlots: SelectedTimeSlots = { ...selectedTimeSlots };
+      
       const rule = new RRule({
         freq: RRule.WEEKLY,
         dtstart: new Date(selectedStartDate),
@@ -179,7 +183,6 @@ const DoctorCalendar: React.FC = () => {
       toast.error("Failed to save slots. Please try again.");
     }
   };
-  
 
   const handleDeleteScheduled = async (_id: string) => {
     try {
@@ -191,7 +194,29 @@ const DoctorCalendar: React.FC = () => {
     }
   };
 
+  const handleEdit = (day: number, index: number) => {
+    setEditingSlot({ day, index });
+    setEditedTimeSlot(selectedTimeSlots[day][index]);
+  };
 
+  const handleEditedTimeSlotChange = (field: 'start' | 'end', value: string) => {
+    setEditedTimeSlot((prev) => prev ? { ...prev, [field]: value } : null);
+  };
+
+  const handleSaveEdit = () => {
+    if (editingSlot && editedTimeSlot) {
+      const updatedTimeSlots = { ...selectedTimeSlots };
+      updatedTimeSlots[editingSlot.day][editingSlot.index] = editedTimeSlot;
+      setSelectedTimeSlots(updatedTimeSlots);
+      setEditingSlot(null);
+      setEditedTimeSlot(null);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingSlot(null);
+    setEditedTimeSlot(null);
+  };
 
   return (
     <>
@@ -265,12 +290,20 @@ const DoctorCalendar: React.FC = () => {
                       {slots.map((slot:any, index:any) => (
                         <li key={index} className="flex justify-between items-center">
                           <span>{slot.start} - {slot.end}</span>
-                          <button
-                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 mb-1 px-2 rounded"
-                            onClick={() => handleDelete(Number(day), index)}
-                          >
-                            Delete
-                          </button>
+                          <div>
+                            <button
+                              className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 mb-1 px-2 rounded mr-2"
+                              onClick={() => handleEdit(Number(day), index)}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 mb-1 px-2 rounded"
+                              onClick={() => handleDelete(Number(day), index)}
+                            >
+                              Delete
+                            </button>
+                          </div>
                         </li>
                       ))}
                     </ul>
@@ -280,6 +313,43 @@ const DoctorCalendar: React.FC = () => {
             )}
           </div>
         </div>
+        {editingSlot && editedTimeSlot && (
+          <div className="mt-4 p-4 bg-gray-100 border rounded">
+            <h3 className="font-bold mb-2">Edit Time Slot</h3>
+            <div className="mb-2">
+              <label className="block mb-1">Start Time:</label>
+              <input
+                type="text"
+                className="w-full p-2 border rounded"
+                value={editedTimeSlot.start}
+                onChange={(e) => handleEditedTimeSlotChange('start', e.target.value)}
+              />
+            </div>
+            <div className="mb-2">
+              <label className="block mb-1">End Time:</label>
+              <input
+                type="text"
+                className="w-full p-2 border rounded"
+                value={editedTimeSlot.end}
+                onChange={(e) => handleEditedTimeSlotChange('end', e.target.value)}
+              />
+            </div>
+            <div className="flex justify-end">
+              <button
+                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2"
+                onClick={handleSaveEdit}
+              >
+                Save
+              </button>
+              <button
+                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+                onClick={handleCancelEdit}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
         <div className="flex justify-center mt-4">
           <button
             className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
