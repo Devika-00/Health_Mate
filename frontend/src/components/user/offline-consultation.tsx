@@ -32,17 +32,7 @@ const OfflineDoctors: React.FC = () => {
   const [selectedDepartment, setSelectedDepartment] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>('');
-  const [departments] = useState<string[]>([
-    "Cardiologist",
-    "Neurologist",
-    "Dermatologist",
-    "Gynecologist",
-    "Physician",
-    "Radiologist",
-    "Dentist",
-    "Psychiatrists",
-    "Allergist"
-  ]);
+  const [departments, setDepartments] = useState<{ _id: string, departmentName: string, isListed: boolean, createdAt: string, updatedAt: string }[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage] = useState<number>(8);
   const [totalDoctors, setTotalDoctors] = useState<number>(0);
@@ -50,8 +40,30 @@ const OfflineDoctors: React.FC = () => {
   const timeSlots = generateTimeSlots();
 
   useEffect(() => {
+    const fetchDoctorDepartments = async () => {
+      try {
+        const response = await axiosJWT.get(`${USER_API}/departments`);
+        if (response.data.success) {
+          const listedDepartments = response.data.allDepartment.filter(
+            (department: any) => department.isListed
+          );
+          setDepartments(listedDepartments);
+        } else {
+          throw new Error('Failed to fetch department details');
+        }
+      } catch (error) {
+        console.error('Error fetching department details:', error);
+      }
+    };
+
+    fetchDoctorDepartments();
+  }, []);
+
+  useEffect(() => {
     const fetchDoctors = async () => {
       try {
+        const departmentNames = departments.map((department) => department.departmentName);
+
         const response = await axiosJWT.get(`${USER_API}/doctors`, {
           params: {
             searchQuery,
@@ -64,7 +76,8 @@ const OfflineDoctors: React.FC = () => {
         });
 
         const filteredDoctors = response.data.doctors.filter((doctor: any) =>
-          doctor.consultationType === "offline" || doctor.consultationType === "both"
+          (doctor.consultationType === "offline" || doctor.consultationType === "both") &&
+          departmentNames.includes(doctor.department)
         );
 
         setDoctors(filteredDoctors);
@@ -74,15 +87,10 @@ const OfflineDoctors: React.FC = () => {
       }
     };
 
-    fetchDoctors();
-  }, [
-    searchQuery,
-    selectedDepartment,
-    selectedDate,
-    selectedTimeSlot,
-    currentPage,
-    itemsPerPage,
-  ]);
+    if (departments.length > 0) {
+      fetchDoctors();
+    }
+  }, [searchQuery, selectedDepartment, selectedDate, selectedTimeSlot, currentPage, itemsPerPage, departments]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
@@ -130,11 +138,13 @@ const OfflineDoctors: React.FC = () => {
             <FaSearch />
           </div>
         </div>
-        <div className={`border border-gray-500 shadow-lg rounded-md w-80`}>
+        <div className="border border-gray-500 shadow-lg rounded-md w-80">
           <select className="rounded-md px-4 py-2 w-full" value={selectedDepartment} onChange={handleDepartmentChange}>
             <option value="">All Departments</option>
-            {departments.map((department, index) => (
-              <option key={index} value={department}>{department}</option>
+            {departments.map((department) => (
+              <option key={department._id} className="text-gray-700" value={department.departmentName}>
+                {department.departmentName}
+              </option>
             ))}
           </select>
         </div>
@@ -187,32 +197,20 @@ const OfflineDoctors: React.FC = () => {
       </div>
       <div className="mt-10 flex justify-center">
         <ul className="flex pl-0 list-none rounded my-2">
-          <li>
-            <button
-              className={`${
-                currentPage === 1
-                  ? "bg-blue-900 text-white"
-                  : "text-blue-900 hover:text-blue-700"
-              } cursor-pointer px-3 py-2`}
-              onClick={() => paginate(1)}
-            >
-              1
-            </button>
-          </li>
-          {totalDoctors > itemsPerPage && (
-            <li>
+          {Array.from({ length: Math.ceil(totalDoctors / itemsPerPage) }, (_, index) => (
+            <li key={index}>
               <button
                 className={`${
-                  currentPage === 2
+                  currentPage === index + 1
                     ? "bg-blue-900 text-white"
                     : "text-blue-900 hover:text-blue-700"
                 } cursor-pointer px-3 py-2`}
-                onClick={() => paginate(2)}
+                onClick={() => paginate(index + 1)}
               >
-                2
+                {index + 1}
               </button>
             </li>
-          )}
+          ))}
         </ul>
       </div>
       <div className="flex justify-center mt-4">

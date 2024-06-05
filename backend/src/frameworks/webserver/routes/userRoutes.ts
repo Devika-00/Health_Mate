@@ -15,6 +15,8 @@ import { bookingDbRepository } from "../../../app/interfaces/bookingDbRepository
 import { bookingRepositoryMongodb } from "../../database/mongodb/repositories/BookingRepositoryMongodb";
 import { prescriptionDbRepository } from "../../../app/interfaces/prescriptionDbRepository";
 import { prescriptionRepositoryMongodb } from "../../database/mongodb/repositories/prescriptionRepositoryMongodb";
+import { departmentDbRepository } from "../../../app/interfaces/departmentDbRepository";
+import { departmentRepositoryMongodb } from "../../database/mongodb/repositories/departmentRepositoryMongodb";
 
 
 const userRoutes = () =>{
@@ -31,6 +33,8 @@ const userRoutes = () =>{
         timeSlotRepositoryMongodb,
         prescriptionDbRepository,
         prescriptionRepositoryMongodb,
+        departmentDbRepository,
+        departmentRepositoryMongodb
 
     );
 
@@ -69,6 +73,7 @@ router.get("/documents/:id",authenticateUser,controller.fetchDocuments);
 router.delete("/documents/:id",authenticateUser,controller.deleteDocument);
 router.get("/fetchWallet/:id",authenticateUser,controller.getWallet);
 router.get("/transactions", authenticateUser, controller.getTransactions);
+router.get("/departments",authenticateUser,controller.getAllDepartments);
 
 /*  Booking Routes for booking Controller  */
 

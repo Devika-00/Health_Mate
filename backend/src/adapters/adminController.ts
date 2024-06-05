@@ -17,6 +17,9 @@ import { doctorDbInterface } from "../app/interfaces/doctorDBRepository";
 import { doctorRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/doctorRepositoryMongodb";
 import { blockUser,blockDoctor } from "../app/use-cases/Admin/adminUpdate";
 import doctor from "../frameworks/database/mongodb/models/doctor";
+import { Department, addOneDepartment, departmentUnlist, departmentUpdate } from "../app/use-cases/Admin/adminDepartment";
+import { IDepartmentRepository } from "../app/interfaces/departmentDbRepository";
+
 
 // adminAuthController
 export default (
@@ -26,12 +29,15 @@ export default (
     userDbRepositoryImpl: userRepositoryMongodbType,
     doctorDbRepository: doctorDbInterface,
     doctorDbRepositoryImpl: doctorRepositoryMongodbType,
+    departmentDbRepository: IDepartmentRepository,
+    departmentDbRepositoryImpl: () => any
     
-   
   ) => {
     const dbUserRepository = userDbRepository(userDbRepositoryImpl());
     const dbDoctorRepository = doctorDbRepository(doctorDbRepositoryImpl());
     const authService = authServiceInterface(authServiceImpl());
+    const dbDepartmentRepository = departmentDbRepository(departmentDbRepositoryImpl());
+   
 
 
 const adminLogin = async(
@@ -195,6 +201,75 @@ const getAllAppoinments = async (
     }
   }
 
+  /**method post - Add Department */
+  
+  const addDepartment = async(
+    req:Request,
+    res:Response,
+    next:NextFunction
+  )=>{
+    try {
+      const { departmentName, isListed } = req.body;
+
+      const department = await addOneDepartment(departmentName,isListed,dbDepartmentRepository);
+      return res.status(HttpStatus.OK).json({ success: true, department,message:"Department added Successfully" });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**method get -  Department */
+  
+  const getAllDepartments = async(
+    req:Request,
+    res:Response,
+    next:NextFunction
+  )=>{
+    try {
+      const allDepartment = await Department(dbDepartmentRepository);
+      return res.status(HttpStatus.OK).json({ success: true, allDepartment,message:"Department added Successfully" });
+    } catch (error) {
+      next(error);
+
+    }
+  }
+
+
+  /**method put - edit department */
+  const updateDepartment = async(
+    req:Request,
+    res:Response,
+    next:NextFunction
+  )=>{
+    try {
+     const {departmentName} = req.body;
+     const {id} = req.params;
+    
+     const update = await departmentUpdate(departmentName,id,dbDepartmentRepository);
+     return res.status(HttpStatus.OK).json({success:true,update,message:"update Successfully"});
+    
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /*
+   * METHOD:PATCH
+   * Block or Unblock user
+   */
+  const unlistDepartment = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const updatedDepartment = await departmentUnlist(id, dbDepartmentRepository);
+      return res.status(HttpStatus.OK).json({
+        success: true,
+        message: "updated successfully",
+        department:updatedDepartment,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 
 
 
@@ -208,7 +283,11 @@ const getAllAppoinments = async (
             doctorDetails,
             VerifyDoctor,
             rejectionDoctor,
-            getAllAppoinments
+            getAllAppoinments,
+            addDepartment,
+            getAllDepartments,
+            updateDepartment,
+            unlistDepartment,
           }
 
 }  

@@ -32,56 +32,52 @@ const DoctorListingPage: React.FC = () => {
   const [selectedDepartment, setSelectedDepartment] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>("");
-  const [departments, setDepartments] = useState<string[]>([
-    "Cardiologist",
-    "Neurologist",
-    "Dermatologist",
-    "Gynecologist",
-    "Physician",
-    "Radiologist",
-    "Dentist",
-    "Psychiatrists",
-    "Allergist",
-  ]);
+  const [departments, setDepartments] = useState<{_id: string, departmentName: string, isListed: boolean, createdAt: string, updatedAt: string}[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage] = useState<number>(8);
   const [totalPages, setTotalPages] = useState<number>(0);
 
-
-
   const timeSlots = generateTimeSlots();
-
 
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const response = await axiosJWT.get(`${USER_API}/doctors`, {
-          params: {
-            searchQuery,
-            department: selectedDepartment,
-            selectedDate: selectedDate ? selectedDate.toISOString() : null,
-            selectedTimeSlot,
-            page: currentPage,
-            limit: itemsPerPage,
-          },
-        });
+        const departmentResponse = await axiosJWT.get(`${USER_API}/departments`);
+        if (departmentResponse.data.success) {
+          const listedDepartments = departmentResponse.data.allDepartment.filter(
+            (department: any) => department.isListed
+          );
+          setDepartments(listedDepartments);
 
-        setDoctors(response.data.doctors);
-        setTotalPages(response.data.total);
+          const departmentNames = listedDepartments.map((department: any) => department.departmentName);
+
+          const response = await axiosJWT.get(`${USER_API}/doctors`, {
+            params: {
+              searchQuery,
+              department: selectedDepartment,
+              selectedDate: selectedDate ? selectedDate.toISOString() : null,
+              selectedTimeSlot,
+              page: currentPage,
+              limit: itemsPerPage,
+            },
+          });
+
+          const filteredDoctors = response.data.doctors.filter((doctor: any) =>
+            departmentNames.includes(doctor.department)
+          );
+
+          setDoctors(filteredDoctors);
+          setTotalPages(Math.ceil(filteredDoctors.length / itemsPerPage));
+        } else {
+          throw new Error("Failed to fetch department details");
+        }
       } catch (error) {
         console.error("Error fetching doctors:", error);
       }
     };
 
     fetchDoctors();
-  }, [
-    searchQuery,
-    selectedDepartment,
-    selectedDate,
-    selectedTimeSlot,
-    currentPage,
-    itemsPerPage,
-  ]);
+  }, [searchQuery, selectedDepartment, selectedDate, selectedTimeSlot, currentPage, itemsPerPage]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
@@ -139,9 +135,9 @@ const DoctorListingPage: React.FC = () => {
             onChange={handleDepartmentChange}
           >
             <option value="">All Departments</option>
-            {departments.map((department, index) => (
-              <option key={index} value={department}>
-                {department}
+            {departments.map((department) => (
+              <option key={department._id} className="text-gray-700" value={department.departmentName}>
+                {department.departmentName}
               </option>
             ))}
           </select>

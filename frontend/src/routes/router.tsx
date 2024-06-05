@@ -48,6 +48,7 @@ const UploadForm = lazy(()=>import("../pages/user/labRecord"));
 const DocumentListPage = lazy(()=>import("../pages/user/documentsListPage"));
 const WalletPage = lazy(()=>import("../pages/user/wallet"));
 const Transaction = lazy(()=>import("../pages/user/walletTransation"));
+const DepartmentManagement = lazy(()=>import("../pages/admin/departmentPage"));
 
 export const MainRouter = () => {
     return (
@@ -113,6 +114,7 @@ export const MainRouter = () => {
                      <Route path="" element={<AdminProtectedRoute />}>
                     <Route path="/admin" element={<AdminDashboard/>}/>
                     <Route path="/admin/users" element={<AdminUserList/>}/>
+                    <Route path="/admin/department" element={<DepartmentManagement/>}/>
                     <Route path="/admin/doctors" element={<AdminDoctorList/>}/>
                     <Route path="/admin/requesteddoctors" element={<RequestedDoctors/>}/>
                     <Route path="/admin/doctors/:id" element={<AdminDoctorDetails/>}/>

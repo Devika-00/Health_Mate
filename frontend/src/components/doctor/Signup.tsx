@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useFormik } from "formik";
 import showToast from "../../utils/toaster";
 import axios from "axios";
 import { validateSignUp } from "../../utils/validation";
-import { DOCTOR_API } from '../../constants';
+import { ADMIN_API, DOCTOR_API } from '../../constants';
 import { uploadCertificateToCloudinary } from "../../Api/uploadImages";
+import axiosJWT from '../../utils/axiosService';
 
 const Signup: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [medicalLicensePreview, setMedicalLicensePreview] = useState<string | null>(null);
+  const [departments, setDepartments] = useState<{_id: string, departmentName: string, isListed: boolean, createdAt: string, updatedAt: string}[]>([]);
   const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
@@ -56,6 +58,23 @@ const Signup: React.FC = () => {
     },
   });
 
+  useEffect(() => {
+    const fetchDoctorDepartment = async () => {
+      try {
+        const response = await axiosJWT.get(`${ADMIN_API}/departments`);
+        if (response.data.success) {
+          setDepartments(response.data.allDepartment); 
+        } else {
+          throw new Error('Failed to fetch doctor details');
+        }
+      } catch (error) {
+        console.error('Error fetching doctor details:', error);
+      }
+    };
+
+    fetchDoctorDepartment();
+  }, []); 
+
   // Handle file input change
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -70,7 +89,7 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center bg-cover bg-center bg-gradient-to-b from-violet-500 to-blue-500">
+    <div className="flex items-center justify-center bg-cover bg-center bg-gradient-to-b from-blue-800 to-blue-900">
       <div className="bg-gray-200 w-4/12 shadow-lg rounded-lg p-10 mt-14 mb-10">
         <h2 className="text-3xl font-bold mb-6 text-center">Sign Up</h2>
         <form onSubmit={formik.handleSubmit}>
@@ -129,15 +148,11 @@ const Signup: React.FC = () => {
               {...formik.getFieldProps("department")}
             >
               <option className="text-gray-700" value=""></option>
-              <option className="text-gray-700" value="Cardiologist">Cardiologist</option>
-              <option className="text-gray-700" value="Neurologist">Neurologist</option>
-              <option className="text-gray-700" value="Dermatologist">Dermatologist</option>
-              <option className="text-gray-700" value="Gynecologist">Gynecologist</option>
-              <option className="text-gray-700" value="Physician">Phyisican</option>
-              <option className="text-gray-700" value="Radiologist">Radiologist</option>
-              <option className="text-gray-700" value="Dentist">Dentist</option>
-              <option className="text-gray-700" value="Psychiatrist">Psychiatrist</option>
-              <option className="text-gray-700" value="Allergist">Allergist</option>
+              {departments.map((department) => (
+                <option key={department._id} className="text-gray-700" value={department.departmentName}>
+                  {department.departmentName}
+                </option>
+              ))}
             </select>
             {formik.errors.department && formik.touched.department && (
               <div className="text-red-500">{formik.errors.department}</div>
@@ -214,8 +229,10 @@ const Signup: React.FC = () => {
             {formik.errors.lisenceCertificate && formik.touched.lisenceCertificate&& (
               <div className="text-red-500">{formik.errors.lisenceCertificate}</div>
             )}
+          </div>
+          <div className="mb-6">
             {medicalLicensePreview && (
-              <img src={medicalLicensePreview} alt="Medical License Preview" className="mt-2 w-44 h-24" />
+              <img src={medicalLicensePreview} alt="Medical License Preview" className="w-full h-auto mb-4" />
             )}
           </div>
           <div className="mb-6">
@@ -234,35 +251,39 @@ const Signup: React.FC = () => {
             )}
           </div>
           <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirm-password">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirmPassword">
               Confirm Password
             </label>
             <input
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"
-              id="confirm-password"
+              id="confirmPassword"
               type="password"
               placeholder="Confirm Password"
               {...formik.getFieldProps("confirmPassword")}
             />
             {formik.errors.confirmPassword && formik.touched.confirmPassword && (
-              <div className="text-red-500">
-                {formik.errors.confirmPassword}
-              </div>
+              <div className="text-red-500">{formik.errors.confirmPassword}</div>
             )}
           </div>
-          
-          <div className="flex items-center justify-center">
+          <div className="mb-6">
             <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded focus:outline-none"
+              className={`bg-blue-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                }`}
               type="submit"
+              disabled={isSubmitting}
             >
-              Sign Up
+              {isSubmitting ? "Submitting..." : "Sign Up"}
             </button>
           </div>
         </form>
-        <p className="mt-2 text-center text-gray-700">
-          Already have an account? <Link to="/doctor/login" className="text-blue-500 underline">Login</Link>
-        </p>
+        <div className="text-center">
+          <p className="text-sm">
+            Already have an account?{" "}
+            <Link to="/doctor/login" className="text-blue-500">
+              Log in
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -17,7 +17,7 @@ const doctorSchema = new mongoose.Schema({
       phoneNumber:{
         type:String,
       },
-      department:{
+      department: {
         type:String,
       },
       role: {

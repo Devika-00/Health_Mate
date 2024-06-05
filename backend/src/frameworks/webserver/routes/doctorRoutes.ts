@@ -14,6 +14,9 @@ import { userDbRepository } from "../../../app/interfaces/userDbRepository";
 import { userRepositoryMongodb } from "../../database/mongodb/repositories/userRepositoryMongodb";
 import { prescriptionDbRepository } from "../../../app/interfaces/prescriptionDbRepository";
 import { PrescriptionRepositoryMongodbType, prescriptionRepositoryMongodb } from "../../database/mongodb/repositories/prescriptionRepositoryMongodb";
+import { departmentDbRepository } from "../../../app/interfaces/departmentDbRepository";
+import { departmentRepositoryMongodb } from "../../database/mongodb/repositories/departmentRepositoryMongodb";
+
 
 const doctorRoute = () => {
     const router = express.Router();
@@ -32,6 +35,8 @@ const doctorRoute = () => {
         prescriptionRepositoryMongodb,
         bookingDbRepository,
         bookingRepositoryMongodb,
+        departmentDbRepository,
+        departmentRepositoryMongodb
     );
 
 
@@ -71,6 +76,7 @@ const doctorRoute = () => {
     router.post("/addPrescription",authenticateDoctor,controller.addPrescription);
     router.get("/prescription/:id",authenticateDoctor,controller.fetchPrescription);
     router.delete("/prescription/:id",authenticateDoctor,controller.deletePrescription);
+    router.get("/departments",authenticateDoctor,controller.getAllDepartments);
     /*Booking Routes for booking Controller */
 
     router.get("/bookingdetails/:id",authenticateDoctor,_bookingController.getAppoinmentList)

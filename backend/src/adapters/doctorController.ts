@@ -19,7 +19,7 @@ import {
 import { addTimeSlot, deleteTimeSlot, getTimeSlotsByDoctorId, } from "../app/use-cases/doctor/timeslot";
 import { BookingDbRepositoryInterface} from "../app/interfaces/bookingDbRepository";
 import { BookingRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/BookingRepositoryMongodb";
-
+import { IDepartmentRepository } from "../app/interfaces/departmentDbRepository";
 
 import {getDoctorProfile,
   DoctorRejected,
@@ -29,6 +29,7 @@ import { userDbInterface } from "../app/interfaces/userDbRepository";
 import { userRepositoryMongodbType } from "../frameworks/database/mongodb/repositories/userRepositoryMongodb";
 import { getSingleUser } from "../app/use-cases/Admin/adminRead";
 import { addPrescriptionToUser, deletePrescriptionData, fetchPrescriptionForDoctor, fetchPrescriptionUsecase } from "../app/use-cases/Prescription/prescriptionUseCase";
+import { Department } from "../app/use-cases/Admin/adminDepartment";
 const doctorController = (
     authServiceInterface:AuthServiceInterfaceType,
     authServiceImpl : AuthService,
@@ -42,6 +43,8 @@ const doctorController = (
     prescriptionDbRepositoryImpl:PrescriptionRepositoryMongodbType,
     bookingDbRepository: BookingDbRepositoryInterface,
     bookingDbRepositoryImpl: BookingRepositoryMongodbType,
+    departmentDbRepository: IDepartmentRepository,
+    departmentDbRepositoryImpl: () => any
 ) => {
     const authService = authServiceInterface(authServiceImpl());
     const dbRepositoryUser = userDbRepository(userRepositoryImpl());
@@ -49,7 +52,7 @@ const doctorController = (
     const dbPrescriptionRepository = prescriptionDbRepository(prescriptionDbRepositoryImpl());
     const dbTimeSlotRepository = timeSlotDbRepository(timeSlotDbRepositoryImpl());
     const dbBookingRepository = bookingDbRepository(bookingDbRepositoryImpl());
-
+    const dbDepartmentRepository = departmentDbRepository(departmentDbRepositoryImpl());
     // doctor signup method POST
 
     const signup = async (req:Request,res:Response,next:NextFunction)=>{
@@ -471,6 +474,20 @@ const receiverDetails = async (
   }
 }
   
+/**method get - fetch departments */
+const getAllDepartments = async(
+  req:Request,
+  res:Response,
+  next:NextFunction
+)=>{
+  try {
+    const allDepartment = await Department(dbDepartmentRepository);
+    return res.status(HttpStatus.OK).json({ success: true, allDepartment,message:"Department added Successfully" });
+  } catch (error) {
+    next(error);
+
+  }
+}
   
 
 
@@ -496,6 +513,7 @@ const receiverDetails = async (
         fetchPrescription,
         deletePrescription,
         receiverDetails,
+        getAllDepartments,
     }
 }
 

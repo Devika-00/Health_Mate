@@ -33,6 +33,9 @@ import { PrescriptionRepositoryMongodbType } from "../frameworks/database/mongod
 import timeSlots from "../frameworks/database/mongodb/models/timeSlots";
 import { getAllTimeSlot } from "../app/use-cases/user/timeslots/get and update ";
 import { fetchPrescriptionUsecase, uploadLabDocuments,getDocuments, deleteSingleDocument } from "../app/use-cases/Prescription/prescriptionUseCase";
+import { IDepartmentRepository } from "../app/interfaces/departmentDbRepository";
+import { Department } from "../app/use-cases/Admin/adminDepartment";
+
 
 
 
@@ -47,13 +50,16 @@ const userController=(
     timeSlotDbRepositoryImpl: TimeSlotRepositoryMongodbType,
     prescriptionDbRepository:PrescriptionDbInterface,
     prescriptionDbRepositoryImpl:PrescriptionRepositoryMongodbType,
+    departmentDbRepository: IDepartmentRepository,
+    departmentDbRepositoryImpl: () => any
 )=>{
     const dbRepositoryUser = userDbRepository(userRepositoryImpl());
     const authService = authServiceInterface(authServiceImpl());
     const dbDoctorRepository = doctorDbRepository(doctorDbRepositoryImpl());
     const dbPrescriptionRepository = prescriptionDbRepository(prescriptionDbRepositoryImpl());
     const dbTimeSlotRepository = timeSlotDbRepository(timeSlotDbRepositoryImpl());
-
+    const dbDepartmentRepository = departmentDbRepository(departmentDbRepositoryImpl());
+   
     // Register User POST - Method
     
     const registerUser = async(
@@ -466,6 +472,22 @@ const deleteDocument = async(
   }
 }
 
+/**method get - Add Department */
+  
+const getAllDepartments = async(
+  req:Request,
+  res:Response,
+  next:NextFunction
+)=>{
+  try {
+    const allDepartment = await Department(dbDepartmentRepository);
+    return res.status(HttpStatus.OK).json({ success: true, allDepartment,message:"Department added Successfully" });
+  } catch (error) {
+    next(error);
+
+  }
+}
+
 
     return {
         registerUser,
@@ -488,6 +510,7 @@ const deleteDocument = async(
         deleteDocument,
         getWallet,
         getTransactions,
+        getAllDepartments,
     };
     };
 

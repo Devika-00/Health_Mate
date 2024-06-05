@@ -38,6 +38,14 @@ const AdminSidebar: React.FC = () => {
             Users
           </Link>
         </li>
+        <li>
+          <Link
+            to="/admin/department"
+            className="block py-2 px-4 rounded-md hover:bg-gray-700"
+          >
+            Department
+          </Link>
+        </li>
       </ul>
     </div>
   );
