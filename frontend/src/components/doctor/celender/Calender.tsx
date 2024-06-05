@@ -97,27 +97,27 @@ const DoctorCalendar: React.FC = () => {
   };
 
   const handleDaySelect = (day: number) => {
-    setSelectedDays((prev) => {
-      if (prev.includes(day)) {
-        return prev.filter((d) => d !== day);
-      } else {
-        return [...prev, day];
-      }
-    });
+    setSelectedDays(prev => prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]);
   };
+  
 
   const handleConfirmSlots = () => {
     if (selectedStartDate && selectedEndDate && selectedSlots.length > 0 && selectedDays.length > 0) {
       const updatedSlots: SelectedTimeSlots = { ...selectedTimeSlots };
-      
+  
+
+      // Extract the day indices from the daysOfWeek array
+      const selectedDayIndices = selectedDays.map(day => daysOfWeek[day].day - 1);
+  
       const rule = new RRule({
         freq: RRule.WEEKLY,
         dtstart: new Date(selectedStartDate),
         until: new Date(selectedEndDate),
-        byweekday: selectedDays,
+        byweekday: selectedDayIndices,
       });
+  
       const dates = rule.all();
-
+  
       dates.forEach((date) => {
         const day = date.getDay();
         if (!updatedSlots[day]) {
@@ -129,7 +129,7 @@ const DoctorCalendar: React.FC = () => {
           }
         });
       });
-
+  
       setSelectedTimeSlots(updatedSlots);
       setSelectedSlots([]);
       setSelectedDays([]);
@@ -137,7 +137,8 @@ const DoctorCalendar: React.FC = () => {
       toast.warn("Please select start date, end date, days, and time slots.");
     }
   };
-
+  
+  
   const handleDelete = (day: number, index: number) => {
     Swal.fire({
       title: "Are you sure?",
@@ -250,7 +251,7 @@ const DoctorCalendar: React.FC = () => {
                     className={`p-2 border rounded ${selectedDays.includes(day.day) ? "bg-blue-500 text-white" : "bg-white"}`}
                     onClick={() => handleDaySelect(day.day)}
                   >
-                    {day.label}
+                   {day.label}
                   </button>
                 ))}
               </div>

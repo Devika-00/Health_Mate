@@ -1,5 +1,3 @@
-// DepartmentManagement.js
-
 import React, { useEffect, useState } from "react";
 import { FaEdit, FaPlus } from "react-icons/fa"; // Import FaPlus for the "Add More" button
 import { DepartmentInterface } from "../../interfaces/departmentInterface";
@@ -35,15 +33,13 @@ const DepartmentManagement: React.FC = () => {
     );
 
     try {   
-    const response = await axiosJWT.patch(ADMIN_API+`/unlist_department/${id}`);
-    if(response.data.success){
-        showToast(response.data.message,"success")
-    }
+      const response = await axiosJWT.patch(`${ADMIN_API}/unlist_department/${id}`);
+      if(response.data.success){
+        showToast(response.data.message, "success");
+      }
     } catch (error) {
-        console.log(error)
+      console.log(error);
     }
-    
-
   };
 
   const toggleModal = () => {
@@ -54,7 +50,16 @@ const DepartmentManagement: React.FC = () => {
     setDepartmentName(e.target.value);
   };
 
+  const isDepartmentExist = (name: string) => {
+    return departments.some(dept => dept.departmentName.toLowerCase() === name.toLowerCase());
+  };
+
   const handleAddDepartment = async () => {
+    if (isDepartmentExist(departmentName)) {
+      showToast("Department already exists", "error");
+      return;
+    }
+
     const newDepartment: DepartmentInterface = {
       _id: (departments.length + 1).toString(),
       departmentName,
@@ -65,19 +70,25 @@ const DepartmentManagement: React.FC = () => {
       const response = await axiosJWT.post(`${ADMIN_API}/addDepartment`, newDepartment);
 
       if (response.data.success) {
-        showToast(response.data.message,"success");
+        showToast(response.data.message, "success");
+        setDepartments(prev => [...prev, newDepartment]);
         setDepartmentName("");
         toggleModal();
       }
 
     } catch (error) {
       console.error('Error adding department:', error);
-      alert('There was an error adding the department.');
+      showToast('There was an error adding the department.', "error");
     }
   };
 
   const handleEditDepartment = async () => {
     if (!currentDepartmentId) return;
+
+    if (isDepartmentExist(departmentName)) {
+      showToast("Department already exists", "error");
+      return;
+    }
 
     const updatedDepartment = {
       departmentName
@@ -87,7 +98,7 @@ const DepartmentManagement: React.FC = () => {
       const response = await axiosJWT.put(`${ADMIN_API}/departments/${currentDepartmentId}`, updatedDepartment);
 
       if (response.data.success) {
-        showToast(response.data.message,"success");
+        showToast(response.data.message, "success");
         setDepartments((prevDepartments) =>
           prevDepartments.map((dept) =>
             dept._id === currentDepartmentId ? { ...dept, departmentName } : dept
@@ -99,7 +110,7 @@ const DepartmentManagement: React.FC = () => {
       }
     } catch (error) {
       console.error('Error editing department:', error);
-      alert('There was an error editing the department.');
+      showToast('There was an error editing the department.', "error");
     }
   };
 
@@ -214,6 +225,7 @@ const DepartmentManagement: React.FC = () => {
               </button>
               <button
                 onClick={toggleModal}
+
                 className="px-4 py-2 ml-2 mt-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 focus:outline-none focus:bg-gray-400"
               >
                 Cancel
