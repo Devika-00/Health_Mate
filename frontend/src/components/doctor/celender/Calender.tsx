@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
@@ -7,7 +7,8 @@ import showToast from "../../../utils/toaster";
 import axiosJWT from "../../../utils/axiosService";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/reducer/reducer";
-import { RRule, RRuleSet, rrulestr } from 'rrule';
+import { RRule } from 'rrule';
+import moment from "moment";
 
 interface TimeSlot {
   start: string;
@@ -18,14 +19,28 @@ interface SelectedTimeSlots {
   [key: number]: TimeSlot[];
 }
 
+interface ScheduledSlot {
+  _id: string;
+  startDate: string;
+  endDate: string;
+  slots: DaySlot[];
+}
+
+interface DaySlot {
+  _id: string;
+  day: number;
+  times: TimeSlot[];
+}
+
 const DoctorCalendar: React.FC = () => {
   const [selectedStartDate, setSelectedStartDate] = useState<string | null>(null);
   const [selectedEndDate, setSelectedEndDate] = useState<string | null>(null);
   const [selectedDays, setSelectedDays] = useState<number[]>([]);
   const [selectedSlots, setSelectedSlots] = useState<TimeSlot[]>([]);
+  const [scheduledSlots, setScheduledSlots] = useState<ScheduledSlot[]>([]);
   const [selectedTimeSlots, setSelectedTimeSlots] = useState<SelectedTimeSlots>({});
   const doctor = useSelector((state: RootState) => state.DoctorSlice);
-
+ 
   const daysOfWeek = [
     { day: 0, label: "Sunday" },
     { day: 1, label: "Monday" },
@@ -49,6 +64,24 @@ const DoctorCalendar: React.FC = () => {
   };
 
   const timeSlots = generateTimeSlots();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axiosJWT.post(`${DOCTOR_API}/getTimeSlots`, {
+          doctorId: doctor.id,
+        });
+
+        console.log(response, "response");
+        if (response) {
+          setScheduledSlots(response.data.timeSlots);
+        }
+      } catch (error) {
+        console.log(error, "error");
+      }
+    };
+    fetchData();
+  }, [doctor.id]);
 
   const handleSlotSelect = (slot: TimeSlot) => {
     setSelectedSlots((prev) => {
@@ -146,102 +179,164 @@ const DoctorCalendar: React.FC = () => {
       toast.error("Failed to save slots. Please try again.");
     }
   };
+  
+
+  const handleDeleteScheduled = async (_id: string) => {
+    try {
+      await axiosJWT.delete(`${DOCTOR_API}/deleteSlot/${_id}`);
+      setScheduledSlots((prev) => prev.filter((slot) => slot._id !== _id));
+      Swal.fire("Deleted!", "Your time slot has been deleted.", "success");
+    } catch (error) {
+      toast.error("Failed to delete slot. Please try again.");
+    }
+  };
+
+
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="flex flex-col md:flex-row bg-blue-100">
-        <div className="w-full md:w-1/2 p-4">
-          <div className="mb-4">
-            <label className="block mb-2">Start Date:</label>
-            <input
-              type="date"
-              className="w-full p-2 border rounded"
-              value={selectedStartDate || ""}
-              onChange={(e) => setSelectedStartDate(e.target.value)}
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block mb-2">End Date:</label>
-            <input
-              type="date"
-              className="w-full p-2 border rounded"
-              value={selectedEndDate || ""}
-              onChange={(e) => setSelectedEndDate(e.target.value)}
-            />
-          </div>
-          <div className="mb-4">
-            <h2 className="text-lg font-bold mb-2">Select Days</h2>
-            <div className="grid grid-cols-3 gap-2">
-              {daysOfWeek.map((day) => (
-                <button
-                  key={day.day}
-                  className={`p-2 border rounded ${selectedDays.includes(day.day) ? "bg-blue-500 text-white" : "bg-white"}`}
-                  onClick={() => handleDaySelect(day.day)}
-                >
-                  {day.label}
-                </button>
-              ))}
-            </div>
-          </div>
-          {selectedDays.length > 0 && (
+    <>
+      <div className="container mx-auto p-4">
+        <div className="flex flex-col md:flex-row bg-blue-100">
+          <div className="w-full md:w-1/2 p-4">
             <div className="mb-4">
-              <h2 className="text-lg font-bold mb-2">Select Time Slots</h2>
-              <div className="grid grid-cols-2 gap-2">
-                {timeSlots.map((slot, index) => (
+              <label className="block mb-2">Start Date:</label>
+              <input
+                type="date"
+                className="w-full p-2 border rounded"
+                value={selectedStartDate || ""}
+                onChange={(e) => setSelectedStartDate(e.target.value)}
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block mb-2">End Date:</label>
+              <input
+                type="date"
+                className="w-full p-2 border rounded"
+                value={selectedEndDate || ""}
+                onChange={(e) => setSelectedEndDate(e.target.value)}
+              />
+            </div>
+            <div className="mb-4">
+              <h2 className="text-lg font-bold mb-2">Select Days</h2>
+              <div className="grid grid-cols-3 gap-2">
+                {daysOfWeek.map((day) => (
                   <button
-                    key={index}
-                    className={`p-2 border rounded ${selectedSlots.some((s) => s.start === slot.start && s.end === slot.end) ? "bg-blue-500 text-white" : "bg-white"}`}
-                    onClick={() => handleSlotSelect(slot)}
+                    key={day.day}
+                    className={`p-2 border rounded ${selectedDays.includes(day.day) ? "bg-blue-500 text-white" : "bg-white"}`}
+                    onClick={() => handleDaySelect(day.day)}
                   >
-                    {slot.start} - {slot.end}
+                    {day.label}
                   </button>
                 ))}
               </div>
             </div>
-          )}
-          <div className="text-center">
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleConfirmSlots}>
-              Save Slots
-            </button>
+            {selectedDays.length > 0 && (
+              <div className="mb-4">
+                <h2 className="text-lg font-bold mb-2">Select Time Slots</h2>
+                <div className="grid grid-cols-2 gap-2">
+                  {timeSlots.map((slot, index) => (
+                    <button
+                      key={index}
+                      className={`p-2 border rounded ${selectedSlots.some((s) => s.start === slot.start && s.end === slot.end) ? "bg-blue-500 text-white" : "bg-white"}`}
+                      onClick={() => handleSlotSelect(slot)}
+                    >
+                      {slot.start} - {slot.end}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            <div className="text-center">
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleConfirmSlots}>
+                Save Slots
+              </button>
+            </div>
+          </div>
+          <div className="w-full md:w-1/2 p-4">
+            <h2 className="text-xl font-semibold mb-4">Selected Slots</h2>
+            {Object.keys(selectedTimeSlots).length === 0 ? (
+              <p>No slots selected.</p>
+            ) : (
+              <div>
+                {Object.entries(selectedTimeSlots).map(([day, slots]) => (
+                  <div key={day} className="mb-4">
+                    <h3 className="font-bold">{daysOfWeek.find((d) => d.day.toString() === day)?.label}</h3>
+                    <ul>
+                      {slots.map((slot:any, index:any) => (
+                        <li key={index} className="flex justify-between items-center">
+                          <span>{slot.start} - {slot.end}</span>
+                          <button
+                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 mb-1 px-2 rounded"
+                            onClick={() => handleDelete(Number(day), index)}
+                          >
+                            Delete
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
-        <div className="w-full md:w-1/2 p-4">
-          <h2 className="text-xl font-semibold mb-4">Selected Slots</h2>
-          {Object.keys(selectedTimeSlots).length === 0 ? (
-            <p>No slots selected.</p>
-          ) : (
-            <div>
-              {Object.entries(selectedTimeSlots).map(([day, slots]) => (
-                <div key={day} className="mb-4">
-                  <h3 className="font-bold">{daysOfWeek.find((d) => d.day.toString() === day)?.label}</h3>
-                  <ul>
-                    {slots.map((slot: any, index: any) => (
-                      <li key={index} className="flex justify-between items-center">
-                        <span>{slot.start} - {slot.end}</span>
-                        <button
-                          className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 mb-1 px-2 rounded"
-                          onClick={() => handleDelete(Number(day), index)}
-                        >
-                          Delete
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          )}
+        <div className="flex justify-center mt-4">
+          <button
+            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+            onClick={handleConfirmAvailableSlots}
+          >
+            Confirm Available Slots
+          </button>
         </div>
       </div>
-      <div className="flex justify-center mt-4">
-        <button
-          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-          onClick={handleConfirmAvailableSlots}
-        >
-          Confirm Available Slots
-        </button>
+
+      {/* Already Scheduled Slots */}
+      <div className="mt-10">
+        <div className="text-center">
+          <h2 className="text-xl font-bold text-gray-800">Already Scheduled Slots</h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+          {scheduledSlots.map((slot) => (
+            <div key={slot._id} className="bg-blue-100 border border-blue-300 shadow-lg rounded-lg p-6 ml-16 mb-8">
+              <div className="flex justify-end mb-4">
+                <button
+                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                  onClick={() => handleDeleteScheduled(slot._id)}
+                >
+                  Delete
+                </button>
+              </div>
+              <p className="text-black mb-2">
+                Start Date:{" "}
+                <strong className="text-red-900 text-xl">
+                  {moment(slot.startDate).format("MMM D, YYYY")}
+                </strong>
+              </p>
+              <p className="text-black mb-2">
+                End Date:{" "}
+                <strong className="text-red-900 text-xl">
+                  {moment(slot.endDate).format("MMM D, YYYY")}
+                </strong>
+              </p>
+              <ul className="list-disc list-inside">
+                {slot.slots.map((daySlot) => (
+                  <div key={daySlot._id} className="mb-4">
+                    <h3 className="font-bold">
+                      {daysOfWeek.find((d) => d.day === daySlot.day)?.label}
+                    </h3>
+                    {daySlot.times.map((time, index) => (
+                      <li key={index} className="text-gray-600">
+                        {time.start} - {time.end}
+                      </li>
+                    ))}
+                  </div>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
