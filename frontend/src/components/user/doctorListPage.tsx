@@ -36,6 +36,7 @@ const DoctorListingPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage] = useState<number>(8);
   const [totalPages, setTotalPages] = useState<number>(0);
+  const [filtersUsed, setFiltersUsed] = useState<boolean>(false); // New state to track if any filters are used
 
   const timeSlots = generateTimeSlots();
 
@@ -68,6 +69,12 @@ const DoctorListingPage: React.FC = () => {
 
           setDoctors(filteredDoctors);
           setTotalPages(Math.ceil(filteredDoctors.length / itemsPerPage));
+          setFiltersUsed( // Update the state to indicate filters are being used
+            searchQuery !== "" ||
+            selectedDepartment !== "" ||
+            selectedDate !== null ||
+            selectedTimeSlot !== ""
+          );
         } else {
           throw new Error("Failed to fetch department details");
         }
@@ -105,6 +112,7 @@ const DoctorListingPage: React.FC = () => {
     setSelectedDate(null);
     setSelectedTimeSlot("");
     setCurrentPage(1); // reset to first page
+    setFiltersUsed(false); // Reset the state to indicate no filters are used
   };
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
@@ -168,12 +176,14 @@ const DoctorListingPage: React.FC = () => {
             <FaCalendarAlt />
           </div>
         </div>
-        <button
-          className="ml-4 bg-blue-900 hover:bg-blue-800 text-white rounded-md px-4 py-2"
-          onClick={handleClearFilters}
-        >
-          Clear Filters
-        </button>
+        {filtersUsed && ( // Show the Clear Filters button only if filters are used
+          <button
+            className="ml-4 bg-blue-900 hover:bg-blue-800 text-white rounded-md px-4 py-2"
+            onClick={handleClearFilters}
+          >
+            Clear Filters
+          </button>
+        )}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {doctors.map((doctor) => (

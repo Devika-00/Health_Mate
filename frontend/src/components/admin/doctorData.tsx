@@ -14,6 +14,7 @@ const DoctorData: React.FC = () => {
 
   const approvedDoctors = doctors.filter(doctor => doctor.isApproved);
   const [isChecked, setIsChecked] = useState<boolean>(false);
+  const [serialNumber, setSerialNumber] = useState<number>(1);
 
   const handleCheckboxChange = (doctor: DoctorInterface) => {
     const newDoctors = doctors.map((item) => {
@@ -38,10 +39,10 @@ const DoctorData: React.FC = () => {
 
   return (
     <>
-      {approvedDoctors.map((doctor: DoctorInterface) => (
+      {approvedDoctors.map((doctor: DoctorInterface,index) => (
         <tr key={doctor._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
           <td className="px-6 py-4 text-left font-medium text-gray-900 whitespace-nowrap dark:text-white">
-            {doctor._id}
+          {serialNumber + index}
           </td>
           <td className="px-6 py-4 text-left">{doctor.doctorName}</td>
           <td className="px-6 py-4 text-left">{doctor.email}</td>

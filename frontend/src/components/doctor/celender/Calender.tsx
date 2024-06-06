@@ -219,6 +219,23 @@ const DoctorCalendar: React.FC = () => {
     setEditedTimeSlot(null);
   };
 
+  const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedStartDate(e.target.value);
+    if (selectedEndDate && e.target.value > selectedEndDate) {
+      showToast("Start date cannot be after end date.", "error");
+      setSelectedEndDate(null);
+    }
+  };
+  
+  const handleEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedEndDate(e.target.value);
+    if (selectedStartDate && e.target.value < selectedStartDate) {
+      showToast("End date cannot be before start date.", "error");
+      setSelectedStartDate(null);
+    }
+  };
+  
+
   return (
     <>
       <div className="container mx-auto p-4">
@@ -230,7 +247,7 @@ const DoctorCalendar: React.FC = () => {
                 type="date"
                 className="w-full p-2 border rounded"
                 value={selectedStartDate || ""}
-                onChange={(e) => setSelectedStartDate(e.target.value)}
+                onChange={handleStartDateChange}
               />
             </div>
             <div className="mb-4">
@@ -239,7 +256,7 @@ const DoctorCalendar: React.FC = () => {
                 type="date"
                 className="w-full p-2 border rounded"
                 value={selectedEndDate || ""}
-                onChange={(e) => setSelectedEndDate(e.target.value)}
+                onChange={handleEndDateChange}
               />
             </div>
             <div className="mb-4">

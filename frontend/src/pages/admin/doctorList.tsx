@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom'; // Assuming you're using React Router for navigation
 import AdminHeader from '../../components/admin/Header&Sidebar/Header';
 import AdminSidebar from '../../components/admin/Header&Sidebar/Sidebar';
@@ -7,6 +7,7 @@ import DoctorData from "../../components/admin/doctorData";
 
 const DoctorList: React.FC = () => {
   // Using the useUsers hook to fetch doctor data
+  const [serialNumber, setSerialNumber] = useState<number>(1);
   
 
   return (
@@ -20,7 +21,7 @@ const DoctorList: React.FC = () => {
             <table className="table-auto w-full">
               <thead>
                 <tr className="bg-gray-200">
-                  <th className="px-6 py-3 text-left">ID</th>
+                  <th className="px-6 py-3 text-left">Serial No</th>
                   <th className="px-6 py-3 text-left">Name</th>
                   <th className="px-6 py-3 text-left">Email</th>
                   <th className="px-6 py-3 text-left">Department</th>

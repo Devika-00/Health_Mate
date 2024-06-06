@@ -18,7 +18,7 @@ const UserList: React.FC = () => {
             <table className="table-auto w-full">
               <thead>
                 <tr className="bg-gray-200">
-                  <th className="px-6 py-3 text-left">ID</th>
+                  <th className="px-6 py-3 text-left">Serial No</th>
                   <th className="px-6 py-3 text-left">Name</th>
                   <th className="px-6 py-3 text-left">Email</th>
                   <th className="px-6 py-3 text-left">Status</th>
@@ -26,8 +26,8 @@ const UserList: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {users.map((user) => {
-                  return <UserData {...user} key={user._id} />;
+                {users.map((user, index) => {
+                  return <UserData {...user} index={index} key={user._id} />;
                 })}
               </tbody>
             </table>

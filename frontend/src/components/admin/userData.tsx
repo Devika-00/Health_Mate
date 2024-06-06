@@ -4,30 +4,35 @@ import axiosJWT from "../../utils/axiosService";
 import { ADMIN_API } from "../../constants";
 import showToast from "../../utils/toaster";
 
-const UserData: React.FC<UserInterface> = ({
+const UserData: React.FC<UserInterface & { index: number }> = ({
   _id,
   name,
   email,
   isBlocked,
+  index,
 }) => {
   const [isChecked, setIsChecked] = useState<boolean>(isBlocked);
 
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
-    axiosJWT.patch(ADMIN_API + `/block_user/${_id}`)
-    .then(response => {
-      // Check if isBlocked is true
-      if (response.data.success && !response.data.user.isBlocked) {
-        showToast(response.data.message);
-      }
+    axiosJWT
+      .patch(ADMIN_API + `/block_user/${_id}`)
+      .then((response) => {
+        // Check if isBlocked is true
+        if (response.data.success && !response.data.user.isBlocked) {
+          showToast(response.data.message);
+        }
       })
       .catch((err) => console.log(err));
   };
 
+  // Calculate serial number dynamically
+  const serialNumber = index + 1;
+
   return (
     <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
       <td className="px-6 py-4 text-left font-medium text-gray-900 whitespace-nowrap dark:text-white">
-        {_id}
+        {serialNumber}
       </td>
       <td className="px-6 py-4 text-left">{name}</td>
       <td className="px-6 py-4 text-left">{email}</td>
