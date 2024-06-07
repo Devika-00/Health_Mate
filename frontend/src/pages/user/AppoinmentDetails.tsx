@@ -485,7 +485,7 @@ const handleChat = () => {
 
 
       </div>
-      <Footer />
+     
     </>
   );
 };

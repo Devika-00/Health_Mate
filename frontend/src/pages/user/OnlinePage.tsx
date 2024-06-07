@@ -10,7 +10,7 @@ const OnlinePage: React.FC = () => {
     <>
       <Navbar />
       <OnlineDoctors/>
-      <Footer />
+    
     </>
   );
 };

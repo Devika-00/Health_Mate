@@ -5,6 +5,8 @@ import ProtectedRoute, {
     AdminProtectedRoute,
     DoctorProtectedRoute} from "./ProtectedRoute"
 import PublicRouteUser from "./PublicRoutes";
+import CommonLayout from "../components/user/commonLayout";
+import CommonLayoutDoctor from "../components/doctor/commonLayout";
 
 
 
@@ -50,13 +52,16 @@ const WalletPage = lazy(()=>import("../pages/user/wallet"));
 const Transaction = lazy(()=>import("../pages/user/walletTransation"));
 const DepartmentManagement = lazy(()=>import("../pages/admin/departmentPage"));
 
+
 export const MainRouter = () => {
     return (
         <>
             <Suspense fallback={<h1>Loading</h1>}> 
                 <Routes>
                     {/* userRoutes */}
+                    <Route element={<CommonLayout />}>
                     <Route path="/" element={<Home />} />
+                    </Route>
                      <Route path="/user/aboutus" element={<AboutPage />} />
                     <Route path="" element={<PublicRouteUser />}>
                     <Route path="/user/register" element={<Register />} />
@@ -69,6 +74,7 @@ export const MainRouter = () => {
                      
                      {/* Protected user  route */}
                      <Route path="" element={<ProtectedRoute />}>
+                     <Route element={<CommonLayout />}>
                      <Route path="/user/Profile" element={<ProfileUser />} />
                      <Route path="/user/doctor" element={<DoctorList />} />
                      <Route path="/user/doctor/:id" element={<DoctorDetailsUser />} />
@@ -81,11 +87,13 @@ export const MainRouter = () => {
                      <Route path ="/user/documents/:id" element={<DocumentListPage/>}/>
                      <Route path="/user/online-consultation" element={<OnlineDoctors/>}/>
                      <Route path="/user/offline-consultation" element={<OfflineDoctors/>}/>
-                     <Route path="/user/chat" element={<Chat/>}/>
                      <Route path="/user/wallet" element={<WalletPage/>}/>
                      <Route path="/user/walletHistory" element={<Transaction/>}/>
                      </Route>
-                    
+                     <Route path="/user/chat" element={<Chat />} />
+                     </Route>
+            
+                     
 
                     {/*Doctor Routes*/ }
                     <Route path="" element={<PublicRouteDoctor />}>  
@@ -96,12 +104,14 @@ export const MainRouter = () => {
 
                     {/* Doctor private routes  */}
                     <Route path="" element={<DoctorProtectedRoute />}>
+                    <Route element={<CommonLayoutDoctor />}>
                     <Route path="/doctor" element={<DoctorhomePage/>}/>
                     <Route path="/doctor/Profile" element ={<ProfileDoctor/>}/>
                     <Route path="/doctor/slot" element ={<DoctorSlotPage/>}/>
                     <Route path="/doctor/patientList" element={<PatientListPage/>}/>
                     <Route path="/patient-details/:id" element={<SinglePagePatient/>} />
                     <Route path="/doctor/status/:doctorId" element={<DoctorStatus/>}/>
+                    </Route>
                     <Route path="/doctor/chat" element={<DoctorChat/>}/>
                     </Route>
 

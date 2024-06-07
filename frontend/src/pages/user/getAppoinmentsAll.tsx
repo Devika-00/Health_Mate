@@ -10,7 +10,6 @@ const AppoinmentListPage: React.FC = () => {
     <>
       <Navbar />
       <AppointmentsListPage/>
-      <Footer />
     </>
   );
 };

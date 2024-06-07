@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Navbar from '../../components/doctor/Navbar/navbar';
-import Footer from '../../components/doctor/Footer/Footer';
 import { Link } from 'react-router-dom';
 // import { BsChatSquareDots } from 'react-icons/bs'; 
 import { MdOutlineModeEdit } from "react-icons/md";
@@ -124,7 +123,6 @@ const Profile: React.FC = () => {
           </div>
         </div>
       </div>
-      <Footer style={"mt-[20px]"} />
     </>
   );
 };

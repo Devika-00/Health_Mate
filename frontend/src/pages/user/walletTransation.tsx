@@ -7,7 +7,7 @@ const walletHistroy :React.FC =() => (
     <>
     <Navbar />
     <Transaction/>
-    <Footer/>
+   
     </>
 );
 

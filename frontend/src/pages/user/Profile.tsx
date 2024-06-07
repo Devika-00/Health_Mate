@@ -73,7 +73,7 @@ const Profile: React.FC = () => {
           </div>
         </div>
       </div>
-      <Footer />
+     
     </>
   );
 };

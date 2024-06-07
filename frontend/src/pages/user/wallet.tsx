@@ -46,7 +46,7 @@ const WalletPage: React.FC = () => {
           </button>
         </div>
       </div>
-      <Footer />
+   
     </>
   );
 };

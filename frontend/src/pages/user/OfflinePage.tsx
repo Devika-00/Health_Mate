@@ -10,7 +10,7 @@ const OfflinePage: React.FC = () => {
     <>
       <Navbar />
       <OfflineDoctors/>
-      <Footer />
+    
     </>
   );
 };

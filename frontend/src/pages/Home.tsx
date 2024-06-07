@@ -9,7 +9,7 @@ const Home:React.FC = () => {
     <Navbar/> 
     <Banner/>
     <Body/>
-    <Footer/>
+
     </>
     
   )

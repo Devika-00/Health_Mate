@@ -11,7 +11,7 @@ const singleDoctorDetails: React.FC = () => {
       <Navbar />
       
       <DoctorDetailsPage/>
-      <Footer />
+    
     </>
   );
 };

@@ -11,7 +11,7 @@ const Appoinment: React.FC = () => {
     <>
       <Navbar />
      <AppointmentOnlineBookingPage/>
-      <Footer />
+     
     </>
   );
 };

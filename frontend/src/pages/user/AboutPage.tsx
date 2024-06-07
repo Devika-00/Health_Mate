@@ -10,7 +10,7 @@ const AboutPage: React.FC = () => {
     <>
       <Navbar />
       <AboutUsPage/>
-      <Footer />
+     
     </>
   );
 };
