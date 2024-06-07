@@ -1,10 +1,8 @@
 import { Link, useParams } from "react-router-dom";
 
-
 interface PaymentMessageProps {
   isSuccess: boolean;
 }
-
 
 const Payment: React.FC<PaymentMessageProps> = ({ isSuccess }) => {
   const { id } = useParams();
@@ -26,7 +24,10 @@ const Payment: React.FC<PaymentMessageProps> = ({ isSuccess }) => {
             </svg>
           ) : (
             <div className="w-16 h-16 mx-auto my-6">
-              <img src="https://miro.medium.com/v2/resize:fit:810/1*OkeqV425CNZUQT2HSkTnJA.png" alt="Payment failed image" />
+              <img
+                src="https://miro.medium.com/v2/resize:fit:810/1*OkeqV425CNZUQT2HSkTnJA.png"
+                alt="Payment failed image"
+              />
             </div>
           )}
           <h3 className="md:text-2xl text-lg text-gray-900 font-semibold mb-2">

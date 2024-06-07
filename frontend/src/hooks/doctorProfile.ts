@@ -53,7 +53,6 @@ const doctorProfile = () => {
       .then(({ data }) => {
         const { doctor } = data;
         setProfile(doctor);
-        console.log(doctor);
         setFormData((prev) => ({
           ...prev,
           doctorName: doctor?.doctorName,

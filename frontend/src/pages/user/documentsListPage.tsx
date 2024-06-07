@@ -1,16 +1,13 @@
-import React from 'react';
-import Navbar from '../../components/user/Navbar/navbar';
+import React from "react";
+import Navbar from "../../components/user/Navbar/navbar";
 
-import DocumentList from '../../components/user/documentsList';
-
-
+import DocumentList from "../../components/user/documentsList";
 
 const DocumentListPage: React.FC = () => {
   return (
     <>
       <Navbar />
-      <DocumentList/>
-     
+      <DocumentList />
     </>
   );
 };

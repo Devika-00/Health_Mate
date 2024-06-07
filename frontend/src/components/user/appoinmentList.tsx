@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import axiosJWT from '../../utils/axiosService';
-import { USER_API } from '../../constants';
+import React, { useState, useEffect } from "react";
+import axiosJWT from "../../utils/axiosService";
+import { USER_API } from "../../constants";
 
 const AppointmentsListPage = () => {
   const [appoinments, setAppointments] = useState<any[]>([]);
@@ -13,7 +12,7 @@ const AppointmentsListPage = () => {
         const response = await axiosJWT.get(`${USER_API}/allAppoinments`);
         setAppointments(response.data.bookings.bookingDetails);
       } catch (error) {
-        console.error('Error fetching appointments:', error);
+        console.error("Error fetching appointments:", error);
       }
     };
 
@@ -21,7 +20,7 @@ const AppointmentsListPage = () => {
   }, []);
 
   const formatDate = (dateString: string) => {
-    const options:any = { year: 'numeric', month: 'long', day: 'numeric' };
+    const options: any = { year: "numeric", month: "long", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
@@ -47,12 +46,22 @@ const AppointmentsListPage = () => {
                 <tr
                   key={appointment._id}
                   className="hover:bg-gray-200 cursor-pointer transition duration-300"
-                  onClick={() => window.location.href = `/appoinmentDetails/${appointment._id}`}
+                  onClick={() =>
+                    (window.location.href = `/appoinmentDetails/${appointment._id}`)
+                  }
                 >
-                  <td className="py-2 px-4 border-b text-center">{appointment.patientName}</td>
-                  <td className="py-2 px-4 border-b text-center">{appointment.patientAge}</td>
-                  <td className="py-2 px-4 border-b text-center">{formatDate(appointment.date)}</td>
-                  <td className="py-2 px-4 border-b text-center">{appointment.timeSlot}</td>
+                  <td className="py-2 px-4 border-b text-center">
+                    {appointment.patientName}
+                  </td>
+                  <td className="py-2 px-4 border-b text-center">
+                    {appointment.patientAge}
+                  </td>
+                  <td className="py-2 px-4 border-b text-center">
+                    {formatDate(appointment.date)}
+                  </td>
+                  <td className="py-2 px-4 border-b text-center">
+                    {appointment.timeSlot}
+                  </td>
                 </tr>
               ))}
             </tbody>

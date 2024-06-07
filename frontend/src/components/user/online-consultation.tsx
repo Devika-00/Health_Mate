@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import axiosJWT from '../../utils/axiosService';
-import { USER_API } from '../../constants';
-import { FaSearch, FaCalendarAlt } from 'react-icons/fa';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import axiosJWT from "../../utils/axiosService";
+import { USER_API } from "../../constants";
+import { FaSearch, FaCalendarAlt } from "react-icons/fa";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 // Interface for TimeSlot
 interface TimeSlot {
@@ -20,19 +20,30 @@ const generateTimeSlots = (): TimeSlot[] => {
     const endHour = i + 1 > 12 ? i - 11 : i + 1;
     const period = i >= 12 ? "PM" : "AM";
     const nextPeriod = i + 1 >= 12 ? "PM" : "AM";
-    slots.push({ start: `${startHour}:00 ${period}`, end: `${endHour}:00 ${nextPeriod}` });
+    slots.push({
+      start: `${startHour}:00 ${period}`,
+      end: `${endHour}:00 ${nextPeriod}`,
+    });
   }
   return slots;
 };
 
 const OnlineDoctors: React.FC = () => {
   const [doctors, setDoctors] = useState<any[]>([]);
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchActive, setSearchActive] = useState<boolean>(false);
-  const [selectedDepartment, setSelectedDepartment] = useState<string>('');
+  const [selectedDepartment, setSelectedDepartment] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>('');
-  const [departments, setDepartments] = useState<{ _id: string, departmentName: string, isListed: boolean, createdAt: string, updatedAt: string }[]>([]);
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>("");
+  const [departments, setDepartments] = useState<
+    {
+      _id: string;
+      departmentName: string;
+      isListed: boolean;
+      createdAt: string;
+      updatedAt: string;
+    }[]
+  >([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage] = useState<number>(8);
   const [totalDoctors, setTotalDoctors] = useState<number>(0);
@@ -50,10 +61,10 @@ const OnlineDoctors: React.FC = () => {
           );
           setDepartments(listedDepartments);
         } else {
-          throw new Error('Failed to fetch department details');
+          throw new Error("Failed to fetch department details");
         }
       } catch (error) {
-        console.error('Error fetching department details:', error);
+        console.error("Error fetching department details:", error);
       }
     };
 
@@ -63,7 +74,9 @@ const OnlineDoctors: React.FC = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const departmentNames = departments.map((department) => department.departmentName);
+        const departmentNames = departments.map(
+          (department) => department.departmentName
+        );
 
         const response = await axiosJWT.get(`${USER_API}/doctors`, {
           params: {
@@ -76,19 +89,22 @@ const OnlineDoctors: React.FC = () => {
           },
         });
 
-        const filteredDoctors = response.data.doctors.filter((doctor: any) =>
-          (doctor.consultationType === "online" || doctor.consultationType === "both") &&
-          departmentNames.includes(doctor.department)
+        const filteredDoctors = response.data.doctors.filter(
+          (doctor: any) =>
+            (doctor.consultationType === "online" ||
+              doctor.consultationType === "both") &&
+            departmentNames.includes(doctor.department)
         );
 
         setDoctors(filteredDoctors);
         setTotalDoctors(filteredDoctors.length);
-        setFiltersUsed( // Update the state to indicate filters are being used
-            searchQuery !== "" ||
+        setFiltersUsed(
+          // Update the state to indicate filters are being used
+          searchQuery !== "" ||
             selectedDepartment !== "" ||
             selectedDate !== null ||
             selectedTimeSlot !== ""
-          );
+        );
       } catch (error) {
         console.error("Error fetching doctors:", error);
       }
@@ -97,7 +113,15 @@ const OnlineDoctors: React.FC = () => {
     if (departments.length > 0) {
       fetchDoctors();
     }
-  }, [searchQuery, selectedDepartment, selectedDate, selectedTimeSlot, currentPage, itemsPerPage, departments]);
+  }, [
+    searchQuery,
+    selectedDepartment,
+    selectedDate,
+    selectedTimeSlot,
+    currentPage,
+    itemsPerPage,
+    departments,
+  ]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
@@ -107,7 +131,9 @@ const OnlineDoctors: React.FC = () => {
     setSearchActive(!searchActive);
   };
 
-  const handleDepartmentChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleDepartmentChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setSelectedDepartment(event.target.value);
   };
 
@@ -115,7 +141,9 @@ const OnlineDoctors: React.FC = () => {
     setSelectedDate(date);
   };
 
-  const handleTimeSlotChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleTimeSlotChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setSelectedTimeSlot(event.target.value);
   };
 
@@ -134,7 +162,11 @@ const OnlineDoctors: React.FC = () => {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Find a Doctor</h1>
       <div className="flex items-center mb-4 space-x-4">
-        <div className={`border border-${searchActive ? 'gray-300' : 'gray-500'} shadow-lg flex items-center relative rounded-md w-80`}>
+        <div
+          className={`border border-${
+            searchActive ? "gray-300" : "gray-500"
+          } shadow-lg flex items-center relative rounded-md w-80`}
+        >
           <input
             type="text"
             placeholder="Search"
@@ -142,15 +174,26 @@ const OnlineDoctors: React.FC = () => {
             onChange={handleSearchChange}
             className="rounded-md px-4 py-2 w-full"
           />
-          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-700 cursor-pointer" onClick={handleSearchIconClick}>
+          <div
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-700 cursor-pointer"
+            onClick={handleSearchIconClick}
+          >
             <FaSearch />
           </div>
         </div>
         <div className="border border-gray-500 shadow-lg rounded-md w-80">
-          <select className="rounded-md px-4 py-2 w-full" value={selectedDepartment} onChange={handleDepartmentChange}>
+          <select
+            className="rounded-md px-4 py-2 w-full"
+            value={selectedDepartment}
+            onChange={handleDepartmentChange}
+          >
             <option value="">All Departments</option>
             {departments.map((department) => (
-              <option key={department._id} className="text-gray-700" value={department.departmentName}>
+              <option
+                key={department._id}
+                className="text-gray-700"
+                value={department.departmentName}
+              >
                 {department.departmentName}
               </option>
             ))}
@@ -195,9 +238,17 @@ const OnlineDoctors: React.FC = () => {
         {doctors.map((doctor) => (
           <Link key={doctor._id} to={`/user/doctor/${doctor._id}`}>
             <div className="bg-gray-300 shadow-md rounded-lg p-6 cursor-pointer flex flex-col justify-center items-center">
-              <img src={doctor.profileImage} alt="Doctor" className="w-64 h-64 mx-auto rounded mb-4" />
-              <h2 className="text-xl font-semibold text-center mb-2">{doctor.doctorName}</h2>
-              <p className="text-gray-600 text-m font-medium text-center mb-2">{doctor.department}</p>
+              <img
+                src={doctor.profileImage}
+                alt="Doctor"
+                className="w-64 h-64 mx-auto rounded mb-4"
+              />
+              <h2 className="text-xl font-semibold text-center mb-2">
+                {doctor.doctorName}
+              </h2>
+              <p className="text-gray-600 text-m font-medium text-center mb-2">
+                {doctor.department}
+              </p>
               <button className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded mt-3">
                 Book Appointment
               </button>
@@ -207,20 +258,23 @@ const OnlineDoctors: React.FC = () => {
       </div>
       <div className="mt-10 flex justify-center">
         <ul className="flex pl-0 list-none rounded my-2">
-          {Array.from({ length: Math.ceil(totalDoctors / itemsPerPage) }, (_, index) => (
-            <li key={index}>
-              <button
-                className={`${
-                  currentPage === index + 1
-                    ? "bg-blue-900 text-white"
-                    : "text-blue-900 hover:text-blue-700"
-                } cursor-pointer px-3 py-2`}
-                onClick={() => paginate(index + 1)}
-              >
-                {index + 1}
-              </button>
-            </li>
-          ))}
+          {Array.from(
+            { length: Math.ceil(totalDoctors / itemsPerPage) },
+            (_, index) => (
+              <li key={index}>
+                <button
+                  className={`${
+                    currentPage === index + 1
+                      ? "bg-blue-900 text-white"
+                      : "text-blue-900 hover:text-blue-700"
+                  } cursor-pointer px-3 py-2`}
+                  onClick={() => paginate(index + 1)}
+                >
+                  {index + 1}
+                </button>
+              </li>
+            )
+          )}
         </ul>
       </div>
       <div className="flex justify-center mt-4">

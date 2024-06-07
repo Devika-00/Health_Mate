@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, {useEffect, useRef, useState } from "react";
 import Conversation from "../../chat/Doctor/Conversation";
 import Message from "../../chat/Doctor/Message";
 import Navbar from "../../components/doctor/Navbar/navbar";
@@ -6,7 +6,6 @@ import { FiSend } from "react-icons/fi";
 import { useAppSelector } from "../../redux/store/Store";
 import axiosJWT from "../../utils/axiosService";
 import { CHAT_API, DOCTOR_API } from "../../constants";
-import { io } from "socket.io-client";
 import { useSocket } from "../../Context/SocketContext";
 
 const Chat: React.FC = () => {
@@ -33,9 +32,6 @@ const Chat: React.FC = () => {
     });
 
     socket?.on("updateLastMessage", (data: any) => {
-      console.log(data, "data");
-      
-
       setConversations((prevConversations) => {
         const updatedConversations = prevConversations.map((conversation) =>
           conversation._id === data.conversationId
@@ -44,18 +40,16 @@ const Chat: React.FC = () => {
         );
 
         // Sort the conversations by the updatedAt field of the lastMessage
-        updatedConversations.sort((a, b) =>
-          new Date(b.lastMessage.createdAt).getTime() -
-          new Date(a.lastMessage.createdAt).getTime()
+        updatedConversations.sort(
+          (a, b) =>
+            new Date(b.lastMessage.createdAt).getTime() -
+            new Date(a.lastMessage.createdAt).getTime()
         );
 
         return updatedConversations;
       });
     });
   }, []);
-
-  // console.log(arrivalMessage,"kkkkkkkk");
-  // console.log(conversations,"llllllllllll");
 
   useEffect(() => {
     if (arrivalMessage) {
@@ -70,9 +64,10 @@ const Chat: React.FC = () => {
         );
 
         // Sort the conversations by the updatedAt field of the lastMessage
-        updatedConversations.sort((a, b) =>
-          new Date(b.lastMessage.createdAt).getTime() -
-          new Date(a.lastMessage.createdAt).getTime()
+        updatedConversations.sort(
+          (a, b) =>
+            new Date(b.lastMessage.createdAt).getTime() -
+            new Date(a.lastMessage.createdAt).getTime()
         );
 
         return updatedConversations;
@@ -82,8 +77,7 @@ const Chat: React.FC = () => {
 
   useEffect(() => {
     socket?.emit("addUser", doctor.id);
-    socket?.on("getUsers", (doctors: any) => {
-    });
+    socket?.on("getUsers", (doctors: any) => {});
   }, [doctor]);
 
   useEffect(() => {
@@ -107,9 +101,10 @@ const Chat: React.FC = () => {
         );
 
         // Sort the conversations by the updatedAt field of the lastMessage
-        updatedConversations.sort((a, b) =>
-          new Date(b.lastMessage.createdAt).getTime() -
-          new Date(a.lastMessage.createdAt).getTime()
+        updatedConversations.sort(
+          (a, b) =>
+            new Date(b.lastMessage.createdAt).getTime() -
+            new Date(a.lastMessage.createdAt).getTime()
         );
 
         setConversations(updatedConversations);
@@ -140,13 +135,10 @@ const Chat: React.FC = () => {
     setCurrentChat(conversation);
 
     // Fetch receiver details
-    const id = conversation.members.find(
-      (member: any) => member !== doctor.id
-    );
+    const id = conversation.members.find((member: any) => member !== doctor.id);
 
     try {
       const response = await axiosJWT.get(`${DOCTOR_API}/user/${id}`);
-      console.log(response, "response"); // Check response in console
       setReceiverData(response.data.user); // Assuming the profile picture URL is stored in `profilePicture`
     } catch (error) {
       console.error("Error fetching receiver details:", error);
@@ -166,9 +158,10 @@ const Chat: React.FC = () => {
       );
 
       // Sort the conversations by the updatedAt field of the lastMessage
-      updatedConversations.sort((a, b) =>
-        new Date(b.lastMessage.createdAt).getTime() -
-        new Date(a.lastMessage.createdAt).getTime()
+      updatedConversations.sort(
+        (a, b) =>
+          new Date(b.lastMessage.createdAt).getTime() -
+          new Date(a.lastMessage.createdAt).getTime()
       );
 
       return updatedConversations;
@@ -206,9 +199,10 @@ const Chat: React.FC = () => {
         );
 
         // Sort the conversations by the updatedAt field of the lastMessage
-        updatedConversations.sort((a, b) =>
-          new Date(b.lastMessage.createdAt).getTime() -
-          new Date(a.lastMessage.createdAt).getTime()
+        updatedConversations.sort(
+          (a, b) =>
+            new Date(b.lastMessage.createdAt).getTime() -
+            new Date(a.lastMessage.createdAt).getTime()
         );
 
         return updatedConversations;

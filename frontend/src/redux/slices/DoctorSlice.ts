@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface DoctorState {
-    doctor: any;
     name: string | null;
     isAuthenticated: boolean | null;
     role: string | null;
@@ -13,7 +12,6 @@ interface DoctorState {
     isAuthenticated: null,
     role: null,
     id: null,
-    doctor: undefined
   };
 
   const Doctorslice = createSlice({

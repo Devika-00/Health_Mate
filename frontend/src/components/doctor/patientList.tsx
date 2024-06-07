@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux'; 
-import axiosJWT from '../../utils/axiosService';
-import { DOCTOR_API } from '../../constants';
-import { RootState } from '../../redux/reducer/reducer';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import { FaCalendarAlt } from 'react-icons/fa';
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import axiosJWT from "../../utils/axiosService";
+import { DOCTOR_API } from "../../constants";
+import { RootState } from "../../redux/reducer/reducer";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { FaCalendarAlt } from "react-icons/fa";
 
 interface BookingDetail {
   _id: string;
@@ -26,12 +26,13 @@ const AppointmentDetails: React.FC = () => {
   useEffect(() => {
     const fetchBookingDetails = async () => {
       try {
-        const response = await axiosJWT.get(`${DOCTOR_API}/bookingdetails/${id}`);
+        const response = await axiosJWT.get(
+          `${DOCTOR_API}/bookingdetails/${id}`
+        );
         const bookingData = response.data.data.bookingDetails;
-        console.log(bookingData);
         setBookingDetails(bookingData);
       } catch (error) {
-        console.error('Error fetching booking details:', error);
+        console.error("Error fetching booking details:", error);
       }
     };
     fetchBookingDetails();
@@ -41,16 +42,19 @@ const AppointmentDetails: React.FC = () => {
     setSelectedDate(date);
   };
 
-  const filteredAppointments = bookingDetails.filter(bookingDetail => {
+  const filteredAppointments = bookingDetails.filter((bookingDetail) => {
     if (!selectedDate) return true;
-    return new Date(bookingDetail.date).toLocaleDateString() === selectedDate.toLocaleDateString();
+    return (
+      new Date(bookingDetail.date).toLocaleDateString() ===
+      selectedDate.toLocaleDateString()
+    );
   });
 
   return (
     <>
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-8">Appointment List</h1>
-        
+
         <div className="border border-gray-500 shadow-lg rounded-md ml-3 mb-4 w-40 relative ">
           <DatePicker
             selected={selectedDate}
@@ -61,7 +65,7 @@ const AppointmentDetails: React.FC = () => {
           <div className="absolute top-3 left-2 text-gray-700">
             <FaCalendarAlt />
           </div>
-        </div>   
+        </div>
 
         {filteredAppointments.length === 0 ? (
           <p className="text-xl">You have no appointments booked.</p>
@@ -77,15 +81,26 @@ const AppointmentDetails: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredAppointments.map(bookingDetail => (
-                <tr key={bookingDetail._id}
-                className="hover:bg-gray-200 cursor-pointer transition duration-300">
-                  <td className="border px-4 py-2">{bookingDetail.patientName}</td>
-                  <td className="border px-4 py-2">{bookingDetail.patientAge}</td>
-                  <td className="border px-4 py-2">{new Date(bookingDetail.date).toLocaleDateString()}</td>
+              {filteredAppointments.map((bookingDetail) => (
+                <tr
+                  key={bookingDetail._id}
+                  className="hover:bg-gray-200 cursor-pointer transition duration-300"
+                >
+                  <td className="border px-4 py-2">
+                    {bookingDetail.patientName}
+                  </td>
+                  <td className="border px-4 py-2">
+                    {bookingDetail.patientAge}
+                  </td>
+                  <td className="border px-4 py-2">
+                    {new Date(bookingDetail.date).toLocaleDateString()}
+                  </td>
                   <td className="border px-4 py-2">{bookingDetail.timeSlot}</td>
                   <td className="border px-4 py-2">
-                    <Link to={`/patient-details/${bookingDetail._id}`} className="text-blue-500 hover:underline">
+                    <Link
+                      to={`/patient-details/${bookingDetail._id}`}
+                      className="text-blue-500 hover:underline"
+                    >
                       View Details
                     </Link>
                   </td>

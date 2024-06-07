@@ -72,17 +72,6 @@ export default function useChats() {
     }
   }, [arrivalMessage, currentChat]);
 
-//   useEffect(() => {
-//     if (socket) {
-//       socket.on("connect", () => {
-//         console.log("connected to socket");
-//       });
-//       socket?.emit("addUser", user.id);
-//       socket?.on("getUsers", (users: string[]) => {
-//         setOnlineUsers(users);
-//       });
-//     }
-//   }, []);
 
   useEffect(() => {
     user.id &&

@@ -14,9 +14,7 @@ const transformSlotTime = (slotTime:any) => {
 
 export const timeSlotRepositoryMongodb = () => {
   const addTimeSlots = async (doctorId:string, startDate:string, endDate:string, slotTime:string) => {
-    console.log(slotTime, "Received slot data");
     const transformedSlotTime = transformSlotTime(slotTime);
-    console.log(transformedSlotTime, "Transformed slot data");
     try {
       const newTimeSlot = await TimeSlot.create({
         doctorId: doctorId,
@@ -25,7 +23,6 @@ export const timeSlotRepositoryMongodb = () => {
         slots: transformedSlotTime,
         available: true,
       });
-      console.log("Time slot added successfully:", newTimeSlot);
       return newTimeSlot;
     } catch (error) {
       console.error("Failed to add time slot:", error);

@@ -185,7 +185,6 @@ const bookingController=(
   ) => {
     try {
       const { id } = req.params;
-      console.log(id,"payment status checking");
       const { paymentStatus } = req.body;
 
       const updateStatus = await updateBookingStatusPayment(
@@ -299,7 +298,6 @@ const bookingController=(
   ) => {
     try {
       const userID = req.user;
-      console.log(userID);
       const bookings = await getBookingByUserId(userID, dbBookingRepository);
       res.status(HttpStatus.OK).json({
         success: true,
@@ -323,7 +321,6 @@ const bookingController=(
   ) => {
     try {
       const  {id}  = req.params;
-      console.log(id);
       const  data  = await getBookingByDoctorId(
         id,
         dbBookingRepository

@@ -214,7 +214,6 @@ const userController=(
   ) => {
     try {
       const userId = req.user;
-      console.log(userId,'userid confirminggg')
       const user  = await getUserProfile(
         userId,
         dbRepositoryUser
@@ -256,7 +255,6 @@ const getTransactions = async (
   try {
     const userId = req.user;
     const transaction = await WalletTransactions(userId, dbRepositoryUser);
-    console.log(transaction,"kkkkkkkkkkkkk");
     res.status(200).json({
       success: true,
       transaction,
@@ -375,8 +373,6 @@ const getTimeslots = async (
       date,
       dbTimeSlotRepository
     );
-
-    console.log(timeSlots);
 
     res.status(HttpStatus.OK).json({ success: true, timeSlots });
   } catch (error) {

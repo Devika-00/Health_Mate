@@ -24,21 +24,23 @@ const Register: React.FC = () => {
       description: "",
       experience: "",
       lisenceCertificate: null,
-      consultationType: ""
+      consultationType: "",
     },
     validate: validateSignUpUser,
     onSubmit: async ({ name, email, password }) => {
-      console.log("working...");
-      
       setIsSubmitting(true);
       try {
-        const { data } = await axios.post(USER_API + "/register", { name, email, password });
+        const { data } = await axios.post(USER_API + "/register", {
+          name,
+          email,
+          password,
+        });
         const { message, accessToken, newUser } = data;
         showToast(message, "success");
         localStorage.setItem("access_token", accessToken);
         setItemToLocalStorage("userId", newUser._id);
         navigate("/user/verify_otp");
-      } catch (error:any) {
+      } catch (error: any) {
         const { message } = error.response.data;
         setIsSubmitting(false);
         showToast(message, "error");
@@ -96,7 +98,10 @@ const Register: React.FC = () => {
             )}
           </div>
           <div className="mb-4">
-            <label htmlFor="confirmPassword" className="block text-gray-700 mr-2">
+            <label
+              htmlFor="confirmPassword"
+              className="block text-gray-700 mr-2"
+            >
               Confirm Password:
             </label>
             <input
@@ -105,9 +110,12 @@ const Register: React.FC = () => {
               className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-blue-500"
               {...formik.getFieldProps("confirmPassword")}
             />
-            {formik.touched.confirmPassword && formik.errors.confirmPassword && (
-              <div className="text-red-500">{formik.errors.confirmPassword}</div>
-            )}
+            {formik.touched.confirmPassword &&
+              formik.errors.confirmPassword && (
+                <div className="text-red-500">
+                  {formik.errors.confirmPassword}
+                </div>
+              )}
           </div>
           <button
             type="submit"

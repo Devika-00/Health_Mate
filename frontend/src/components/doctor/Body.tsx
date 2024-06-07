@@ -1,6 +1,5 @@
 import React from "react";
 import { MdDateRange } from "react-icons/md";
-import { LuClipboardList } from "react-icons/lu";
 import CenterImage from "../../assets/images/stethoscope-copy-space.jpg";
 import { Link } from "react-router-dom";
 
@@ -24,15 +23,21 @@ const Body: React.FC = () => {
           </div>
 
           <div className="justify-center">
-          <Link to="/doctor/slot" className="flex items-center justify-center bg-blue-950 text-white font-semibold py-2 px-4 rounded-full mr-72 mb-4 focus:outline-none focus:shadow-outline">
-            <MdDateRange className="w-6 h-6 mr-2 " />
-            Schedule Appointment
-          </Link>
-          <Link to="/doctor/patientList" className="flex items-center justify-center bg-blue-950 text-white font-semibold py-2 px-4 rounded-full mr-72 mb-4 focus:outline-none focus:shadow-outline">
-            <MdDateRange className="w-6 h-6 mr-2 " />
-            Patient List
-          </Link>
-         </div>
+            <Link
+              to="/doctor/slot"
+              className="flex items-center justify-center bg-blue-950 text-white font-semibold py-2 px-4 rounded-full mr-72 mb-4 focus:outline-none focus:shadow-outline"
+            >
+              <MdDateRange className="w-6 h-6 mr-2 " />
+              Schedule Appointment
+            </Link>
+            <Link
+              to="/doctor/patientList"
+              className="flex items-center justify-center bg-blue-950 text-white font-semibold py-2 px-4 rounded-full mr-72 mb-4 focus:outline-none focus:shadow-outline"
+            >
+              <MdDateRange className="w-6 h-6 mr-2 " />
+              Patient List
+            </Link>
+          </div>
         </div>
       </div>
     </div>

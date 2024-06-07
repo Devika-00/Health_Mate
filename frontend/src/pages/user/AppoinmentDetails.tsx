@@ -5,11 +5,10 @@ import axiosJWT from "../../utils/axiosService";
 import { CHAT_API, USER_API } from "../../constants";
 import { useNavigate, useParams } from "react-router-dom";
 import showToast from "../../utils/toaster";
-import { Modal } from "react-bootstrap";
 import { FaFilePdf, FaPlus, FaTimes, FaTrash } from "react-icons/fa";
 import { FaFileUpload } from "react-icons/fa";
 import { uploadDocumentToCloudinary } from "../../Api/uploadImages";
-import { AiOutlineFileText, AiOutlineVideoCamera } from 'react-icons/ai';
+import { AiOutlineFileText} from 'react-icons/ai';
 import { FiMessageSquare } from "react-icons/fi";
 import axios from "axios";
 import { useAppSelector } from "../../redux/store/Store";
@@ -126,7 +125,7 @@ zp.addPlugins({ ZIM });
     };
 
     const response = await axiosJWT.post(`${USER_API}/fetchPrescription`, data);
-    console.log(response,"hsdhsajdhjas");
+
 
     if (response.data && response.data.response) {
       setPrescription(response.data.response);
@@ -189,7 +188,6 @@ const handleSubmit = async (event: any) => {
     
     // Send the array of document data to the backend
     const response = await axiosJWT.post(`${USER_API}/uploadDocuments`, {   id: id, documents: documentsData, });
-    console.log(response,"jkjdkjkjfksjf");
     if (response.data.sucess) {
       showToast('Documents uploaded successfully', 'success');
       setShowDocumentModal(false);

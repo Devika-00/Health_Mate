@@ -41,7 +41,6 @@ export const addNewDoctor = async(
   const createdDoctor = await doctorRepository.addDoctor(
     doctor
   );
-  console.log(verificationToken, "token");
   //   sent verification mail to restaurant email address
   if (createdDoctor) {
     const emailSubject = "Doctor verification ";

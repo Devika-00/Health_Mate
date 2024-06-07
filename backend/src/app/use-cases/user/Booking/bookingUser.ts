@@ -156,7 +156,7 @@ export const createPayment = async (
     const changeStatus = await bookingRepository.changeBookingstatus(appoinmentStatus,cancelReason,id);
 
   const booking = await bookingRepository.getBookingById(id);
-  console.log(booking,"ghfghfjg");
+
   //@ts-ignore
   const fee:any = booking?.fee;
    //@ts-ignore

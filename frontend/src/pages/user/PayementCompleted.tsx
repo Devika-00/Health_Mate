@@ -1,6 +1,5 @@
 import { useParams, useSearchParams } from "react-router-dom";
-import Navbar from '../../components/user/Navbar/navbar';
-import Footer from '../../components/user/Footer/Footer';
+import Navbar from "../../components/user/Navbar/navbar";
 import PaymentMessage from "../../components/user/payment";
 import axiosJWT from "../../utils/axiosService";
 import { USER_API } from "../../constants";
@@ -9,12 +8,8 @@ const PaymentCompleted = () => {
   const [searchParams] = useSearchParams();
   const { id } = useParams();
 
-  console.log(id);
-
   const status = searchParams.get("success");
   const isSuccess = status === "true" ? true : false;
-
-  console.log(status);
 
   if (status) {
     const paymentStatus = isSuccess ? "Paid" : "Failed";

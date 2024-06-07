@@ -35,7 +35,7 @@ export const userRegister = async (
 
     //create a new User 
     const createdUser: UserInterface = await userRepository.addUser(userEntity);
-    console.log(createdUser);
+  
 
     const wallet = await userRepository.addWallet(createdUser.id);
     
@@ -199,7 +199,7 @@ export const sendResetVerificationCode = async (
   authService: ReturnType<AuthServiceInterfaceType>
 ) => {
   const isEmailExist = await userDbRepository.getUserbyEmail(email);
-  console.log(isEmailExist);
+
   
   if(isEmailExist?.authenticationMethod === "google"){
     throw new CustomError(`${email} is sign in using google signin method .Do not reset the password `,HttpStatus.BAD_REQUEST);
@@ -214,7 +214,7 @@ export const sendResetVerificationCode = async (
     email,
     verificationCode
   );
-  console.log(isUpdated);
+
   sentMail(
     email,
     "Reset password",

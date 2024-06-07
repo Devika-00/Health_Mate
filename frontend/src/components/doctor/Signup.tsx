@@ -1,17 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import showToast from "../../utils/toaster";
 import axios from "axios";
 import { validateSignUp } from "../../utils/validation";
-import { ADMIN_API, DOCTOR_API } from '../../constants';
+import { ADMIN_API, DOCTOR_API } from "../../constants";
 import { uploadCertificateToCloudinary } from "../../Api/uploadImages";
-import axiosJWT from '../../utils/axiosService';
+import axiosJWT from "../../utils/axiosService";
 
 const Signup: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [medicalLicensePreview, setMedicalLicensePreview] = useState<string | null>(null);
-  const [departments, setDepartments] = useState<{_id: string, departmentName: string, isListed: boolean, createdAt: string, updatedAt: string}[]>([]);
+  const [medicalLicensePreview, setMedicalLicensePreview] = useState<
+    string | null
+  >(null);
+  const [departments, setDepartments] = useState<
+    {
+      _id: string;
+      departmentName: string;
+      isListed: boolean;
+      createdAt: string;
+      updatedAt: string;
+    }[]
+  >([]);
   const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
@@ -19,7 +29,7 @@ const Signup: React.FC = () => {
       email: "",
       phoneNumber: "",
       department: "",
-      consultationType: "", 
+      consultationType: "",
       education: "",
       description: "",
       experience: "",
@@ -28,9 +38,22 @@ const Signup: React.FC = () => {
       lisenceCertificate: null,
     },
     validate: validateSignUp,
-    onSubmit: async ({ name: doctorName, email, password, phoneNumber, department, education, description, experience, lisenceCertificate, consultationType }) => {
+    onSubmit: async ({
+      name: doctorName,
+      email,
+      password,
+      phoneNumber,
+      department,
+      education,
+      description,
+      experience,
+      lisenceCertificate,
+      consultationType,
+    }) => {
       setIsSubmitting(true);
-      const certificateUrl = await uploadCertificateToCloudinary(lisenceCertificate); 
+      const certificateUrl = await uploadCertificateToCloudinary(
+        lisenceCertificate
+      );
       axios
         .post(DOCTOR_API + "/signup", {
           doctorName,
@@ -63,23 +86,23 @@ const Signup: React.FC = () => {
       try {
         const response = await axiosJWT.get(`${ADMIN_API}/departments`);
         if (response.data.success) {
-          setDepartments(response.data.allDepartment); 
+          setDepartments(response.data.allDepartment);
         } else {
-          throw new Error('Failed to fetch doctor details');
+          throw new Error("Failed to fetch doctor details");
         }
       } catch (error) {
-        console.error('Error fetching doctor details:', error);
+        console.error("Error fetching doctor details:", error);
       }
     };
 
     fetchDoctorDepartment();
-  }, []); 
+  }, []);
 
   // Handle file input change
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const file = e.target.files[0];
-      formik.setFieldValue('lisenceCertificate', file);
+      formik.setFieldValue("lisenceCertificate", file);
       const reader = new FileReader();
       reader.onload = () => {
         setMedicalLicensePreview(reader.result as string);
@@ -94,7 +117,10 @@ const Signup: React.FC = () => {
         <h2 className="text-3xl font-bold mb-6 text-center">Sign Up</h2>
         <form onSubmit={formik.handleSubmit}>
           <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="name"
+            >
               Name
             </label>
             <input
@@ -109,7 +135,10 @@ const Signup: React.FC = () => {
             )}
           </div>
           <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="email"
+            >
               Email
             </label>
             <input
@@ -124,7 +153,10 @@ const Signup: React.FC = () => {
             )}
           </div>
           <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="phoneNumber">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="phoneNumber"
+            >
               Phone Number
             </label>
             <input
@@ -139,7 +171,10 @@ const Signup: React.FC = () => {
             )}
           </div>
           <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="department">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="department"
+            >
               Department
             </label>
             <select
@@ -149,7 +184,11 @@ const Signup: React.FC = () => {
             >
               <option className="text-gray-700" value=""></option>
               {departments.map((department) => (
-                <option key={department._id} className="text-gray-700" value={department.departmentName}>
+                <option
+                  key={department._id}
+                  className="text-gray-700"
+                  value={department.departmentName}
+                >
                   {department.departmentName}
                 </option>
               ))}
@@ -159,7 +198,10 @@ const Signup: React.FC = () => {
             )}
           </div>
           <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="consultationType">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="consultationType"
+            >
               Consultation Type
             </label>
             <select
@@ -168,16 +210,28 @@ const Signup: React.FC = () => {
               {...formik.getFieldProps("consultationType")}
             >
               <option className="text-gray-700" value=""></option>
-              <option className="text-gray-700" value="online">Online Consultation</option>
-              <option className="text-gray-700" value="offline">Offline Consultation</option>
-              <option className="text-gray-700" value="both">Both</option>
+              <option className="text-gray-700" value="online">
+                Online Consultation
+              </option>
+              <option className="text-gray-700" value="offline">
+                Offline Consultation
+              </option>
+              <option className="text-gray-700" value="both">
+                Both
+              </option>
             </select>
-            {formik.errors.consultationType && formik.touched.consultationType && (
-              <div className="text-red-500">{formik.errors.consultationType}</div>
-            )}
+            {formik.errors.consultationType &&
+              formik.touched.consultationType && (
+                <div className="text-red-500">
+                  {formik.errors.consultationType}
+                </div>
+              )}
           </div>
           <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="education">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="education"
+            >
               Education
             </label>
             <input
@@ -192,7 +246,10 @@ const Signup: React.FC = () => {
             )}
           </div>
           <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="description"
+            >
               Description
             </label>
             <input
@@ -204,7 +261,10 @@ const Signup: React.FC = () => {
             {/* Add error handling for description if needed */}
           </div>
           <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="experience">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="experience"
+            >
               Experience
             </label>
             <input
@@ -216,7 +276,10 @@ const Signup: React.FC = () => {
             {/* Add error handling for experience if needed */}
           </div>
           <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="medicalLicense">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="medicalLicense"
+            >
               Medical License
             </label>
             <input
@@ -226,17 +289,27 @@ const Signup: React.FC = () => {
               accept="image/*"
               onChange={handleFileChange}
             />
-            {formik.errors.lisenceCertificate && formik.touched.lisenceCertificate&& (
-              <div className="text-red-500">{formik.errors.lisenceCertificate}</div>
-            )}
+            {formik.errors.lisenceCertificate &&
+              formik.touched.lisenceCertificate && (
+                <div className="text-red-500">
+                  {formik.errors.lisenceCertificate}
+                </div>
+              )}
           </div>
           <div className="mb-6">
             {medicalLicensePreview && (
-              <img src={medicalLicensePreview} alt="Medical License Preview" className="w-full h-auto mb-4" />
+              <img
+                src={medicalLicensePreview}
+                alt="Medical License Preview"
+                className="w-full h-auto mb-4"
+              />
             )}
           </div>
           <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="password"
+            >
               Password
             </label>
             <input
@@ -251,7 +324,10 @@ const Signup: React.FC = () => {
             )}
           </div>
           <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirmPassword">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="confirmPassword"
+            >
               Confirm Password
             </label>
             <input
@@ -261,14 +337,18 @@ const Signup: React.FC = () => {
               placeholder="Confirm Password"
               {...formik.getFieldProps("confirmPassword")}
             />
-            {formik.errors.confirmPassword && formik.touched.confirmPassword && (
-              <div className="text-red-500">{formik.errors.confirmPassword}</div>
-            )}
+            {formik.errors.confirmPassword &&
+              formik.touched.confirmPassword && (
+                <div className="text-red-500">
+                  {formik.errors.confirmPassword}
+                </div>
+              )}
           </div>
           <div className="mb-6">
             <button
-              className={`bg-blue-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-                }`}
+              className={`bg-blue-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
+                isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+              }`}
               type="submit"
               disabled={isSubmitting}
             >

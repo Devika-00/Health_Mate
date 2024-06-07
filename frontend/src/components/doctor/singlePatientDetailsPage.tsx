@@ -57,7 +57,6 @@ function invite() {
       try {
         const response = await axiosJWT.get(`${USER_API}/bookingdetails/${id}`);
         const bookingData = response.data.data.bookingDetails;
-        console.log(bookingData,"haiiiiiiiiiiiii");
         setPatient(bookingData);
       } catch (err) {
         console.error('Error fetching patient details:', err);
@@ -121,7 +120,6 @@ function invite() {
   }
 
 
-  console.log(patient.userId,"ijisjdijds");
 
   const handleChat = () => {
     axios

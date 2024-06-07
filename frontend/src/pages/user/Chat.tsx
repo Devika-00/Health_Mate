@@ -5,8 +5,8 @@ import Navbar from "../../components/user/Navbar/navbar";
 import { FiSend } from "react-icons/fi";
 import { useAppSelector } from "../../redux/store/Store";
 import axiosJWT from "../../utils/axiosService";
-import { CHAT_API, DOCTOR_API, USER_API } from "../../constants";
-import { io } from "socket.io-client";
+import { CHAT_API,  USER_API } from "../../constants";
+
 import { useSocket } from "../../Context/SocketContext";
 
 
@@ -51,12 +51,12 @@ const Chat: React.FC = () => {
   }, [arrivalMessage, currentChat]);
 
 
-  console.log(arrivalMessage,"dfdfsdfsdfsd");
+  
 
   useEffect(() => {
     socket?.emit("addUser", user.id);
     socket?.on("getUsers", (users: any) => {
-      console.log(users, "hellooooo");
+   
     });
   }, [user]);
 
@@ -114,7 +114,7 @@ const Chat: React.FC = () => {
 
     try {
         const response = await axiosJWT.get(`${USER_API}/doctor/${id}`);
-        console.log(response, "response"); // Check response in console
+       
         setReceiverData(response.data.doctor); // Assuming the profile picture URL is stored in `profilePicture`
     } catch (error) {
         console.error("Error fetching receiver details:", error);

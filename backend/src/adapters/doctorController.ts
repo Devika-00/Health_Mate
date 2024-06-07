@@ -129,11 +129,6 @@ const doctorController = (
       ) => {
         try {
 
-          // const { access_token: access, refresh_token: refresh } = req.cookies;
-          // if (access || refresh) {
-          //   res.clearCookie("access_token");
-          //   res.clearCookie("refresh_token");
-          // }
           const doctorData: GoogleResponseDoctorType = req.body.doctor;
 
           const { accessToken, isEmailExist, createdUser } =
@@ -142,10 +137,6 @@ const doctorController = (
               dbRepositoryDoctor,
               authService
             );
-          // res.cookie("access_token", accessToken, {
-          //   httpOnly: true,
-          //   secure: true,
-          // });
           const user = isEmailExist ? isEmailExist : createdUser;
           res.status(HttpStatus.OK).json({ message: "login success", user , accessToken: accessToken,});
         } catch (error) {
@@ -164,7 +155,6 @@ const doctorController = (
         
         const {id} = req.params;
         const user = await getSingleUser(id,dbRepositoryUser);
-        console.log(user,"comingg");
         return res.status(HttpStatus.OK).json({ success: true, user });
       } catch (error) {
         next(error);
@@ -232,32 +222,6 @@ const doctorController = (
   };
 
 
-  // const scheduleTime = async (
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ) => {
-  //   try {
-  //     const doctorId = req.doctor;
-  //     const { time, date } = req.body; // Destructure time and date from req.body
-  //     const newTimeSlot = await addTimeSlot(
-  //       doctorId,
-  //       {
-  //         time, date,
-  //         isAvailable:true,
-  //       }, // Pass time and date as an object
-  //       dbTimeSlotRepository
-  //     );
-  
-  //     res.status(HttpStatus.OK).json({
-  //       success: true,
-  //       message: "Time slot added successfully",
-  //       newTimeSlot,
-  //     });
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // };
   
 
   /*
@@ -281,23 +245,7 @@ const doctorController = (
     }
   };
 
-  // const removeTimeSlot = async (
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ) => {
-  //   try {
-      
-  //     const{ id } = req.params;
-  //     console.log(id);
-  //     await deleteTimeSlot(id, dbTimeSlotRepository);
-  //     res
-  //       .status(HttpStatus.OK)
-  //       .json({ success: true, message: "Slot deleted successfully" });
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // }
+
     
     const getPatientList = async (
       req: Request,
@@ -319,7 +267,6 @@ const doctorController = (
     ) => {
       try {
         const {id} = req.params;
-        console.log(id);
         const patient = await getPatientFullDetails(id,dbBookingRepository);
         return res.status(HttpStatus.OK).json({ success: true, patient });
       } catch (error) {
@@ -335,7 +282,6 @@ const doctorController = (
     ) => {
       try {
         const {id} = req.params;
-        console.log(id);
         const doctor = await getDoctorProfile(id,dbRepositoryDoctor);
         return res.status(HttpStatus.OK).json({ success: true, doctor });
       } catch (error) {
@@ -367,7 +313,6 @@ const doctorController = (
     next: NextFunction
   ) => {
     try {
-      console.log("///////");
       const { doctorId, startDate, endDate, slotTime } = req.body;
       const data = { doctorId, startDate, endDate, slotTime };
       const response = await addTimeSlot(
@@ -464,9 +409,9 @@ const receiverDetails = async (
   next: NextFunction
 ) => {
   try {
-    console.log(req.params);
+ 
     const {id} = req.params;
-    console.log(id);
+
     const doctor = await getDoctorProfile(id,dbRepositoryDoctor);
     return res.status(HttpStatus.OK).json({ success: true, doctor });
   } catch (error) {

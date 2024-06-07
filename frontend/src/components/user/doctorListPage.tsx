@@ -20,7 +20,10 @@ const generateTimeSlots = (): TimeSlot[] => {
     const endHour = i + 1 > 12 ? i - 11 : i + 1;
     const period = i >= 12 ? "PM" : "AM";
     const nextPeriod = i + 1 >= 12 ? "PM" : "AM";
-    slots.push({ start: `${startHour}:00 ${period}`, end: `${endHour}:00 ${nextPeriod}` });
+    slots.push({
+      start: `${startHour}:00 ${period}`,
+      end: `${endHour}:00 ${nextPeriod}`,
+    });
   }
   return slots;
 };
@@ -32,7 +35,15 @@ const DoctorListingPage: React.FC = () => {
   const [selectedDepartment, setSelectedDepartment] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>("");
-  const [departments, setDepartments] = useState<{_id: string, departmentName: string, isListed: boolean, createdAt: string, updatedAt: string}[]>([]);
+  const [departments, setDepartments] = useState<
+    {
+      _id: string;
+      departmentName: string;
+      isListed: boolean;
+      createdAt: string;
+      updatedAt: string;
+    }[]
+  >([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage] = useState<number>(8);
   const [totalPages, setTotalPages] = useState<number>(0);
@@ -43,14 +54,19 @@ const DoctorListingPage: React.FC = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const departmentResponse = await axiosJWT.get(`${USER_API}/departments`);
+        const departmentResponse = await axiosJWT.get(
+          `${USER_API}/departments`
+        );
         if (departmentResponse.data.success) {
-          const listedDepartments = departmentResponse.data.allDepartment.filter(
-            (department: any) => department.isListed
-          );
+          const listedDepartments =
+            departmentResponse.data.allDepartment.filter(
+              (department: any) => department.isListed
+            );
           setDepartments(listedDepartments);
 
-          const departmentNames = listedDepartments.map((department: any) => department.departmentName);
+          const departmentNames = listedDepartments.map(
+            (department: any) => department.departmentName
+          );
 
           const response = await axiosJWT.get(`${USER_API}/doctors`, {
             params: {
@@ -69,11 +85,12 @@ const DoctorListingPage: React.FC = () => {
 
           setDoctors(filteredDoctors);
           setTotalPages(Math.ceil(filteredDoctors.length / itemsPerPage));
-          setFiltersUsed( // Update the state to indicate filters are being used
+          setFiltersUsed(
+            // Update the state to indicate filters are being used
             searchQuery !== "" ||
-            selectedDepartment !== "" ||
-            selectedDate !== null ||
-            selectedTimeSlot !== ""
+              selectedDepartment !== "" ||
+              selectedDate !== null ||
+              selectedTimeSlot !== ""
           );
         } else {
           throw new Error("Failed to fetch department details");
@@ -84,7 +101,14 @@ const DoctorListingPage: React.FC = () => {
     };
 
     fetchDoctors();
-  }, [searchQuery, selectedDepartment, selectedDate, selectedTimeSlot, currentPage, itemsPerPage]);
+  }, [
+    searchQuery,
+    selectedDepartment,
+    selectedDate,
+    selectedTimeSlot,
+    currentPage,
+    itemsPerPage,
+  ]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
@@ -94,7 +118,9 @@ const DoctorListingPage: React.FC = () => {
     setSearchActive(!searchActive);
   };
 
-  const handleDepartmentChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleDepartmentChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setSelectedDepartment(event.target.value);
   };
 
@@ -102,7 +128,9 @@ const DoctorListingPage: React.FC = () => {
     setSelectedDate(date);
   };
 
-  const handleTimeSlotChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleTimeSlotChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setSelectedTimeSlot(event.target.value);
   };
 
@@ -121,7 +149,11 @@ const DoctorListingPage: React.FC = () => {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Find a Doctor</h1>
       <div className="flex items-center mb-4">
-        <div className={`border border-${searchActive ? "gray-300" : "gray-500"} shadow-lg flex items-center relative rounded-md w-80`}>
+        <div
+          className={`border border-${
+            searchActive ? "gray-300" : "gray-500"
+          } shadow-lg flex items-center relative rounded-md w-80`}
+        >
           <input
             type="text"
             placeholder="Search"
@@ -144,7 +176,11 @@ const DoctorListingPage: React.FC = () => {
           >
             <option value="">All Departments</option>
             {departments.map((department) => (
-              <option key={department._id} className="text-gray-700" value={department.departmentName}>
+              <option
+                key={department._id}
+                className="text-gray-700"
+                value={department.departmentName}
+              >
                 {department.departmentName}
               </option>
             ))}
@@ -209,22 +245,24 @@ const DoctorListingPage: React.FC = () => {
       </div>
       <div className="mt-10 flex justify-center">
         <ul className="flex pl-0 list-none rounded my-2">
-          {Array.from({ length: totalPages }, (_, index) => (
-            (index <= totalPages / 8) && (
-              <li key={index}>
-                <button
-                  className={`${
-                    currentPage === index + 1
-                      ? "bg-blue-900 text-white"
-                      : "text-blue-900 hover:text-blue-700"
-                  } cursor-pointer px-3 py-2`}
-                  onClick={() => paginate(index + 1)}
-                >
-                  {index + 1}
-                </button>
-              </li>
-            )
-          ))}
+          {Array.from(
+            { length: totalPages },
+            (_, index) =>
+              index <= totalPages / 8 && (
+                <li key={index}>
+                  <button
+                    className={`${
+                      currentPage === index + 1
+                        ? "bg-blue-900 text-white"
+                        : "text-blue-900 hover:text-blue-700"
+                    } cursor-pointer px-3 py-2`}
+                    onClick={() => paginate(index + 1)}
+                  >
+                    {index + 1}
+                  </button>
+                </li>
+              )
+          )}
         </ul>
       </div>
       <div className="flex justify-center mt-4">

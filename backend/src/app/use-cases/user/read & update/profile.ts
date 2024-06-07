@@ -22,7 +22,7 @@ export const getWalletUser = async (
   userRepository: ReturnType<userDbInterface>
 )=> {
 const amount =  userRepository.getWallet(userId);
-console.log(amount,"amountttt");
+
 return amount;
 } 
 

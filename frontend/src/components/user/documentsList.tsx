@@ -14,7 +14,9 @@ const DocumentList = () => {
   const { id } = useParams<{ id: string }>();
   const [documents, setDocuments] = useState<any[]>([]);
   const [showModal, setShowModal] = useState(false);
-  const [selectedDocumentId, setSelectedDocumentId] = useState<string | null>(null);
+  const [selectedDocumentId, setSelectedDocumentId] = useState<string | null>(
+    null
+  );
   const user = useAppSelector((state) => state.UserSlice);
 
   useEffect(() => {
@@ -107,7 +109,9 @@ const DocumentList = () => {
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75">
           <div className="bg-white p-6 rounded shadow-lg">
-            <h2 className="text-xl font-semibold mb-4">Do you want to delete the document?</h2>
+            <h2 className="text-xl font-semibold mb-4">
+              Do you want to delete the document?
+            </h2>
             <div className="flex justify-end">
               <button
                 className="bg-red-600 text-white px-4 py-2 rounded mr-2"

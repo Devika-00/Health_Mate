@@ -64,7 +64,6 @@ export const bookingRepositoryMongodb = () => {
     };
 
     const changeBookingstatusPayment = async (id: string) => {
-      console.log(id,"hai"); // Log the id parameter
       return await Booking.findByIdAndUpdate(id, { paymentStatus: "Success" });
     };
     

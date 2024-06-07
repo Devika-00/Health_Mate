@@ -9,16 +9,18 @@ const DepartmentManagement: React.FC = () => {
   const [departments, setDepartments] = useState<DepartmentInterface[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [departmentName, setDepartmentName] = useState<string>("");
-  const [currentDepartmentId, setCurrentDepartmentId] = useState<string | null>(null);
+  const [currentDepartmentId, setCurrentDepartmentId] = useState<string | null>(
+    null
+  );
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        const response = await axiosJWT.get(`${ADMIN_API}/departments`); 
-        setDepartments(response.data.allDepartment); 
+        const response = await axiosJWT.get(`${ADMIN_API}/departments`);
+        setDepartments(response.data.allDepartment);
       } catch (error) {
-        console.error('Error fetching departments:', error);
+        console.error("Error fetching departments:", error);
       }
     };
 
@@ -32,9 +34,11 @@ const DepartmentManagement: React.FC = () => {
       )
     );
 
-    try {   
-      const response = await axiosJWT.patch(`${ADMIN_API}/unlist_department/${id}`);
-      if(response.data.success){
+    try {
+      const response = await axiosJWT.patch(
+        `${ADMIN_API}/unlist_department/${id}`
+      );
+      if (response.data.success) {
         showToast(response.data.message, "success");
       }
     } catch (error) {
@@ -51,7 +55,9 @@ const DepartmentManagement: React.FC = () => {
   };
 
   const isDepartmentExist = (name: string) => {
-    return departments.some(dept => dept.departmentName.toLowerCase() === name.toLowerCase());
+    return departments.some(
+      (dept) => dept.departmentName.toLowerCase() === name.toLowerCase()
+    );
   };
 
   const handleAddDepartment = async () => {
@@ -67,18 +73,20 @@ const DepartmentManagement: React.FC = () => {
     };
 
     try {
-      const response = await axiosJWT.post(`${ADMIN_API}/addDepartment`, newDepartment);
+      const response = await axiosJWT.post(
+        `${ADMIN_API}/addDepartment`,
+        newDepartment
+      );
 
       if (response.data.success) {
         showToast(response.data.message, "success");
-        setDepartments(prev => [...prev, newDepartment]);
+        setDepartments((prev) => [...prev, newDepartment]);
         setDepartmentName("");
         toggleModal();
       }
-
     } catch (error) {
-      console.error('Error adding department:', error);
-      showToast('There was an error adding the department.', "error");
+      console.error("Error adding department:", error);
+      showToast("There was an error adding the department.", "error");
     }
   };
 
@@ -91,17 +99,22 @@ const DepartmentManagement: React.FC = () => {
     }
 
     const updatedDepartment = {
-      departmentName
+      departmentName,
     };
 
     try {
-      const response = await axiosJWT.put(`${ADMIN_API}/departments/${currentDepartmentId}`, updatedDepartment);
+      const response = await axiosJWT.put(
+        `${ADMIN_API}/departments/${currentDepartmentId}`,
+        updatedDepartment
+      );
 
       if (response.data.success) {
         showToast(response.data.message, "success");
         setDepartments((prevDepartments) =>
           prevDepartments.map((dept) =>
-            dept._id === currentDepartmentId ? { ...dept, departmentName } : dept
+            dept._id === currentDepartmentId
+              ? { ...dept, departmentName }
+              : dept
           )
         );
         setDepartmentName("");
@@ -109,8 +122,8 @@ const DepartmentManagement: React.FC = () => {
         toggleModal();
       }
     } catch (error) {
-      console.error('Error editing department:', error);
-      showToast('There was an error editing the department.', "error");
+      console.error("Error editing department:", error);
+      showToast("There was an error editing the department.", "error");
     }
   };
 
@@ -139,7 +152,9 @@ const DepartmentManagement: React.FC = () => {
         </button>
       </div>
 
-      <h1 className="text-3xl font-bold mb-6 text-center">Department Management</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">
+        Department Management
+      </h1>
       <div className="overflow-x-auto shadow-lg rounded-lg">
         <table className="min-w-full bg-white rounded-lg overflow-hidden">
           {/* Table Headers */}
@@ -172,7 +187,9 @@ const DepartmentManagement: React.FC = () => {
                 <td className="px-6 py-4 text-left font-medium text-gray-900 whitespace-nowrap">
                   {index + 1}
                 </td>
-                <td className="px-6 py-4 text-left text-gray-700">{department.departmentName}</td>
+                <td className="px-6 py-4 text-left text-gray-700">
+                  {department.departmentName}
+                </td>
                 <td className="px-6 py-4 text-left">
                   <label className="flex cursor-pointer select-none items-center">
                     <div className="relative">
@@ -196,7 +213,10 @@ const DepartmentManagement: React.FC = () => {
                   </label>
                 </td>
                 <td className="px-6 py-4 text-left">
-                  <FaEdit className="text-blue-500 cursor-pointer" onClick={() => handleEditClick(department)} />
+                  <FaEdit
+                    className="text-blue-500 cursor-pointer"
+                    onClick={() => handleEditClick(department)}
+                  />
                 </td>
               </tr>
             ))}
@@ -208,7 +228,9 @@ const DepartmentManagement: React.FC = () => {
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-            <h2 className="text-lg font-bold mb-4 text-center">{isEditing ? "Edit Department" : "Add Department"}</h2>
+            <h2 className="text-lg font-bold mb-4 text-center">
+              {isEditing ? "Edit Department" : "Add Department"}
+            </h2>
             <input
               type="text"
               value={departmentName}
@@ -225,7 +247,6 @@ const DepartmentManagement: React.FC = () => {
               </button>
               <button
                 onClick={toggleModal}
-
                 className="px-4 py-2 ml-2 mt-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 focus:outline-none focus:bg-gray-400"
               >
                 Cancel

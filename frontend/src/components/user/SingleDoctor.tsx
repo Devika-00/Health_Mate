@@ -1,9 +1,8 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import axiosJWT from '../../utils/axiosService';
-import { USER_API } from '../../constants';
-import { FaCalendarCheck, FaVideo, FaCalendarAlt } from 'react-icons/fa'; // Import icons from React Icons
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import axiosJWT from "../../utils/axiosService";
+import { USER_API } from "../../constants";
+import { FaCalendarCheck, FaVideo, FaCalendarAlt } from "react-icons/fa"; // Import icons from React Icons
 
 const DoctorDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -16,7 +15,7 @@ const DoctorDetailsPage: React.FC = () => {
         const response = await axiosJWT.get(`${USER_API}/doctor/${id}`);
         setDoctor(response.data.doctor);
       } catch (error) {
-        console.error('Error fetching doctor details:', error);
+        console.error("Error fetching doctor details:", error);
       }
     };
     fetchDoctorDetails();
@@ -36,25 +35,37 @@ const DoctorDetailsPage: React.FC = () => {
 
   // Function to render appointment button based on consultation type
   const renderAppointmentButton = () => {
-    if (doctor.consultationType === 'online') {
+    if (doctor.consultationType === "online") {
       return (
-        <button onClick={handleOnlineBookAppointment} className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4">
+        <button
+          onClick={handleOnlineBookAppointment}
+          className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4"
+        >
           <FaVideo className="mr-2" /> Online Appointment
         </button>
       );
-    } else if (doctor.consultationType === 'offline') {
+    } else if (doctor.consultationType === "offline") {
       return (
-        <button onClick={handleBookAppointment} className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4">
+        <button
+          onClick={handleBookAppointment}
+          className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4"
+        >
           <FaCalendarAlt className="mr-2" /> Book Appointment
         </button>
       );
-    } else if (doctor.consultationType === 'both') {
+    } else if (doctor.consultationType === "both") {
       return (
         <div>
-          <button onClick={handleOnlineBookAppointment} className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 mr-4">
+          <button
+            onClick={handleOnlineBookAppointment}
+            className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 mr-4"
+          >
             <FaVideo className="mr-2" /> Online Appointment
           </button>
-          <button onClick={handleBookAppointment} className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4">
+          <button
+            onClick={handleBookAppointment}
+            className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4"
+          >
             <FaCalendarAlt className="mr-2" /> Book Appointment
           </button>
         </div>
@@ -68,7 +79,11 @@ const DoctorDetailsPage: React.FC = () => {
       <div className="flex flex-col md:flex-row items-center justify-center">
         {/* Left Section */}
         <div className="md:w-1/3 mb-4 md:mb-0">
-          <img src={doctor.profileImage} alt="Doctor" className="h-96 w-96 rounded-lg shadow-md" />
+          <img
+            src={doctor.profileImage}
+            alt="Doctor"
+            className="h-96 w-96 rounded-lg shadow-md"
+          />
         </div>
         {/* Right Section */}
         <div className="md:w-2/3 md:pl-8">

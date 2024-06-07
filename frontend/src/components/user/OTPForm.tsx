@@ -27,7 +27,6 @@ const OTPForm: React.FC = () => {
     },
     onSubmit: ({ otp }) => {
       const userId = getItemFromLocalStorage("userId");
-      console.log(userId);
       if (userId) {
         axios
           .post(USER_API + "/verify_otp", { otp, userId })
@@ -56,20 +55,20 @@ const OTPForm: React.FC = () => {
     return () => clearInterval(timer);
   }, [seconds]);
 
-
-  const resendCode=()=>{
+  const resendCode = () => {
     setSeconds(60);
     const userId = getItemFromLocalStorage("userId");
-    if(userId){
-      axios.post(USER_API+"/resend_otp",{userId})
-      .then(({data})=>{
-        showToast(data.message,"success")
-      })
-      .catch(({response})=>{
-        showToast(response.data.message,"error");
-      });
-    }else{
-      showToast("something went wrong","error");
+    if (userId) {
+      axios
+        .post(USER_API + "/resend_otp", { userId })
+        .then(({ data }) => {
+          showToast(data.message, "success");
+        })
+        .catch(({ response }) => {
+          showToast(response.data.message, "error");
+        });
+    } else {
+      showToast("something went wrong", "error");
       return navigate("/user/login");
     }
   };
@@ -106,14 +105,15 @@ const OTPForm: React.FC = () => {
             </button>
             <p className="mt-3 ml-20 text-xs text-gray-700">
               Didn't receive OTP?{" "}
-              <button className="text-blue-500 underline focus:outline-none hover:text-blue-700"
-              onClick={resendCode}
-              disabled={seconds !== 0} 
+              <button
+                className="text-blue-500 underline focus:outline-none hover:text-blue-700"
+                onClick={resendCode}
+                disabled={seconds !== 0}
               >
                 Resend OTP
                 <span className="font-medium">
-                {seconds !== 0 && ` (${seconds}s)`}
-              </span>
+                  {seconds !== 0 && ` (${seconds}s)`}
+                </span>
               </button>
             </p>
           </form>
