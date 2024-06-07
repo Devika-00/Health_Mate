@@ -24,17 +24,17 @@ const Body: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-5">Our Services</h1>
+      <h1 className="text-2xl font-bold mb-5 text-center">Our Services</h1>
 
       {/* Online and Offline Consultation Cards */}
-      <div className="flex justify-center gap-16 mb-8">
+      <div className="flex flex-col md:flex-row justify-center gap-8 mb-8">
         {/* Online Consultation Card */}
-        <Link to="/user/online-consultation" className="w-96">
+        <Link to="/user/online-consultation" className="w-full md:w-96">
           <div className="bg-gray-100 rounded-lg shadow-2xl border border-gray-300 flex flex-col justify-center items-center cursor-pointer">
             <img
               src="https://asianetbroadband.in/wp-content/uploads/2022/03/online-consultation.jpg"
               alt="Online Consultation"
-              className="h-72 w-80 object-cover rounded-t-lg mt-7"
+              className="h-72 w-full object-cover rounded-t-lg mt-7"
             />
             <div className="p-4 text-center">
               <h2 className="text-lg font-semibold mb-2">
@@ -48,12 +48,12 @@ const Body: React.FC = () => {
         </Link>
 
         {/* Offline Consultation Card */}
-        <Link to="/user/offline-consultation" className="w-96">
+        <Link to="/user/offline-consultation" className="w-full md:w-96">
           <div className="bg-gray-100 rounded-lg shadow-2xl border border-gray-300 flex flex-col justify-center items-center cursor-pointer">
             <img
               src="https://media.istockphoto.com/id/1473559425/photo/female-medical-practitioner-reassuring-a-patient.jpg?s=612x612&w=0&k=20&c=kGbm-TE5qdppyyiteyip7_CzKLktyPrRuWD4Zz2EcqE="
               alt="Offline Consultation"
-              className="h-72 w-80 object-cover rounded-t-lg mt-7"
+              className="h-72 w-full object-cover rounded-t-lg mt-7"
             />
             <div className="p-4 text-center">
               <h2 className="text-lg font-semibold mb-2">
@@ -68,15 +68,15 @@ const Body: React.FC = () => {
       </div>
 
       {/* Doctors Section */}
-      <h1 className="text-2xl font-bold mb-5">Our Doctors</h1>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <h1 className="text-2xl font-bold mb-5 text-center">Our Doctors</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {doctors.map((doctor) => (
-          <Link key={doctor._id} to={`/user/doctor/${doctor._id}`}>
+          <Link key={doctor._id} to={`/user/doctor/${doctor._id}`} className="w-full">
             <div className="bg-gray-100 rounded-lg shadow-xl border border-gray-300 flex flex-col justify-center items-center cursor-pointer">
               <img
                 src={doctor.profileImage}
                 alt="Doctor"
-                className="h-52 w-52 object-cover rounded-t-lg mt-7"
+                className="h-52 w-full object-cover rounded-t-lg mt-7"
               />
               <div className="p-4 text-center">
                 <h2 className="text-lg font-semibold mb-2">

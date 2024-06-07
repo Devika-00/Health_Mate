@@ -10,10 +10,6 @@ const ChatIcon = () => {
   const { pathname } = useLocation();
   // const [notificationCount, setNotificationCount] = useState<number>(0);
 
-//   useEffect(() => {
-//     socket?.on("notification", () => {});
-//   }, []);
-
   const isExcludedRoute =
     pathname === "/chat" ||
     pathname === "/restaurant/chat" ||

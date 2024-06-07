@@ -147,28 +147,37 @@ const DoctorListingPage: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Find a Doctor</h1>
-      <div className="flex items-center mb-4">
-        <div
-          className={`border border-${
-            searchActive ? "gray-300" : "gray-500"
-          } shadow-lg flex items-center relative rounded-md w-80`}
-        >
-          <input
-            type="text"
-            placeholder="Search"
-            value={searchQuery}
-            onChange={handleSearchChange}
-            className="rounded-md px-4 py-2 w-full"
-          />
+      <h1 className="text-3xl font-bold mb-8 text-center md:text-left">
+        Find a Doctor
+      </h1>
+      {/* Filter Section */}
+      <div className="flex flex-col md:flex-row items-center justify-center md:justify-between mb-4">
+        {/* Search Input */}
+        <div className="relative mb-4 md:mb-0 w-full md:w-1/3">
+          {/* Input Field */}
           <div
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-700 cursor-pointer"
-            onClick={handleSearchIconClick}
+            className={`border border-${
+              searchActive ? "gray-300" : "gray-500"
+            } shadow-lg flex items-center relative rounded-md w-full`}
           >
-            <FaSearch />
+            <input
+              type="text"
+              placeholder="Search"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              className="rounded-md px-4 py-2 w-full"
+            />
+            {/* Search Icon */}
+            <div
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-700 cursor-pointer"
+              onClick={handleSearchIconClick}
+            >
+              <FaSearch />
+            </div>
           </div>
         </div>
-        <div className="border border-gray-500 shadow-lg rounded-md w-80 ml-4">
+        {/* Department Dropdown */}
+        <div className="border border-gray-500 shadow-lg rounded-md w-full md:w-1/3 mx-0 md:mx-4 mb-4 md:mb-0">
           <select
             className="rounded-md px-4 py-2 w-full"
             value={selectedDepartment}
@@ -186,7 +195,8 @@ const DoctorListingPage: React.FC = () => {
             ))}
           </select>
         </div>
-        <div className="border border-gray-500 shadow-lg rounded-md ml-3 w-80">
+        {/* Time Slot Dropdown */}
+        <div className="border border-gray-500 shadow-lg rounded-md w-full md:w-1/3 mx-0 md:mx-4 mb-4 md:mb-0">
           <select
             className="rounded-md px-4 py-2 w-full"
             value={selectedTimeSlot}
@@ -200,7 +210,8 @@ const DoctorListingPage: React.FC = () => {
             ))}
           </select>
         </div>
-        <div className="border border-gray-500 shadow-lg rounded-md ml-3 w-40 relative">
+        {/* Date Picker */}
+        <div className="border border-gray-500 shadow-lg rounded-md w-full md:w-1/3 mx-0 md:mx-4 relative">
           <DatePicker
             selected={selectedDate}
             onChange={handleDateChange}
@@ -212,16 +223,18 @@ const DoctorListingPage: React.FC = () => {
             <FaCalendarAlt />
           </div>
         </div>
-        {filtersUsed && ( // Show the Clear Filters button only if filters are used
+        {/* Clear Filters Button */}
+        {filtersUsed && (
           <button
-            className="ml-4 bg-blue-900 hover:bg-blue-800 text-white rounded-md px-4 py-2"
+            className="ml-4 mt-2 bg-blue-900 hover:bg-blue-800 text-white rounded-md px-4 py-2"
             onClick={handleClearFilters}
           >
             Clear Filters
           </button>
         )}
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {/* Doctor Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {doctors.map((doctor) => (
           <Link key={doctor._id} to={`/user/doctor/${doctor._id}`}>
             <div className="bg-gray-300 shadow-md rounded-lg p-6 cursor-pointer flex flex-col justify-center items-center">
@@ -243,28 +256,26 @@ const DoctorListingPage: React.FC = () => {
           </Link>
         ))}
       </div>
+      {/* Pagination */}
       <div className="mt-10 flex justify-center">
         <ul className="flex pl-0 list-none rounded my-2">
-          {Array.from(
-            { length: totalPages },
-            (_, index) =>
-              index <= totalPages / 8 && (
-                <li key={index}>
-                  <button
-                    className={`${
-                      currentPage === index + 1
-                        ? "bg-blue-900 text-white"
-                        : "text-blue-900 hover:text-blue-700"
-                    } cursor-pointer px-3 py-2`}
-                    onClick={() => paginate(index + 1)}
-                  >
-                    {index + 1}
-                  </button>
-                </li>
-              )
-          )}
+          {Array.from({ length: totalPages }, (_, index) => (
+            <li key={index}>
+              <button
+                className={`${
+                  currentPage === index + 1
+                    ? "bg-blue-900 text-white"
+                    : "text-blue-900 hover:text-blue-700"
+                } cursor-pointer px-3 py-2`}
+                onClick={() => paginate(index + 1)}
+              >
+                {index + 1}
+              </button>
+            </li>
+          ))}
         </ul>
       </div>
+      {/* Next/Previous Page Buttons */}
       <div className="flex justify-center mt-4">
         {currentPage > 1 && (
           <button
@@ -286,5 +297,6 @@ const DoctorListingPage: React.FC = () => {
     </div>
   );
 };
+  
 
 export default DoctorListingPage;

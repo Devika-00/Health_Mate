@@ -38,13 +38,13 @@ const Conversation: React.FC<ConversationProps> = ({ conversation,lastMessage })
 
     return (
         <div className="bg-white rounded-lg shadow-md p-2 flex flex-col mb-1">
-            <div className="flex items-center">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start">
                 <img
-                    className="w-14 h-14 rounded-full object-cover mr-4"
+                    className="w-14 h-14 rounded-full object-cover mb-2 sm:mb-0 sm:mr-4"
                     src={userData.profilePicture} 
                     alt="Doctor Profile"
                 />
-                <div className="flex flex-col">
+                <div className="flex flex-col text-center sm:text-left">
                     <span className="font-medium">{userData.name}</span>
                     <span className="text-gray-500 text-sm">{lastMessage?.text}</span>
                 </div>

@@ -18,11 +18,11 @@ const Profile: React.FC = () => {
   return (
     <>
       <Navbar />
-      <h2 className="text-4xl font-bold mt-6 text-center text-blue-900">
+      <h2 className="text-4xl font-bold mt-4 text-center text-blue-900">
         Profile
       </h2>
       <div className="flex flex-col items-center justify-center h-screen bg-white">
-        <div className="flex flex-col items-center w-2/5 justify-center mb-10 mt-12 bg-blue-900 rounded-lg p-6 shadow-lg text-white relative">
+        <div className="flex flex-col items-center pt-20 pb-10 lg:flex-row lg:justify-center w-full lg:w-2/3 xl:w-1/2 mb-10 mt-5 bg-blue-900 rounded-lg p-6 shadow-lg text-white relative">
           {/* Wallet button */}
           <Link
             to="/user/wallet"
@@ -31,8 +31,8 @@ const Profile: React.FC = () => {
             <BsWallet className="h-7 w-7 text-blue-900" />
             <span className="ml-2 text-blue-900">Wallet</span>
           </Link>
-
-          <div className="relative mb-4">
+  
+          <div className="relative mb-10">
             <img
               src={
                 imagePreview
@@ -40,7 +40,7 @@ const Profile: React.FC = () => {
                   : profile?.profilePicture ?? "https://picsum.photos/200/"
               }
               alt="Profile"
-              className="w-32 h-32 rounded-full"
+              className="w-32 h-32 rounded-full mr-8"
             />
             <label
               htmlFor="profile-image"
@@ -50,14 +50,14 @@ const Profile: React.FC = () => {
                 type="file"
                 id="profile-image"
                 name="imageFile"
-                className="hidden"
+                className="hidden "
                 onChange={handleInputChange}
               />
               <MdOutlineModeEdit />
             </label>
           </div>
           {/* Profile Fields */}
-          <div className="bg-white w-3/4 p-6 mb-3 rounded-lg shadow-lg">
+          <div className="bg-white w-full lg:w-3/4 p-6 mb-3 lg:mb-0 rounded-lg shadow-lg">
             <div className="mb-4">
               <label
                 htmlFor="name"

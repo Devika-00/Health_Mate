@@ -161,27 +161,33 @@ const OnlineDoctors: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Find a Doctor</h1>
-      <div className="flex items-center mb-4 space-x-4">
-        <div
-          className={`border border-${
-            searchActive ? "gray-300" : "gray-500"
-          } shadow-lg flex items-center relative rounded-md w-80`}
-        >
-          <input
-            type="text"
-            placeholder="Search"
-            value={searchQuery}
-            onChange={handleSearchChange}
-            className="rounded-md px-4 py-2 w-full"
-          />
+      <div className="flex flex-col md:flex-row items-center justify-center md:justify-between mb-4">
+        {/* Search Input */}
+        <div className="relative mb-4 md:mb-0 w-full md:w-1/3">
+          {/* Input Field */}
           <div
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-700 cursor-pointer"
-            onClick={handleSearchIconClick}
+            className={`border border-${
+              searchActive ? "gray-300" : "gray-500"
+            } shadow-lg flex items-center relative rounded-md w-full`}
           >
-            <FaSearch />
+            <input
+              type="text"
+              placeholder="Search"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              className="rounded-md px-4 py-2 w-full"
+            />
+            {/* Search Icon */}
+            <div
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-700 cursor-pointer"
+              onClick={handleSearchIconClick}
+            >
+              <FaSearch />
+            </div>
           </div>
         </div>
-        <div className="border border-gray-500 shadow-lg rounded-md w-80">
+        {/* Department Dropdown */}
+        <div className="border border-gray-500 shadow-lg rounded-md w-full md:w-1/3 mx-0 md:mx-4 mb-4 md:mb-0">
           <select
             className="rounded-md px-4 py-2 w-full"
             value={selectedDepartment}
@@ -199,7 +205,8 @@ const OnlineDoctors: React.FC = () => {
             ))}
           </select>
         </div>
-        <div className="border border-gray-500 shadow-lg rounded-md ml-3 w-80">
+        {/* Time Slot Dropdown */}
+        <div className="border border-gray-500 shadow-lg rounded-md w-full md:w-1/3 mx-0 md:mx-4 mb-4 md:mb-0">
           <select
             className="rounded-md px-4 py-2 w-full"
             value={selectedTimeSlot}
@@ -213,11 +220,12 @@ const OnlineDoctors: React.FC = () => {
             ))}
           </select>
         </div>
-        <div className="border border-gray-500 shadow-lg rounded-md w-40 relative ">
+        {/* Date Picker */}
+        <div className="border border-gray-500 shadow-lg rounded-md w-full md:w-1/3 mx-0 md:mx-4 relative">
           <DatePicker
             selected={selectedDate}
             onChange={handleDateChange}
-            className="rounded-md px-4 py-2 w-full pl-10 "
+            className="rounded-md px-4 py-2 w-full pl-10"
             minDate={new Date()}
             placeholderText="Select Date"
           />
@@ -225,9 +233,10 @@ const OnlineDoctors: React.FC = () => {
             <FaCalendarAlt />
           </div>
         </div>
-        {filtersUsed && ( // Show the Clear Filters button only if filters are used
+        {/* Clear Filters Button */}
+        {filtersUsed && (
           <button
-            className="ml-4 bg-blue-900 hover:bg-blue-800 text-white rounded-md px-4 py-2"
+            className="ml-4 mt-2 bg-blue-900 hover:bg-blue-800 text-white rounded-md px-4 py-2"
             onClick={handleClearFilters}
           >
             Clear Filters
@@ -297,6 +306,6 @@ const OnlineDoctors: React.FC = () => {
       </div>
     </div>
   );
-};
+}
 
 export default OnlineDoctors;

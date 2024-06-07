@@ -253,26 +253,26 @@ const AppointmentBookingPage: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Book an Appointment</h1>
-
+  
       {doctor && (
         <div>
-          <div className="flex items-center mb-8">
+          <div className="flex flex-col md:flex-row items-center mb-8">
             <img
               src={doctor.profileImage}
               alt={doctor.doctorName}
-              className="w-60 h-60 rounded mr-4"
+              className="w-40 h-40 md:w-60 md:h-60 rounded mb-4 md:mb-0 md:mr-4"
             />
-            <div className="ml-8">
+            <div className="ml-0 md:ml-8 text-center md:text-left">
               <h2 className="text-xl font-bold">{doctor.doctorName}</h2>
               <p>{doctor.department}</p>
-              <p className="text-green-600 font-semibold"> Verified </p>
+              <p className="text-green-600 font-semibold">Verified</p>
               <div className="text-gray-800 bg-blue-100 p-4 rounded-md mt-5 font-bold">
                 <p className="mb-2">Consultation: Offline</p>
                 <p>Fee: 400/-</p>
               </div>
             </div>
             {/* Google Map */}
-            <div className="flex justify-center mb-8 h-56 ml-96 w-full">
+            <div className="flex justify-center mb-8 md:ml-8 w-full md:w-auto mt-5">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3929.9542915875227!2d76.32012407479272!3d9.937761290164516!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b087303f27ba213%3A0xd163e2ff8e59c028!2sP%20S%20Mission%20Hospital!5e0!3m2!1sen!2sin!4v1715065874858!5m2!1sen!2sin"
                 width="400"
@@ -284,7 +284,7 @@ const AppointmentBookingPage: React.FC = () => {
               ></iframe>
             </div>
           </div>
-
+  
           <div className="mb-4">
             <h1 className="ml-4 mt-6 font-medium text-blue-950 text-lg">
               Select The Scheduled Date
@@ -309,7 +309,7 @@ const AppointmentBookingPage: React.FC = () => {
               }
             />
           </div>
-
+  
           {timeSlots.length > 0 ? (
             <div className="max-w-md mx-auto lg:mx-0 lg:mr-auto lg:w-1/3">
               <h1 className="text-2xl font-bold mb-4">Schedule Time Slots</h1>
@@ -317,7 +317,7 @@ const AppointmentBookingPage: React.FC = () => {
                 {timeSlots.map((slot, index) => (
                   <button
                     key={index}
-                    className={`w-full rounded-md py-3 border border-bg-blue-900 px-4 text-sm font-medium ${
+                    className={`w-full rounded-md py-3 border border-blue-900 px-4 text-sm font-medium ${
                       selectedTimeSlot === slot
                         ? "bg-blue-900 text-white"
                         : "bg-white text-gray-700 hover:bg-gray-200"
@@ -332,14 +332,14 @@ const AppointmentBookingPage: React.FC = () => {
           ) : (
             <>
               <p className="text-red-600 mt-4 text-lg">
-                The doctor is on leave{" "}
+                The doctor is on leave
               </p>
               <p className="text-red-600 mt-4">
                 No slots scheduled for the selected date.
               </p>
             </>
           )}
-
+  
           <Modal
             isOpen={isModalOpen}
             onRequestClose={handleModalClose}
@@ -356,7 +356,8 @@ const AppointmentBookingPage: React.FC = () => {
                 left: "auto",
                 right: "auto",
                 bottom: "auto",
-                width: "400px",
+                width: "90%",
+                maxWidth: "400px",
                 borderRadius: "8px",
                 boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
                 padding: "20px",
@@ -393,7 +394,7 @@ const AppointmentBookingPage: React.FC = () => {
               Add Details +
             </button>
           </Modal>
-
+  
           <Modal
             isOpen={isDetailsModalOpen}
             onRequestClose={() => setIsDetailsModalOpen(false)}
@@ -410,7 +411,8 @@ const AppointmentBookingPage: React.FC = () => {
                 left: "auto",
                 right: "auto",
                 bottom: "auto",
-                width: "400px",
+                width: "90%",
+                maxWidth: "400px",
                 borderRadius: "8px",
                 boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
                 padding: "20px",
@@ -468,12 +470,12 @@ const AppointmentBookingPage: React.FC = () => {
           </Modal>
         </div>
       )}
-
-      <div className="mt-8 ml-8">
+  
+      <div className="mt-8">
         {existingPatientDetails ? (
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="border border-gray-500 p-4 rounded-md">
-              <h2 className=" font-bold mb-3 text-lg">Patient Details</h2>
+              <h2 className="font-bold mb-3 text-lg">Patient Details</h2>
               <p>Name: {existingPatientDetails.patientName}</p>
               <p>Age: {existingPatientDetails.patientAge}</p>
               <p>Gender: {existingPatientDetails.patientGender}</p>
@@ -483,23 +485,23 @@ const AppointmentBookingPage: React.FC = () => {
           <div></div>
         )}
       </div>
-
-      <div className="flex justify-start mt-8">
+  
+      <div className="flex flex-col md:flex-row justify-start mt-8">
         {existingPatientDetails ? (
           <>
             <button
               onClick={handleOnlinePayment}
               disabled={timeSlots.length === 0}
-              className={`bg-blue-950 text-white py-2 px-4 rounded-lg ${
+              className={`bg-blue-950 text-white py-2 px-4 rounded-lg mb-2 md:mb-0 ${
                 timeSlots.length === 0 ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
-              online Payment
+              Online Payment
             </button>
             <button
               onClick={handleWalletPayment}
               disabled={timeSlots.length === 0}
-              className={`bg-blue-950 ml-5 text-white py-2 px-4 rounded-lg ${
+              className={`bg-blue-950 text-white py-2 px-4 rounded-lg md:ml-5 ${
                 timeSlots.length === 0 ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
@@ -514,7 +516,7 @@ const AppointmentBookingPage: React.FC = () => {
               timeSlots.length === 0 ? "opacity-50 cursor-not-allowed" : ""
             }`}
           >
-            Book an appoinment
+            Book an Appointment
           </button>
         )}
       </div>

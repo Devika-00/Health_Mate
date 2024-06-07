@@ -218,9 +218,9 @@ const Chat: React.FC = () => {
   return (
     <>
       <Navbar />
-      <div className="h-[664px] flex">
+      <div className="h-[664px] flex flex-col lg:flex-row">
         {/* Chat Menu */}
-        <div className="w-1/4 bg-gray-200">
+        <div className="w-full lg:w-1/4 bg-gray-200">
           <div className="p-4 h-full flex flex-col">
             {/* Search Bar */}
             <div className="mb-4 relative">
@@ -274,7 +274,7 @@ const Chat: React.FC = () => {
                       />
                     </div>
                   ))}
-                  <div className="flex items-center mt-2">
+                  <div className="flex items-center ">
                     <textarea
                       className="w-full px-3 py-1 border border-gray-300 rounded-lg focus:outline-none ml-4 mb-5"
                       placeholder="Write a message..."
@@ -290,7 +290,7 @@ const Chat: React.FC = () => {
                   </div>
                 </>
               ) : (
-                <div className="absolute top-10% text-5xl text-gray-400 cursor-default mt-52 ml-40">
+                <div className="text-center text-5xl text-gray-400 cursor-default mt-20 lg:mt-52">
                   Open a chat to start conversation..
                 </div>
               )}

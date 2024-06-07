@@ -5,10 +5,9 @@ import Navbar from "../../components/user/Navbar/navbar";
 import { FiSend } from "react-icons/fi";
 import { useAppSelector } from "../../redux/store/Store";
 import axiosJWT from "../../utils/axiosService";
-import { CHAT_API,  USER_API } from "../../constants";
+import { CHAT_API, USER_API } from "../../constants";
 
 import { useSocket } from "../../Context/SocketContext";
-
 
 const Chat: React.FC = () => {
   const user = useAppSelector((state) => state.UserSlice);
@@ -18,10 +17,10 @@ const Chat: React.FC = () => {
   const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState<string>("");
   const [arrivalMessage, setArrivalMessage] = useState<any>(null);
-  const [receiverData, setReceiverData] = useState<string | null>(null); 
+  const [receiverData, setReceiverData] = useState<string | null>(null);
   // const socket = useRef<any>();
   const scrollRef = useRef<HTMLDivElement>(null);
-  const socket = useSocket()
+  const socket = useSocket();
 
   useEffect(() => {
     // socket? = io("ws://localhost:3000");
@@ -50,14 +49,9 @@ const Chat: React.FC = () => {
     }
   }, [arrivalMessage, currentChat]);
 
-
-  
-
   useEffect(() => {
     socket?.emit("addUser", user.id);
-    socket?.on("getUsers", (users: any) => {
-   
-    });
+    socket?.on("getUsers", (users: any) => {});
   }, [user]);
 
   useEffect(() => {
@@ -108,19 +102,17 @@ const Chat: React.FC = () => {
     setCurrentChat(conversation);
 
     // Fetch receiver details
-    const id = conversation.members.find(
-        (member: any) => member !== user.id
-    );
+    const id = conversation.members.find((member: any) => member !== user.id);
 
     try {
-        const response = await axiosJWT.get(`${USER_API}/doctor/${id}`);
-       
-        setReceiverData(response.data.doctor); // Assuming the profile picture URL is stored in `profilePicture`
+      const response = await axiosJWT.get(`${USER_API}/doctor/${id}`);
+
+      setReceiverData(response.data.doctor); // Assuming the profile picture URL is stored in `profilePicture`
     } catch (error) {
-        console.error("Error fetching receiver details:", error);
-        // Handle error: Log or display error message
+      console.error("Error fetching receiver details:", error);
+      // Handle error: Log or display error message
     }
-};
+  };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const message = {
@@ -160,14 +152,12 @@ const Chat: React.FC = () => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-
-
   return (
     <>
       <Navbar />
-      <div className="h-[664px] flex">
+      <div className="h-[664px] flex flex-col lg:flex-row">
         {/* Chat Menu */}
-        <div className="w-1/4 bg-gray-200">
+        <div className="w-full lg:w-1/4 bg-gray-200">
           <div className="p-4 h-full flex flex-col">
             {/* Search Bar */}
             <div className="mb-4 relative">
@@ -190,7 +180,7 @@ const Chat: React.FC = () => {
                 />
               </svg>
             </div>
-
+  
             {conversations.map((conversation, index) => (
               <div
                 key={index}
@@ -206,40 +196,42 @@ const Chat: React.FC = () => {
         </div>
 
         {/* Chat Box */}
-        <div className="w-3/4 bg-gray-100">
+        <div className="w-full lg:w-3/4 bg-gray-100">
           <div className="flex flex-col h-full">
             <div className="h-full flex flex-col overflow-y-scroll pr-4">
-              {currentChat ? (
+              {!currentChat ? (
+                <div className="text-center text-5xl text-gray-400 cursor-default mt-20 lg:mt-52">
+                  Open a chat to start conversation..
+                </div>
+              ) : (
                 <>
                   {messages.map((m, index) => (
-                    <div className="flex-1"  key={index} ref={scrollRef}>
-                      <Message message={m} own={m.senderId === user.id} receiverProfilePicture={receiverData?.profileImage} receiverName={receiverData?.doctorName} />
+                    <div className="flex-1" key={index} ref={scrollRef}>
+                      <Message
+                        message={m}
+                        own={m.senderId === user.id}
+                        receiverProfilePicture={receiverData?.profileImage}
+                        receiverName={receiverData?.doctorName}
+                      />
                     </div>
                   ))}
                   <div className="flex items-center">
-              <textarea
-                className="w-full px-3 py-1 border border-gray-300 rounded-lg focus:outline-none ml-4 mb-5 "
-                placeholder="Write a message..."
-                onChange={(e) => setNewMessage(e.target.value)}
-                value={newMessage}
-              ></textarea>
-              <button
-                className="ml-2 mb-5 mr-5 px-5 py-3 bg-blue-500 text-white rounded-md cursor-pointer focus:outline-none hover:bg-blue-600"
-                onClick={handleSubmit}
-              >
-                <FiSend size={18} />
-              </button>
-            </div>
+                    <textarea
+                      className="w-full px-3 py-1 border border-gray-300 rounded-lg focus:outline-none ml-4 mb-5"
+                      placeholder="Write a message..."
+                      onChange={(e) => setNewMessage(e.target.value)}
+                      value={newMessage}
+                    ></textarea>
+                    <button
+                      className="ml-2 mb-5 mr-5 px-5 py-3 bg-blue-500 text-white rounded-md cursor-pointer focus:outline-none hover:bg-blue-600"
+                      onClick={handleSubmit}
+                    >
+                      <FiSend size={18} />
+                    </button>
+                  </div>
                 </>
-                
-              ) : (
-                <div className="absolute top-10% text-5xl text-gray-400 cursor-default mt-52 ml-40">
-                  Open a chat to start conversation..
-                </div>
               )}
             </div>
-
-            
           </div>
         </div>
       </div>
