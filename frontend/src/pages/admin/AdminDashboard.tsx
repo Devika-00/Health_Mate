@@ -59,17 +59,17 @@ const Dashboard: React.FC = () => {
           <h1 className="text-2xl font-bold mb-1">Dashboard</h1>
           <div className="grid grid-cols-3 gap-6 ">
             {/* Card 1: Doctors Count */}
-            <div className="bg-white shadow-md rounded-lg p-6 bg-yellow-100">
+            <div className=" shadow-md rounded-lg p-6 bg-yellow-100">
               <h2 className="text-lg font-bold">Doctors Count</h2>
               <p className="text-3xl font-bold">{doctors.length}</p>
             </div>
             {/* Card 2: Users Count */}
-            <div className="bg-white shadow-md rounded-lg p-6 bg-red-200">
+            <div className="shadow-md rounded-lg p-6 bg-red-200">
               <h2 className="text-lg font-bold">Users Count</h2>
               <p className="text-3xl font-bold">{users.length}</p>
             </div>
             {/* Card 3: Appointments Count */}
-            <div className="bg-white shadow-md rounded-lg p-6 bg-blue-300">
+            <div className=" shadow-md rounded-lg p-6 bg-blue-300">
               <h2 className="text-lg font-bold">Appointments</h2>
               <p className="text-3xl font-bold">{appointments.length}</p>
             </div>

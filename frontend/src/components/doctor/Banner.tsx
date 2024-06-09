@@ -1,17 +1,20 @@
 import React from 'react';
-import { doctorbanner } from '../../assets/images';
+import {  doctorbanner } from '../../assets/images';
+import { Link } from 'react-router-dom';
 
 const Banner: React.FC = () => {
   return (
-    <div className="relative w-full h-[80vh]">
-      <img src={doctorbanner} alt="Banner Image" className="w-full h-full object-cover" />
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-center mr-48">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-blue-900 mb-4 ml-10">Caring for Life</h1>
-        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-blue-900 mb-4 ml-14">Leading the Way</h2>
-        <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-blue-900 mb-8 ml-16">in Medical Excellence</h3>
+    <main className="flex-1 relative">
+      <img src={doctorbanner} alt="Center" className="w-full h-full object-cover"/>
+      <div className="absolute inset-0 flex justify-center items-center md:justify-start md:ml-10">
+        <div className="bg-white bg-opacity-75 p-6 rounded-lg shadow-lg text-center md:ml-12">
+          <h1 className="text-4xl font-bold text-blue-900 mb-4">Caring for Life</h1>
+          <h2 className="text-2xl font-semibold text-blue-700">Leading the Way in Medical Excellence</h2>
+        </div>
       </div>
-    </div>
+    </main>
   );
+  
 };
 
 export default Banner;

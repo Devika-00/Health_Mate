@@ -68,27 +68,25 @@ const Body: React.FC = () => {
       </div>
 
       {/* Doctors Section */}
-      <h1 className="text-2xl font-bold mb-5 text-center">Our Doctors</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        {doctors.map((doctor) => (
-          <Link key={doctor._id} to={`/user/doctor/${doctor._id}`} className="w-full">
-            <div className="bg-gray-100 rounded-lg shadow-xl border border-gray-300 flex flex-col justify-center items-center cursor-pointer">
-              <img
-                src={doctor.profileImage}
-                alt="Doctor"
-                className="h-52 w-full object-cover rounded-t-lg mt-7"
-              />
-              <div className="p-4 text-center">
-                <h2 className="text-lg font-semibold mb-2">
-                  {doctor.doctorName}
-                </h2>
-                <p className="text-gray-600 mb-2">{doctor.department}</p>
-                <p className="text-gray-600 mb-4">{doctor.description}</p>
+      <h1 className="text-3xl font-bold mb-8 text-center">Meet Our Doctors</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          {doctors.map((doctor) => (
+            <Link key={doctor._id} to={`/user/doctor/${doctor._id}`} className="w-full">
+              <div className="bg-white rounded-lg shadow-md shadow-blue-100 border border-blue-100 transition-transform duration-300 transform hover:shadow-lg hover:scale-105">
+                <img
+                  src={doctor.profileImage}
+                  alt="Doctor"
+                  className="h-80 w-full object-cover rounded-t-lg"
+                />
+                <div className="p-4">
+                  <h2 className="text-xl text-blue-900 font-bold mb-2">{doctor.doctorName}</h2>
+                  <p className="text-gray-900 font-semibold mb-2">{doctor.department}</p>
+                  <p className="text-gray-600 mb-4">{doctor.description}</p>
+                </div>
               </div>
-            </div>
-          </Link>
-        ))}
-      </div>
+            </Link>
+          ))}
+        </div>
     </div>
   );
 };

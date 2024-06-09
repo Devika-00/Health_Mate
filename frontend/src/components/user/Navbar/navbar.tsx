@@ -5,6 +5,7 @@ import { RootState } from "../../../redux/reducer/reducer";
 import showToast from "../../../utils/toaster";
 import { clearUser } from "../../../redux/slices/UserSlice";
 import { FiMenu, FiX } from "react-icons/fi";
+import { GiHealthNormal } from "react-icons/gi";
 
 const Navbar: React.FC = () => {
   const user = useSelector((state: RootState) => state.UserSlice);
@@ -24,12 +25,12 @@ const Navbar: React.FC = () => {
 
   return (
     <nav className="bg-blue-900 shadow-lg w-full">
-      <div className="px-4 ">
-        <div className="flex justify-between h-14">
+      <div className="px-5 ">
+        <div className="flex justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
-            <Link to="/" className="text-white font-bold text-xl">
-              HEALTH MATE
+            <Link to="/" className="text-white font-bold text-xl ml-10">
+                   HEALTH MATE
             </Link>
           </div>
           {/* Hamburger Icon */}
