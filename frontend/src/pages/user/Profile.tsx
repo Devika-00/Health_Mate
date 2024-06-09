@@ -8,9 +8,7 @@ const Profile: React.FC = () => {
   const {
     profile,
     formData,
-    error,
     imagePreview,
-    isSubmitting,
     handleInputChange,
     handleSubmit,
   } = useProfile();
@@ -18,142 +16,145 @@ const Profile: React.FC = () => {
   return (
     <>
       <Navbar />
-      <h2 className="text-4xl font-bold mt-4 text-center text-blue-900">
-        Profile
-      </h2>
-      <div className="flex flex-col items-center justify-center h-screen bg-white">
-        <div className="flex flex-col items-center pt-20 pb-10 lg:flex-row lg:justify-center w-full lg:w-2/3 xl:w-1/2 mb-10 mt-5 bg-blue-900 rounded-lg p-6 shadow-lg text-white relative">
+      <div className="min-h-screen bg-gray-100 flex flex-col items-center">
+        <h2 className="text-4xl font-bold mt-6 text-center text-blue-900">
+          Profile
+        </h2>
+        <div className="bg-blue-900 mt-10 mb-10 w-full max-w-2xl rounded-lg shadow-lg p-6 relative">
           {/* Wallet button */}
           <Link
             to="/user/wallet"
-            className="absolute top-4 right-4 bg-gray-100 hover:bg-blue-100 rounded-md p-2 flex items-center"
+            className="absolute top-4 right-4 bg-blue-100 hover:bg-blue-200 text-blue-900 rounded-md p-2 flex items-center"
           >
-            <BsWallet className="h-7 w-7 text-blue-900" />
-            <span className="ml-2 text-blue-900">Wallet</span>
+            <BsWallet className="h-7 w-7" />
+            <span className="ml-2">Wallet</span>
           </Link>
-  
-          <div className="relative mb-10">
-            <img
-              src={
-                imagePreview
-                  ? imagePreview
-                  : profile?.profilePicture ?? "https://picsum.photos/200/"
-              }
-              alt="Profile"
-              className="w-32 h-32 rounded-full mr-8"
-            />
-            <label
-              htmlFor="profile-image"
-              className="absolute bottom-0 right-0 bg-white text-blue-900 rounded-full cursor-pointer border-4 border-white px-2 py-1 "
-            >
-              <input
-                type="file"
-                id="profile-image"
-                name="imageFile"
-                className="hidden "
-                onChange={handleInputChange}
+          <div className="flex flex-col items-center">
+            <div className="relative mb-6">
+              <img
+                src={
+                  imagePreview
+                    ? imagePreview
+                    : profile?.profilePicture ?? "https://picsum.photos/200/"
+                }
+                alt="Profile"
+                className="w-36 h-36 rounded-full"
               />
-              <MdOutlineModeEdit />
-            </label>
-          </div>
-          {/* Profile Fields */}
-          <div className="bg-white w-full lg:w-3/4 p-6 mb-3 lg:mb-0 rounded-lg shadow-lg">
-            <div className="mb-4">
               <label
-                htmlFor="name"
-                className="block text-gray-700 font-semibold"
+                htmlFor="profile-image"
+                className="absolute bottom-0 right-0 bg-white text-blue-900 rounded-full cursor-pointer border-4 border-white p-1"
               >
-                Name:
+                <input
+                  type="file"
+                  id="profile-image"
+                  name="imageFile"
+                  className="hidden"
+                  onChange={handleInputChange}
+                />
+                <MdOutlineModeEdit />
               </label>
-              <input
-                type="text"
-                id="name"
-                value={formData.name}
-                name="name"
-                onChange={handleInputChange}
-                className="border text-gray-700 border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:ring focus:border-blue-500"
-              />
             </div>
-            <div className="mb-4">
-              <label
-                htmlFor="email"
-                className="block text-gray-700 font-semibold"
-              >
-                Email:
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={profile?.email ?? ""}
-                onChange={handleInputChange}
-                className="border text-gray-700 border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:ring focus:border-blue-500"
-              />
+            <div className="w-full">
+              {/* Profile Fields */}
+              <div className="bg-white w-full rounded-lg shadow-lg p-6">
+                <div className="mb-4">
+                  <label
+                    htmlFor="name"
+                    className="block text-gray-700 font-semibold"
+                  >
+                    Name:
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    value={formData.name}
+                    name="name"
+                    onChange={handleInputChange}
+                    className="border text-gray-700 border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:ring focus:border-blue-500"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label
+                    htmlFor="email"
+                    className="block text-gray-700 font-semibold"
+                  >
+                    Email:
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={profile?.email ?? ""}
+                    onChange={handleInputChange}
+                    className="border text-gray-700 border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:ring focus:border-blue-500"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label
+                    htmlFor="age"
+                    className="block text-gray-700 font-semibold"
+                  >
+                    Age:
+                  </label>
+                  <input
+                    type="number"
+                    id="age"
+                    name="age"
+                    value={formData?.age ?? ""}
+                    onChange={handleInputChange}
+                    className="border text-gray-700 border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:ring focus:border-blue-500"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label
+                    htmlFor="phoneNumber"
+                    className="block text-gray-700 font-semibold"
+                  >
+                    Phone Number:
+                  </label>
+                  <input
+                    type="tel"
+                    id="phoneNumber"
+                    name="phoneNumber"
+                    value={formData?.phoneNumber ?? ""}
+                    onChange={handleInputChange}
+                    className="border text-gray-700 border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:ring focus:border-blue-500"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label
+                    htmlFor="gender"
+                    className="block text-gray-700 font-semibold"
+                  >
+                    Gender:
+                  </label>
+                  <select
+                    id="gender"
+                    name="gender"
+                    value={formData?.gender ?? ""}
+                    onChange={handleInputChange}
+                    className="border text-gray-700 border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:ring focus:border-blue-500"
+                  >
+                    <option className="text-gray-700" value="male">
+                      Male
+                    </option>
+                    <option className="text-gray-700" value="female">
+                      Female
+                    </option>
+                    <option className="text-gray-700" value="others">
+                      Others
+                    </option>
+                  </select>
+                </div>
+                {/* Update Profile Button */}
+                <button
+                  className="bg-blue-900 text-white py-2 px-4 mt-3 w-full rounded-md hover:bg-blue-800 focus:outline-none focus:ring focus:border-blue-500"
+                  onClick={handleSubmit}
+                >
+                  Update Profile
+                </button>
+              </div>
             </div>
-            <div className="mb-4">
-              <label
-                htmlFor="age"
-                className="block text-gray-700 font-semibold"
-              >
-                Age:
-              </label>
-              <input
-                type="number"
-                id="age"
-                name="age"
-                value={formData?.age ?? ""}
-                onChange={handleInputChange}
-                className="border text-gray-700 border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:ring focus:border-blue-500"
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                htmlFor="phoneNumber"
-                className="block text-gray-700 font-semibold"
-              >
-                Phone Number:
-              </label>
-              <input
-                type="tel"
-                id="phoneNumber"
-                name="phoneNumber"
-                value={formData?.phoneNumber ?? ""}
-                onChange={handleInputChange}
-                className="border text-gray-700 border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:ring focus:border-blue-500"
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                htmlFor="gender"
-                className="block text-gray-700 font-semibold"
-              >
-                Gender:
-              </label>
-              <select
-                id="gender"
-                name="gender"
-                value={formData?.gender ?? ""}
-                onChange={handleInputChange}
-                className="border text-gray-700 border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:ring focus:border-blue-500"
-              >
-                <option className="text-gray-700" value="male">
-                  Male
-                </option>
-                <option className="text-gray-700" value="female">
-                  Female
-                </option>
-                <option className="text-gray-700" value="others">
-                  Others
-                </option>
-              </select>
-            </div>
-            {/* Update Profile Button */}
-            <button
-              className="bg-blue-900 text-white py-2 px-4 mt-3 rounded-md hover:bg-blue-800 focus:outline-none focus:ring focus:border-blue-500"
-              onClick={handleSubmit}
-            >
-              Update Profile
-            </button>
           </div>
         </div>
       </div>

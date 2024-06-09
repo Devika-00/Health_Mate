@@ -160,26 +160,6 @@ const Chat: React.FC = () => {
         <div className="w-full lg:w-1/4 bg-gray-200">
           <div className="p-4 h-full flex flex-col">
             {/* Search Bar */}
-            <div className="mb-4 relative">
-              <input
-                placeholder="Search for friends"
-                className="w-full py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:border-teal-500"
-              />
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 absolute top-1/2 transform -translate-y-1/2 right-3 text-gray-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M15 15l5.79 5.79M4 11a7 7 0 017-7 7 7 0 017 7 7 7 0 01-7 7 7 7 0 01-7-7z"
-                />
-              </svg>
-            </div>
   
             {conversations.map((conversation, index) => (
               <div

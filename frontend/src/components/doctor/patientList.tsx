@@ -51,30 +51,33 @@ const AppointmentDetails: React.FC = () => {
   });
 
   return (
-    <>
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">Appointment List</h1>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-8">Appointment List</h1>
 
-        <div className="border border-gray-500 shadow-lg rounded-md ml-3 mb-4 w-40 relative ">
-          <DatePicker
-            selected={selectedDate}
-            onChange={handleDateChange}
-            className="rounded-md px-4 py-2 w-full pl-10 "
-            placeholderText="Select Date"
-          />
-          <div className="absolute top-3 left-2 text-gray-700">
-            <FaCalendarAlt />
+      <div className="flex justify-start mb-4">
+        <div className="w-full max-w-xs relative">
+          <div className="border border-gray-500 shadow-lg rounded-md relative">
+            <DatePicker
+              selected={selectedDate}
+              onChange={handleDateChange}
+              className="rounded-md px-4 py-2 w-full pl-10"
+              placeholderText="Select Date"
+            />
+            <div className="absolute top-3 left-2 text-gray-700">
+              <FaCalendarAlt />
+            </div>
           </div>
         </div>
+      </div>
 
-        {filteredAppointments.length === 0 ? (
-          <p className="text-xl">You have no appointments booked.</p>
-        ) : (
+      {filteredAppointments.length === 0 ? (
+        <p className="text-xl text-center">You have no appointments booked.</p>
+      ) : (
+        <div className="overflow-x-auto">
           <table className="table-auto w-full">
             <thead>
               <tr>
-                <th className="px-4 py-2">Patient Name</th>
-                <th className="px-4 py-2">Age</th>
+                <th className="px-4 py-2">Patient Name</th>               
                 <th className="px-4 py-2">Date</th>
                 <th className="px-4 py-2">Time</th>
                 <th className="px-4 py-2">Details</th>
@@ -88,9 +91,6 @@ const AppointmentDetails: React.FC = () => {
                 >
                   <td className="border px-4 py-2">
                     {bookingDetail.patientName}
-                  </td>
-                  <td className="border px-4 py-2">
-                    {bookingDetail.patientAge}
                   </td>
                   <td className="border px-4 py-2">
                     {new Date(bookingDetail.date).toLocaleDateString()}
@@ -108,9 +108,9 @@ const AppointmentDetails: React.FC = () => {
               ))}
             </tbody>
           </table>
-        )}
-      </div>
-    </>
+        </div>
+      )}
+    </div>
   );
 };
 

@@ -16,6 +16,7 @@ const Login = lazy(()=>import("../pages/user/Login"));
 const VerifyOtp = lazy(()=>import("../pages/user/VerifyOTP"));
 const ForgotPassword = lazy(() => import("../pages/user/forgotPassword"));
 const ResetPassword = lazy(()=>import("../pages/user/resetPassword"));
+const NotFoundPage = lazy(() => import("../pages/Error404"));
 const DoctorhomePage = lazy(()=>import("../pages/doctor/doctordashbord"))
 const DoctorSignup = lazy(()=>import("../pages/doctor/doctorSignup"))
 const DoctorLogin = lazy(()=>import("../pages/doctor/doctorLogin"))
@@ -131,7 +132,7 @@ export const MainRouter = () => {
                     <Route path="/admin/doctors/:id/verification" element={<VerificationDoctor/>}/>
                     </Route>
 
-                    
+                    <Route path="*" element={<NotFoundPage />} />
                 </Routes>
             </Suspense> 
         </>

@@ -82,41 +82,39 @@ const DoctorStatusPage = () => {
 
   return (
     <div className="flex items-center justify-center mb-16 mt-16">
-      <div className="bg-gray-100 shadow-xl rounded-md p-12 w-6/12">
-        <div className="flex items-center justify-center mb-8">
-          {/* Profile picture */}
-          <img
-            src={formData.profileImage}
-            alt="Doctor"
-            className="w-48 h-48 rounded mr-4"
-          />
-          <div>
-            {/* Doctor name */}
-            <p className="text-2xl font-semibold">{formData.doctorName}</p>
-            {/* Department */}
-            <p className="text-gray-500">{formData.department}</p>
-          </div>
-        </div>
-        <hr className="my-4" />
-        {/* Status */}
-        <p className={`text-lg font-semibold ${getStatusColor()}`}>
-          Verification Status:{formData.status}
-        </p>
-        {formData.status === "rejected" && (
-          <p className="text-red-500">
-            Rejected Reason: {formData.rejectedReason}
-          </p>
-        )}
-        {/* Reapply button for rejected status */}
-        {formData.status === "rejected" && (
-          <button
-            className="bg-blue-500 text-white rounded-md px-4 py-2 mt-4"
-            onClick={handleReapplyClick}
-          >
-            Reapply
-          </button>
-        )}
+      <div className="bg-gray-100 shadow-xl rounded-md p-12 md:w-4/12 w-full">
+    <div className="flex flex-col md:flex-row items-center justify-center md:items-start md:justify-between mb-8">
+      {/* Profile picture */}
+      <img
+        src={formData.profileImage}
+        alt="Doctor"
+        className="w-48 h-48 rounded mb-4 md:mr-4"
+      />
+      <div className="mr-24 mt-16">
+        {/* Doctor name */}
+        <p className="text-2xl font-semibold">{formData.doctorName}</p>
+        {/* Department */}
+        <p className="text-gray-500">{formData.department}</p>
       </div>
+  </div>
+  <hr className="my-4" />
+  {/* Status */}
+  <p className={`text-lg font-semibold ${getStatusColor()}`}>
+    Verification Status: {formData.status}
+  </p>
+  {formData.status === "rejected" && (
+    <p className="text-red-500">Rejected Reason: {formData.rejectedReason}</p>
+  )}
+  {/* Reapply button for rejected status */}
+  {formData.status === "rejected" && (
+    <button
+      className="bg-blue-500 text-white rounded-md px-4 py-2 mt-4"
+      onClick={handleReapplyClick}
+    >
+      Reapply
+    </button>
+  )}
+</div>
       {/* Modal for reapplying verification */}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">

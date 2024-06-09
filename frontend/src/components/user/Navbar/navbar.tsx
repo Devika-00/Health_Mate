@@ -24,7 +24,7 @@ const Navbar: React.FC = () => {
 
   return (
     <nav className="bg-blue-900 shadow-lg w-full">
-      <div className="px-4 mx-auto max-w-7xl pt-3"> {/* Add pt-4 for top padding */}
+      <div className="px-4 ">
         <div className="flex justify-between h-14">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
@@ -33,31 +33,31 @@ const Navbar: React.FC = () => {
             </Link>
           </div>
           {/* Hamburger Icon */}
-          <div className="flex items-center md:hidden">
+          <div className="flex md:hidden">
             <button
               onClick={toggleMenu}
-              className="text-white focus:outline-none"
+              className="text-white  hover:text-gray-300 focus:outline-none focus:text-gray-300"
             >
               {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
             </button>
           </div>
           {/* Navigation Links */}
-          <div className={`flex flex-col md:flex-row md:items-center z-10 ${isMenuOpen ? 'block' : 'hidden'} md:block`}>
+          <div className="hidden md:flex items-center mr-20">
             <Link
               to="/"
-              className={`px-3 py-2 rounded-md text-sm font-medium ${isMenuOpen ? 'text-gray-800'  : 'text-white'}`}
+              className=" px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-blue-700 md:ml-2"
             >
               Home
             </Link>
             <Link
               to="/user/aboutus"
-              className={`px-3 py-2 rounded-md text-sm font-medium ${isMenuOpen ? 'text-gray-800' : 'text-white'}`}
+              className="px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-blue-700 md:ml-2"
             >
               About Us
             </Link>
             <Link
               to="/user/doctor"
-              className={`px-3 py-2 rounded-md text-sm font-medium ${isMenuOpen ? 'text-gray-800' : 'text-white'}`}
+              className="px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-blue-700 md:ml-2"
             >
               Doctors
             </Link>
@@ -66,25 +66,25 @@ const Navbar: React.FC = () => {
               <>
                 <Link
                   to="/user/appoinmentlist"
-                  className={`px-3 py-2 rounded-md text-sm font-medium ${isMenuOpen ? 'text-gray-800' : 'text-white'}`}
+                  className="px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-blue-700 md:ml-2"
                 >
                   Appointments
                 </Link>
                 <Link
                   to="/user/profile"
-                  className={`px-3 py-2 rounded-md text-sm font-medium ${isMenuOpen ? 'text-gray-800' : 'text-white'}`}
+                  className=" px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-blue-700 md:ml-2"
                 >
                   Profile
                 </Link>
                 <Link
                   to="/user/chat"
-                  className={`px-3 py-2 rounded-md text-sm font-medium ${isMenuOpen ? 'text-gray-800' : 'text-white'}`}
+                  className="px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-blue-700 md:ml-2"
                 >
                   Chat
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="text-blue-900 px-3 py-2 text-sm font-medium bg-gray-100 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50 rounded-md ml-2 mt-2 md:mt-0"
+                  className=" text-blue-900 px-3 py-2 text-sm font-medium bg-gray-100 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50 rounded-md mt-2 md:mt-0 md:ml-2"
                 >
                   Logout
                 </button>
@@ -92,7 +92,7 @@ const Navbar: React.FC = () => {
             ) : (
               <Link
                 to="/user/login"
-                className={`px-3 py-2 text-sm font-medium bg-gray-100 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50 rounded-md ml-2 mt-2 md:mt-0 ${isMenuOpen ? 'text-blue-600' : 'text-white'}`}
+                className="px-3 py-2 text-sm font-medium bg-gray-100 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50 rounded-md mt-2 md:mt-0 md:ml-2 text-blue-900"
               >
                 Login
               </Link>
@@ -100,6 +100,66 @@ const Navbar: React.FC = () => {
           </div>
         </div>
       </div>
+      {/* Mobile menu */}
+      {isMenuOpen && (
+        <div className="md:hidden">
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <Link
+              to="/"
+              className="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-blue-700"
+            >
+              Home
+            </Link>
+            <Link
+              to="/user/aboutus"
+              className="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-blue-700"
+            >
+              About Us
+            </Link>
+            <Link
+              to="/user/doctor"
+              className="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-blue-700"
+            >
+              Doctors
+            </Link>
+            {user.isAuthenticated && user.role === "user" ? (
+              <>
+                <Link
+                  to="/user/appoinmentlist"
+                  className="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-blue-700"
+                >
+                  Appointments
+                </Link>
+                <Link
+                  to="/user/profile"
+                  className="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-blue-700"
+                >
+                  Profile
+                </Link>
+                <Link
+                  to="/user/chat"
+                  className="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-blue-700"
+                >
+                  Chat
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-blue-900 px-3 py-2 text-base font-medium bg-gray-100 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50 rounded-md"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link
+                to="/user/login"
+                className="block px-3 py-2 text-base font-medium bg-gray-100 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50 rounded-md text-blue-900"
+              >
+                Login
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

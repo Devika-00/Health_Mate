@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Conversation from "../../chat/Doctor/Conversation";
 import Message from "../../chat/Doctor/Message";
 import Navbar from "../../components/doctor/Navbar/navbar";
@@ -17,12 +17,10 @@ const Chat: React.FC = () => {
   const [newMessage, setNewMessage] = useState<string>("");
   const [arrivalMessage, setArrivalMessage] = useState<any>(null);
   const [receiverData, setReceiverData] = useState<string | null>(null);
-  // const socket = useRef<any>();
   const socket = useSocket();
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // socket? = io("ws://localhost:3000");
     socket?.on("getMessage", (data: any) => {
       setArrivalMessage({
         senderId: data.senderId,
@@ -39,7 +37,6 @@ const Chat: React.FC = () => {
             : conversation
         );
 
-        // Sort the conversations by the updatedAt field of the lastMessage
         updatedConversations.sort(
           (a, b) =>
             new Date(b.lastMessage.createdAt).getTime() -
@@ -63,7 +60,6 @@ const Chat: React.FC = () => {
             : conversation
         );
 
-        // Sort the conversations by the updatedAt field of the lastMessage
         updatedConversations.sort(
           (a, b) =>
             new Date(b.lastMessage.createdAt).getTime() -
@@ -88,7 +84,6 @@ const Chat: React.FC = () => {
         );
         const conversationData = response.data;
 
-        // Fetch the last message for each conversation
         const updatedConversations = await Promise.all(
           conversationData.map(async (conversation: any) => {
             const messagesResponse = await axiosJWT.get(
@@ -100,7 +95,6 @@ const Chat: React.FC = () => {
           })
         );
 
-        // Sort the conversations by the updatedAt field of the lastMessage
         updatedConversations.sort(
           (a, b) =>
             new Date(b.lastMessage.createdAt).getTime() -
@@ -118,7 +112,7 @@ const Chat: React.FC = () => {
 
   useEffect(() => {
     const getMessages = async () => {
-      if (!currentChat) return; // Check if currentChat is defined
+      if (!currentChat) return;
       try {
         const response = await axiosJWT.get(
           `${CHAT_API}/messages/${currentChat._id}`
@@ -134,18 +128,15 @@ const Chat: React.FC = () => {
   const handleConversationClick = async (conversation: any) => {
     setCurrentChat(conversation);
 
-    // Fetch receiver details
     const id = conversation.members.find((member: any) => member !== doctor.id);
 
     try {
       const response = await axiosJWT.get(`${DOCTOR_API}/user/${id}`);
-      setReceiverData(response.data.user); // Assuming the profile picture URL is stored in `profilePicture`
+      setReceiverData(response.data.user);
     } catch (error) {
       console.error("Error fetching receiver details:", error);
-      // Handle error: Log or display error message
     }
 
-    // Update last message when the conversation is opened
     const lastMessageResponse = await axiosJWT.get(
       `${CHAT_API}/messages/${conversation._id}`
     );
@@ -157,7 +148,6 @@ const Chat: React.FC = () => {
           : conv
       );
 
-      // Sort the conversations by the updatedAt field of the lastMessage
       updatedConversations.sort(
         (a, b) =>
           new Date(b.lastMessage.createdAt).getTime() -
@@ -198,7 +188,6 @@ const Chat: React.FC = () => {
             : conversation
         );
 
-        // Sort the conversations by the updatedAt field of the lastMessage
         updatedConversations.sort(
           (a, b) =>
             new Date(b.lastMessage.createdAt).getTime() -
@@ -215,39 +204,20 @@ const Chat: React.FC = () => {
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
   return (
     <>
       <Navbar />
-      <div className="h-[664px] flex flex-col lg:flex-row">
+      <div className="h-screen flex flex-col lg:flex-row">
         {/* Chat Menu */}
         <div className="w-full lg:w-1/4 bg-gray-200">
           <div className="p-4 h-full flex flex-col">
-            {/* Search Bar */}
-            <div className="mb-4 relative">
-              <input
-                placeholder="Search for friends"
-                className="w-full py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:border-teal-500"
-              />
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 absolute top-1/2 transform -translate-y-1/2 right-3 text-gray-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M15 15l5.79 5.79M4 11a7 7 0 017-7 7 7 0 017 7 7 7 0 01-7 7z"
-                />
-              </svg>
-            </div>
 
             {conversations.map((conversation, index) => (
               <div
                 key={index}
                 onClick={() => handleConversationClick(conversation)}
+                className="cursor-pointer hover:bg-gray-300 p-2 rounded-lg"
               >
                 <Conversation
                   conversation={conversation}
@@ -259,42 +229,40 @@ const Chat: React.FC = () => {
         </div>
 
         {/* Chat Box */}
-        <div className="w-3/4 bg-gray-100">
-          <div className="flex flex-col h-full">
-            <div className="h-full flex flex-col overflow-y-scroll pr-4">
-              {currentChat ? (
-                <>
-                  {messages.map((m, index) => (
-                    <div className="flex-1" key={index} ref={scrollRef}>
-                      <Message
-                        message={m}
-                        own={m.senderId === doctor.id}
-                        receiverProfilePicture={receiverData?.profilePicture}
-                        receiverName={receiverData?.name}
-                      />
-                    </div>
-                  ))}
-                  <div className="flex items-center ">
-                    <textarea
-                      className="w-full px-3 py-1 border border-gray-300 rounded-lg focus:outline-none ml-4 mb-5"
-                      placeholder="Write a message..."
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      value={newMessage}
-                    ></textarea>
-                    <button
-                      className="ml-2 mb-5 mr-5 px-5 py-3 bg-blue-500 text-white rounded-md cursor-pointer focus:outline-none hover:bg-blue-600"
-                      onClick={handleSubmit}
-                    >
-                      <FiSend size={18} />
-                    </button>
+        <div className="w-full lg:w-3/4 bg-gray-100 flex flex-col">
+          <div className="flex-1 flex flex-col overflow-y-scroll p-4">
+            {currentChat ? (
+              <>
+                {messages.map((m, index) => (
+                  <div key={index} ref={scrollRef}>
+                    <Message
+                      message={m}
+                      own={m.senderId === doctor.id}
+                      receiverProfilePicture={receiverData?.profilePicture}
+                      receiverName={receiverData?.name}
+                    />
                   </div>
-                </>
-              ) : (
-                <div className="text-center text-5xl text-gray-400 cursor-default mt-20 lg:mt-52">
-                  Open a chat to start conversation..
+                ))}
+                <div className="flex items-center mt-auto">
+                  <textarea
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none resize-none"
+                    placeholder="Write a message..."
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    value={newMessage}
+                  ></textarea>
+                  <button
+                    className="ml-2 px-3 py-2 bg-blue-500 text-white rounded-lg cursor-pointer focus:outline-none hover:bg-blue-600"
+                    onClick={handleSubmit}
+                  >
+                    <FiSend size={18} />
+                  </button>
                 </div>
-              )}
-            </div>
+              </>
+            ) : (
+              <div className="text-center text-xl text-gray-400 mt-20 lg:mt-52">
+                Open a chat to start conversation..
+              </div>
+            )}
           </div>
         </div>
       </div>
