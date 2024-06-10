@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Navbar from '../../components/doctor/Navbar/navbar';
-import { Link } from 'react-router-dom';
 // import { BsChatSquareDots } from 'react-icons/bs'; 
 import { MdOutlineModeEdit } from "react-icons/md";
 import doctorProfile from "../../hooks/doctorProfile";
@@ -10,14 +9,10 @@ const Profile: React.FC = () => {
   const {
     profile,
     formData,
-    error,
     imagePreview,
     certificatePreview,
-    isSubmitting,
     handleInputChange,
     handleSubmit,
-    handleVerify,
-    
   } = doctorProfile();
   
 

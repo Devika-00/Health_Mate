@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import { useAppSelector } from "../redux/store/Store";
 import { Navigate, Outlet } from "react-router-dom";
 import ZegoCloud from "../utils/zegoService";

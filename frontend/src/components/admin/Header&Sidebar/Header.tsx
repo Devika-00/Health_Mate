@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaSearch, FaCog, FaUser } from 'react-icons/fa';
+import {  FaUser } from 'react-icons/fa';
 import showToast from '../../../utils/toaster';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -8,7 +8,6 @@ import { clearAdmin } from '../../../redux/slices/AdminSlice';
 
 const AdminHeader: React.FC = () => {
 
-  const admin = useSelector((state: RootState) => state.AdminSlice);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

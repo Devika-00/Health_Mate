@@ -1,13 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom'; // Assuming you're using React Router for navigation
+import React from 'react';
 import AdminHeader from '../../components/admin/Header&Sidebar/Header';
 import AdminSidebar from '../../components/admin/Header&Sidebar/Sidebar';
-import useDoctors from "../../hooks/useDoctors";
 import DoctorData from "../../components/admin/doctorData";
 
 const DoctorList: React.FC = () => {
-  // Using the useUsers hook to fetch doctor data
-  const [serialNumber, setSerialNumber] = useState<number>(1);
+  
   
 
   return (

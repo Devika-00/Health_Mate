@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { DOCTOR_API } from "../../../constants";

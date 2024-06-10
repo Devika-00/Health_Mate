@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosJWT from "../../utils/axiosService";
 import { USER_API } from "../../constants";
-import { FaCalendarCheck, FaVideo, FaCalendarAlt } from "react-icons/fa"; // Import icons from React Icons
+import { FaVideo, FaCalendarAlt } from "react-icons/fa"; // Import icons from React Icons
 
 const DoctorDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();

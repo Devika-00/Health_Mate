@@ -9,18 +9,9 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Calendar } from "lucide-react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Navigate, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 import { RootState } from "../../redux/reducer/reducer";
 
-const dayLabels = [
-  { day: 0, label: "Sunday" },
-  { day: 1, label: "Monday" },
-  { day: 2, label: "Tuesday" },
-  { day: 3, label: "Wednesday" },
-  { day: 4, label: "Thursday" },
-  { day: 5, label: "Friday" },
-  { day: 6, label: "Saturday" },
-];
 
 const AppointmentOnlineBookingPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -39,9 +30,7 @@ const AppointmentOnlineBookingPage: React.FC = () => {
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
   const [existingPatientDetails, setExistingPatientDetails] =
     useState<any>(null);
-  const [scheduledAppointments, setScheduledAppointments] = useState<any[]>([]);
   const [bookings, setBookings] = useState<any[]>([]);
-  const dispatch = useDispatch(); // Initialize useDispatch hook
   const userId = useSelector((state: RootState) => state.UserSlice.id);
 
   useEffect(() => {
@@ -176,10 +165,6 @@ const AppointmentOnlineBookingPage: React.FC = () => {
         const bookingId = response.data.createBooking._id;
 
         // Update wallet amount before navigating
-        const updateWalletResponse = await axiosJWT.put(
-          `${USER_API}/updateWallet`,
-          { bookingId, fees: 300 }
-        );
 
         navigate(`/payment_status/${bookingId}?success=true`);
       } else {

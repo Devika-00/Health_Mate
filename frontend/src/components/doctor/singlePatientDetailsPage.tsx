@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import axiosJWT from '../../utils/axiosService';
 import { useNavigate, useParams } from 'react-router-dom';
 import { CHAT_API, DOCTOR_API, USER_API } from '../../constants';
@@ -137,9 +137,6 @@ function invite() {
   };
 
 
-  function Booked(arg0: JSX.Element) {
-    throw new Error('Function not implemented.');
-  }
 
   return (
     <div className="flex justify-center items-center py-10 bg-gray-100">

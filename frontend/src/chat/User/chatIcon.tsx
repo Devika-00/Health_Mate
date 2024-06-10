@@ -1,8 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../redux/store/Store";
 
-import { useEffect } from "react";
-
 const ChatIcon = () => {
   const { role, isAuthenticated } = useAppSelector((state) => state.UserSlice);
 //   const socket = useSocket();

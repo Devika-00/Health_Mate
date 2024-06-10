@@ -13,7 +13,7 @@ import { setAdmin } from '../../redux/slices/AdminSlice';
 
 
 const AdminLoginForm: React.FC = () => {
-    const [isSubmitting, setIsSubmitting] = useState<Boolean>(false);
+    const [, setIsSubmitting] = useState<Boolean>(false);
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const formik = useFormik({

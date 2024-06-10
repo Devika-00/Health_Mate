@@ -11,7 +11,7 @@ export default function useChats() {
   const [showChatsidebar, setShowChatSidebar] = useState<boolean>(true);
   const [chats, setChats] = useState<ChatInterface[]>([]);
   const [currentChat, setCurrentChat] = useState<ChatInterface | null>(null);
-  const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
+  const [onlineUsers] = useState<string[]>([]);
   const [messages, setMessages] = useState<MessageInterface[]>([]);
   const [newMessage, setNewMessage] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
@@ -130,7 +130,7 @@ export default function useChats() {
     return () => clearTimeout(delay);
   }, [newMessage]);
 
-  const emitTypingStatus = (isTyping: boolean) => {
+  const emitTypingStatus = (_isTyping: boolean) => {
     // Socket.io related code has been removed
   };
 

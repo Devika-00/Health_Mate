@@ -5,7 +5,7 @@ import { RootState } from "../../../redux/reducer/reducer";
 import showToast from "../../../utils/toaster";
 import { clearUser } from "../../../redux/slices/UserSlice";
 import { FiMenu, FiX } from "react-icons/fi";
-import { GiHealthNormal } from "react-icons/gi";
+
 
 const Navbar: React.FC = () => {
   const user = useSelector((state: RootState) => state.UserSlice);

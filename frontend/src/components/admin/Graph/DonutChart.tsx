@@ -1,5 +1,5 @@
 // DonutChart.tsx
-import React, { FC, useEffect, useState } from 'react';
+import  { FC, useEffect, useState } from 'react';
 import Chart from 'react-apexcharts';
 import axiosJWT from '../../../utils/axiosService';
 import { ADMIN_API } from '../../../constants';

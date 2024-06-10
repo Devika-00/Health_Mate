@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../../components/user/Navbar/navbar";
-import Footer from "../../components/user/Footer/Footer";
 import axiosJWT from "../../utils/axiosService";
 import { CHAT_API, USER_API } from "../../constants";
 import { useNavigate, useParams } from "react-router-dom";
@@ -135,7 +134,7 @@ zp.addPlugins({ ZIM });
     }
   };
 
-  const showDocument = async (id: string | undefined) =>{
+  const showDocument = async (_id: string | undefined) =>{
     setShowDocumentModal(true);
   }
   const showDocumentPage = async (id: string | undefined) =>{
@@ -218,7 +217,7 @@ const handleChat = () => {
       senderId: user.id,
       recieverId: doctorDetails._id,
     })
-    .then(({ data }) => {
+    .then(({ }) => {
       navigate("/user/chat");
     })
     .catch(() => {

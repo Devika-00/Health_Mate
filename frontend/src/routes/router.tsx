@@ -1,6 +1,6 @@
 import {Suspense, lazy} from "react";
 import { Routes, Route } from "react-router-dom";
-import PublicRoute, { PublicRouteAdmin, PublicRouteDoctor } from "./PublicRoutes";
+import { PublicRouteAdmin, PublicRouteDoctor } from "./PublicRoutes";
 import ProtectedRoute, {
     AdminProtectedRoute,
     DoctorProtectedRoute} from "./ProtectedRoute"

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axiosJWT from "../../utils/axiosService";
 import { DOCTOR_API } from "../../constants";
 import { useParams } from "react-router-dom";

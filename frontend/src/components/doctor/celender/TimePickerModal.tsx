@@ -39,9 +39,7 @@ const TimePickerModal: React.FC<TimePickerModalProps> = ({ onTimeSelect }) => {
     });
   };
 
-  const handleSaveSlots = () => {
-    onTimeSelect(selectedSlots);
-  };
+  
 
   return (
     <div className="p-4">

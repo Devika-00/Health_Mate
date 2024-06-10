@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import {
   AiOutlineFilePdf,
-  AiOutlineFileImage,
+
   AiOutlineClose,
 } from "react-icons/ai";
 import axiosJWT from "../../utils/axiosService";

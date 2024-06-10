@@ -13,8 +13,7 @@ const DoctorData: React.FC = () => {
   const dispatch = useDispatch(); // Initialize dispatch
 
   const approvedDoctors = doctors.filter(doctor => doctor.isApproved);
-  const [isChecked, setIsChecked] = useState<boolean>(false);
-  const [serialNumber, setSerialNumber] = useState<number>(1);
+  const [serialNumber] = useState<number>(1);
 
   const handleCheckboxChange = (doctor: DoctorInterface) => {
     const newDoctors = doctors.map((item) => {

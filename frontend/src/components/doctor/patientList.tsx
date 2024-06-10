@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import axiosJWT from "../../utils/axiosService";
 import { DOCTOR_API } from "../../constants";
 import { RootState } from "../../redux/reducer/reducer";
@@ -17,7 +17,6 @@ interface BookingDetail {
 }
 
 const AppointmentDetails: React.FC = () => {
-  const dispatch = useDispatch();
   const id = useSelector((state: RootState) => state.DoctorSlice.id);
 
   const [bookingDetails, setBookingDetails] = useState<BookingDetail[]>([]);

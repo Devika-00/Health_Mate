@@ -1,4 +1,4 @@
-import { useEffect, useState, ChangeEvent } from "react";
+import { useEffect, useState } from "react";
 import axiosJWT from "../utils/axiosService";
 import showToast from "../utils/toaster";
 import { DoctorInterface } from "../types/DoctorInterface";
@@ -11,7 +11,7 @@ axios.defaults.withCredentials = true;
 const doctorProfile = () => {
   const [profile, setProfile] = useState<DoctorInterface | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [isVerified, setIsVerified] = useState<boolean>(false);
+  const [, setIsVerified] = useState<boolean>(false);
   const [formData, setFormData] = useState<{
     doctorName: string;
     gender: string;

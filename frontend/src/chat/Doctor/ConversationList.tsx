@@ -23,28 +23,10 @@ const ConversationsList: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        const handleNewMessage = (newMessage: any) => {
-            setConversations(prevConversations => {
-                const updatedConversations = prevConversations.map(conversation => {
-                    if (conversation._id === newMessage.conversationId) {
-                        return {
-                            ...conversation,
-                            lastMessage: newMessage,
-                            updatedAt: newMessage.createdAt,
-                        };
-                    }
-                    return conversation;
-                });
-                return updatedConversations.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
-            });
-        };
 
-        // Assuming you have a websocket or similar mechanism to receive new messages
-        // websocket.on("newMessage", handleNewMessage);
+        
 
         return () => {
-            // Clean up the websocket listener
-            // websocket.off("newMessage", handleNewMessage);
         };
     }, []);
 
@@ -53,8 +35,11 @@ const ConversationsList: React.FC = () => {
             {conversations.map(conversation => (
                 <Conversation
                     key={conversation._id}
-                    conversation={conversation}
-                />
+                    conversation={conversation} lastMessage={{
+                        text: "",
+                        senderId: "",
+                        createdAt: ""
+                    }}                />
             ))}
         </div>
     );

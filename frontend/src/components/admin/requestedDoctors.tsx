@@ -1,14 +1,13 @@
 
 import { Link } from 'react-router-dom';
 import { DoctorInterface } from '../../types/DoctorInterface';
-import useDoctors from '../../hooks/useDoctors'; 
 import { useEffect, useState } from 'react';
 import { ADMIN_API } from '../../constants';
 
 const RequestedDoctorData: React.FC = () => {
   
   const [doctors, setDoctors] = useState<DoctorInterface[]>([]);
-  const [serialNumber, setSerialNumber] = useState<number>(1);
+  const [serialNumber] = useState<number>(1);
 
   useEffect(() => {
     const fetchDoctors = async () => {

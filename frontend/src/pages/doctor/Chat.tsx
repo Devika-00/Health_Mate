@@ -73,7 +73,7 @@ const Chat: React.FC = () => {
 
   useEffect(() => {
     socket?.emit("addUser", doctor.id);
-    socket?.on("getUsers", (doctors: any) => {});
+    socket?.on("getUsers", () => {});
   }, [doctor]);
 
   useEffect(() => {
