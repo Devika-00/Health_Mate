@@ -22,11 +22,16 @@ const io = new Server(httpServer, {
   },
 });
 
+app.use(
+  express.static(path.join(__dirname, "../../frontend/dist/index.html"))
+);
+
 socketConfig(io);
 expressConfig(app);
 connectDB();
 routes(app);
 startServer(httpServer);
+
 
 app.get("*", (req: Request, res: Response) => {
   res.sendFile(
