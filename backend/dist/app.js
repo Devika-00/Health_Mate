@@ -23,6 +23,7 @@ const io = new socket_io_1.Server(httpServer, {
         credentials: true,
     },
 });
+app.use(express_1.default.static(path_1.default.join(__dirname, "../../frontend/dist")));
 (0, socket_1.default)(io);
 (0, expressConfig_1.default)(app);
 (0, connection_1.default)();
