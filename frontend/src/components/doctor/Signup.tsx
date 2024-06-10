@@ -7,6 +7,7 @@ import { validateSignUp } from "../../utils/validation";
 import { ADMIN_API, DOCTOR_API } from "../../constants";
 import { uploadCertificateToCloudinary } from "../../Api/uploadImages";
 import axiosJWT from "../../utils/axiosService";
+import DoctorImage from "../../assets/images/doctor1.jpg";
 
 const Signup: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -112,7 +113,8 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center bg-cover bg-center bg-gradient-to-b from-blue-800 to-blue-900">
+    <div className="flex items-center justify-center bg-cover bg-center"
+    style={{ backgroundImage: `url(${DoctorImage})`, opacity: 100 }}>
       <div className="bg-gray-200 w-4/12 shadow-lg rounded-lg p-10 mt-14 mb-10">
         <h2 className="text-3xl font-bold mb-6 text-center">Sign Up</h2>
         <form onSubmit={formik.handleSubmit}>
