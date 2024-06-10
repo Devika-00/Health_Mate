@@ -72,7 +72,7 @@ const UploadForm = () => {
               name={`docFile${index}`}
               accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
               className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-              onChange={(e) => handleFileChange(index, e.target.files[0])}
+              onChange={(e:any) => handleFileChange(index, e.target.files[0])}
               required
             />
           </div>

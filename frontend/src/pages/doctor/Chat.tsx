@@ -16,7 +16,7 @@ const Chat: React.FC = () => {
   const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState<string>("");
   const [arrivalMessage, setArrivalMessage] = useState<any>(null);
-  const [receiverData, setReceiverData] = useState<string | null>(null);
+  const [receiverData, setReceiverData] = useState<any | null>(null);
   const socket = useSocket();
   const scrollRef = useRef<HTMLDivElement>(null);
 
