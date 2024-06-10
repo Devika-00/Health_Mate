@@ -54,20 +54,17 @@ const DoctorListingPage: React.FC = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const departmentResponse = await axiosJWT.get(
-          `${USER_API}/departments`
-        );
+        const departmentResponse = await axiosJWT.get(`${USER_API}/departments`);
         if (departmentResponse.data.success) {
-          const listedDepartments =
-            departmentResponse.data.allDepartment.filter(
-              (department: any) => department.isListed
-            );
-          setDepartments(listedDepartments);
-
-          const departmentNames = listedDepartments.map(
-            (department: any) => department.departmentName
+          const listedDepartments = departmentResponse.data.allDepartment.filter(
+            (department:any) => department.isListed
           );
-
+          setDepartments(listedDepartments);
+  
+          const departmentNames = listedDepartments.map(
+            (department:any) => department.departmentName
+          );
+  
           const response = await axiosJWT.get(`${USER_API}/doctors`, {
             params: {
               searchQuery,
@@ -78,19 +75,18 @@ const DoctorListingPage: React.FC = () => {
               limit: itemsPerPage,
             },
           });
-
-          const filteredDoctors = response.data.doctors.filter((doctor: any) =>
+  
+          const filteredDoctors = response.data.doctors.filter((doctor:any) =>
             departmentNames.includes(doctor.department)
           );
-
+  
           setDoctors(filteredDoctors);
           setTotalPages(Math.ceil(filteredDoctors.length / itemsPerPage));
           setFiltersUsed(
-            // Update the state to indicate filters are being used
             searchQuery !== "" ||
-              selectedDepartment !== "" ||
-              selectedDate !== null ||
-              selectedTimeSlot !== ""
+            selectedDepartment !== "" ||
+            selectedDate !== null ||
+            selectedTimeSlot !== ""
           );
         } else {
           throw new Error("Failed to fetch department details");
@@ -99,16 +95,10 @@ const DoctorListingPage: React.FC = () => {
         console.error("Error fetching doctors:", error);
       }
     };
-
+  
     fetchDoctors();
-  }, [
-    searchQuery,
-    selectedDepartment,
-    selectedDate,
-    selectedTimeSlot,
-    currentPage,
-    itemsPerPage,
-  ]);
+  }, [searchQuery, selectedDepartment, selectedDate, selectedTimeSlot, currentPage]);
+  
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
