@@ -1,4 +1,4 @@
-import express, {Application,NextFunction} from "express";
+import express, {Application,NextFunction,Request,Response} from "express";
 import expressConfig from "./frameworks/webserver/expressConfig";
 import startServer from "./frameworks/webserver/server";
 import connectDB from "./frameworks/database/mongodb/connection";
@@ -8,6 +8,8 @@ import routes from "./frameworks/webserver/routes";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import socketConfig from "./frameworks/webserver/webSocket/socket";
+import path from "path";
+
 
 const app:Application = express();
 
@@ -25,6 +27,13 @@ expressConfig(app);
 connectDB();
 routes(app);
 startServer(httpServer);
+
+app.get("*", (req: Request, res: Response) => {
+  res.sendFile(
+    path.join(__dirname, "../../frontend/dist/index.html")
+  );
+});
+
 
 app.use(errorHandlingMiddleware);
 app.all("*",(req, res, next: NextFunction)=>{

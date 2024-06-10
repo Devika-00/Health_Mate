@@ -1,0 +1,55 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const authServiceInterface_1 = require("../../../app/service-interface/authServiceInterface");
+const authService_1 = require("../../services/authService");
+const doctorDBRepository_1 = require("../../../app/interfaces/doctorDBRepository");
+const doctorRepositoryMongodb_1 = require("../../database/mongodb/repositories/doctorRepositoryMongodb");
+const authMiddleware_1 = require("../middlewares/authMiddleware");
+const doctorController_1 = __importDefault(require("../../../adapters/doctorController"));
+const timeSlotDbRepository_1 = require("../../../app/interfaces/timeSlotDbRepository");
+const timeSlotRepositotyMongodb_1 = require("../../database/mongodb/repositories/timeSlotRepositotyMongodb");
+const bookingDbRepository_1 = require("../../../app/interfaces/bookingDbRepository");
+const BookingRepositoryMongodb_1 = require("../../database/mongodb/repositories/BookingRepositoryMongodb");
+const bookingController_1 = __importDefault(require("../../../adapters/bookingController"));
+const userDbRepository_1 = require("../../../app/interfaces/userDbRepository");
+const userRepositoryMongodb_1 = require("../../database/mongodb/repositories/userRepositoryMongodb");
+const prescriptionDbRepository_1 = require("../../../app/interfaces/prescriptionDbRepository");
+const prescriptionRepositoryMongodb_1 = require("../../database/mongodb/repositories/prescriptionRepositoryMongodb");
+const departmentDbRepository_1 = require("../../../app/interfaces/departmentDbRepository");
+const departmentRepositoryMongodb_1 = require("../../database/mongodb/repositories/departmentRepositoryMongodb");
+const doctorRoute = () => {
+    const router = express_1.default.Router();
+    //doctor controller
+    const controller = (0, doctorController_1.default)(authServiceInterface_1.authServiceInterface, authService_1.authService, userDbRepository_1.userDbRepository, userRepositoryMongodb_1.userRepositoryMongodb, doctorDBRepository_1.doctorDbRepository, doctorRepositoryMongodb_1.doctorRepositoryMongodb, timeSlotDbRepository_1.timeSlotDbRepository, timeSlotRepositotyMongodb_1.timeSlotRepositoryMongodb, prescriptionDbRepository_1.prescriptionDbRepository, prescriptionRepositoryMongodb_1.prescriptionRepositoryMongodb, bookingDbRepository_1.bookingDbRepository, BookingRepositoryMongodb_1.bookingRepositoryMongodb, departmentDbRepository_1.departmentDbRepository, departmentRepositoryMongodb_1.departmentRepositoryMongodb);
+    const _bookingController = (0, bookingController_1.default)(userDbRepository_1.userDbRepository, userRepositoryMongodb_1.userRepositoryMongodb, doctorDBRepository_1.doctorDbRepository, doctorRepositoryMongodb_1.doctorRepositoryMongodb, timeSlotDbRepository_1.timeSlotDbRepository, timeSlotRepositotyMongodb_1.timeSlotRepositoryMongodb, bookingDbRepository_1.bookingDbRepository, BookingRepositoryMongodb_1.bookingRepositoryMongodb);
+    router.post("/signup", controller.signup);
+    router.post("/verify_token/:token", controller.verifyToken);
+    router.post("/google_signIn", controller.googleSignIn);
+    router.post("/login", controller.login);
+    router.get("/profile", authMiddleware_1.authenticateDoctor, controller.doctorProfile);
+    router.patch("/profile/edit", authMiddleware_1.authenticateDoctor, controller.updateDoctorInfo);
+    router.get("/status", authMiddleware_1.authenticateDoctor, controller.doctorStatus);
+    // router.post("/schedule",authenticateDoctor,controller.scheduleTime);
+    // router.get("/timeslots/:date",authenticateDoctor,controller.getTimeSlots);
+    router.post("/addSlot", authMiddleware_1.authenticateDoctor, controller.addSlot);
+    router.post("/getTimeSlots", authMiddleware_1.authenticateDoctor, controller.getTimeSlots);
+    router.delete("/deleteSlot/:id", authMiddleware_1.authenticateDoctor, controller.deleteSlot);
+    // router.delete("/deleteTime/:id",authenticateDoctor,controller.removeTimeSlot);
+    router.get("/user/:id", authMiddleware_1.authenticateDoctor, controller.userDetails);
+    router.get("/patients", authMiddleware_1.authenticateDoctor, controller.getPatientList);
+    router.get("/patients/:id", authMiddleware_1.authenticateDoctor, controller.getPatientDetails);
+    router.get("/doctorDetails/:id", authMiddleware_1.authenticateDoctor, controller.getDoctorDetails);
+    router.put("/reapply_verification/:id", authMiddleware_1.authenticateDoctor, controller.getDoctorRejected);
+    router.post("/addPrescription", authMiddleware_1.authenticateDoctor, controller.addPrescription);
+    router.get("/prescription/:id", authMiddleware_1.authenticateDoctor, controller.fetchPrescription);
+    router.delete("/prescription/:id", authMiddleware_1.authenticateDoctor, controller.deletePrescription);
+    router.get("/departments", authMiddleware_1.authenticateDoctor, controller.getAllDepartments);
+    /*Booking Routes for booking Controller */
+    router.get("/bookingdetails/:id", authMiddleware_1.authenticateDoctor, _bookingController.getAppoinmentList);
+    return router;
+};
+exports.default = doctorRoute;
