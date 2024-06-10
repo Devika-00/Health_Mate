@@ -344,7 +344,7 @@ const Signup: React.FC = () => {
                 </div>
               )}
           </div>
-          <div className="mb-6">
+          <div className="mb-6 flex justify-center">
             <button
               className={`bg-blue-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
                 isSubmitting ? "opacity-50 cursor-not-allowed" : ""

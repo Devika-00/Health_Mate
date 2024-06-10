@@ -117,20 +117,30 @@ const Register: React.FC = () => {
                 </div>
               )}
           </div>
-          <button
-            type="submit"
-            className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Submitting..." : "Register"}
-          </button>
+          <div className="flex flex-col items-center">
+            <button
+              type="submit"
+              className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Submitting...' : 'Register'}
+            </button>
+            <Link
+              to="/doctor/register"
+              className="mt-4 text-sm text-indigo-900 font-semibold hover:text-indigo-500"
+            >
+              Register as Doctor
+            </Link>
+          </div>
         </form>
-        <p className="mt-2 text-xs text-gray-700">
+        
+        <p className="mt-2 text-xs text-gray-700 flex justify-center mt-4">
           Already have an account?
           <Link to="/user/login" className="text-blue-500 underline ml-1">
             Login
           </Link>
         </p>
+
       </div>
     </div>
   );

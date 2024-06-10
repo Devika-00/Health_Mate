@@ -40,7 +40,7 @@ const Login: React.FC = () => {
     },
   });
 
-  const handleGooglSignIn = (user: {
+  const handleGoogleSignIn = (user: {
     name: string;
     email: string;
     picture: string;
@@ -66,81 +66,69 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen">
-      <div className="flex">
-        <div className="w-96 p-8 bg-gray-300 rounded-lg shadow-lg ml-8">
-          <h2 className="font-extrabold text-blue-900 text-3xl mb-5 ml-28">
-            Login
-          </h2>
-          <form onSubmit={formik.handleSubmit}>
-            <div className="mb-4">
-              <label htmlFor="email" className="block text-gray-700 mr-64">
-                Email:
-              </label>
-              <input
-                type="text"
-                id="email"
-                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-blue-500"
-                {...formik.getFieldProps("email")}
-              />
-              {formik.errors.email && formik.touched.email && (
-                <div className="text-red-500">{formik.errors.email}</div>
-              )}
-            </div>
-            <div className="mb-6">
-              <label htmlFor="password" className="block text-gray-700 mr-64">
-                Password:
-              </label>
-              <input
-                type="password"
-                id="password"
-                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-blue-500"
-                {...formik.getFieldProps("password")}
-              />
-              {formik.errors.password && formik.touched.password && (
-                <div className="text-red-500">{formik.errors.password}</div>
-              )}
-              <Link
-                to="/user/forgot-password"
-                className="text-gray-500 hover:underline block ml-48"
-              >
-                Forgot Password?
-              </Link>
-            </div>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-xl">
+        <h2 className="text-3xl font-bold text-center text-blue-900">Login</h2>
+        <form onSubmit={formik.handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email:</label>
+            <input
+              type="text"
+              id="email"
+              className="w-full mt-1 border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              {...formik.getFieldProps("email")}
+            />
+            {formik.errors.email && formik.touched.email && (
+              <div className="text-sm text-red-500">{formik.errors.email}</div>
+            )}
+          </div>
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password:</label>
+            <input
+              type="password"
+              id="password"
+              className="w-full mt-1 border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              {...formik.getFieldProps("password")}
+            />
+            {formik.errors.password && formik.touched.password && (
+              <div className="text-sm text-red-500">{formik.errors.password}</div>
+            )}
+            <Link to="/user/forgot-password" className="text-sm text-gray-500 hover:underline mt-2 block text-right">Forgot Password?</Link>
+          </div>
+          <div className="flex flex-col items-center">
             <button
               type="submit"
-              className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-6 mt-4 rounded-lg focus:outline-none focus:shadow-outline ml-28"
-              disabled={isSubmitting ? true : false}
+              className="w-full py-2 text-white bg-blue-900 rounded-lg font-bold hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+              disabled={isSubmitting}
             >
-              Login
+              {isSubmitting ? "Submitting..." : "Login"}
             </button>
-          </form>
-          <p className="mt-2 text-xs text-gray-700 ml-24">
-            Don,t have an account?
-          </p>
-          <Link
-            to="/user/register"
-            className="text-blue-500 mt-2 text-xs ml-28 underline"
-          >
-            Create Account
-          </Link>
-
-          <div className="px-4 py-2 w-full  flex justify-center gap-2 ">
-            <GoogleLogin
-              onSuccess={(credentialResponse: any) => {
-                const data: {
-                  name: string;
-                  email: string;
-                  picture: string;
-                  email_verified: boolean;
-                } = jwtDecode(credentialResponse?.credential);
-                handleGooglSignIn(data);
-              }}
-              onError={() => {
-                showToast("Login Failed", "error");
-              }}
-            />
+            <Link
+              to="/doctor/login"
+              className="mt-4 text-sm font-semibold text-indigo-900 hover:text-indigo-500"
+            >
+              Login as Doctor
+            </Link>
           </div>
+        </form>
+        <p className="text-center text-sm text-gray-700">
+          Don't have an account? <Link to="/user/register" className="text-blue-500 hover:underline">Create Account</Link>
+        </p>
+        <div className="flex justify-center mt-4">
+          <GoogleLogin
+            onSuccess={(credentialResponse: any) => {
+              const data: {
+                name: string;
+                email: string;
+                picture: string;
+                email_verified: boolean;
+              } = jwtDecode(credentialResponse?.credential);
+              handleGoogleSignIn(data);
+            }}
+            onError={() => {
+              showToast("Login Failed", "error");
+            }}
+          />
         </div>
       </div>
     </div>
