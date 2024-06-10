@@ -4,9 +4,8 @@ import { useFormik } from "formik";
 import showToast from "../../utils/toaster";
 import axios from "axios";
 import { validateSignUp } from "../../utils/validation";
-import { ADMIN_API, DOCTOR_API } from "../../constants";
+import { DOCTOR_API } from "../../constants";
 import { uploadCertificateToCloudinary } from "../../Api/uploadImages";
-import axiosJWT from "../../utils/axiosService";
 import DoctorImage from "../../assets/images/doctor1.jpg";
 
 const Signup: React.FC = () => {
@@ -85,7 +84,7 @@ const Signup: React.FC = () => {
   useEffect(() => {
     const fetchDoctorDepartment = async () => {
       try {
-        const response = await axiosJWT.get(`${ADMIN_API}/departments`);
+        const response = await axios.get(`${DOCTOR_API}/departments`);
         if (response.data.success) {
           setDepartments(response.data.allDepartment);
         } else {
@@ -98,6 +97,8 @@ const Signup: React.FC = () => {
 
     fetchDoctorDepartment();
   }, []);
+
+
 
   // Handle file input change
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

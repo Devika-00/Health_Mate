@@ -76,7 +76,7 @@ const doctorRoute = () => {
     router.post("/addPrescription",authenticateDoctor,controller.addPrescription);
     router.get("/prescription/:id",authenticateDoctor,controller.fetchPrescription);
     router.delete("/prescription/:id",authenticateDoctor,controller.deletePrescription);
-    router.get("/departments",authenticateDoctor,controller.getAllDepartments);
+    router.get("/departments",controller.getAllDepartments);
     /*Booking Routes for booking Controller */
 
     router.get("/bookingdetails/:id",authenticateDoctor,_bookingController.getAppoinmentList)
