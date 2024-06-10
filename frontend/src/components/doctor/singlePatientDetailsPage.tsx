@@ -10,7 +10,6 @@ import { ZIM } from "zego-zim-web";
 import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
 import { useAppSelector } from '../../redux/store/Store';
 import axios from 'axios';
-import { JSX } from 'react/jsx-runtime';
 
 const PatientDetailPage = () => {
   const { id } = useParams<{ id: string }>();

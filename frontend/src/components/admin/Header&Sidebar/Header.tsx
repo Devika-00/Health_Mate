@@ -1,9 +1,8 @@
 import React from 'react';
 import {  FaUser } from 'react-icons/fa';
 import showToast from '../../../utils/toaster';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch} from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { RootState } from '../../../redux/reducer/reducer';
 import { clearAdmin } from '../../../redux/slices/AdminSlice';
 
 const AdminHeader: React.FC = () => {

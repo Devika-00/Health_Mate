@@ -7,7 +7,7 @@ interface TimePickerModalProps {
   onTimeSelect: (selectedSlots: TimeSlot[]) => void;
 }
 
-const TimePickerModal: React.FC<TimePickerModalProps> = ({ onTimeSelect }) => {
+const TimePickerModal: React.FC<TimePickerModalProps> = ({ }) => {
   const [selectedSlots, setSelectedSlots] = useState<TimeSlot[]>([]);
 
   // Example time slots for demonstration
