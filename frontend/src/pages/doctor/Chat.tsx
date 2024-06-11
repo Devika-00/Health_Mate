@@ -208,7 +208,7 @@ const Chat: React.FC = () => {
   return (
     <>
       <Navbar />
-      <div className="h-screen flex flex-col lg:flex-row">
+      <div className="h-[664px] flex flex-col lg:flex-row">
         {/* Chat Menu */}
         <div className="w-full lg:w-1/4 bg-gray-200">
           <div className="p-4 h-full flex flex-col">
@@ -229,8 +229,9 @@ const Chat: React.FC = () => {
         </div>
 
         {/* Chat Box */}
-        <div className="w-full lg:w-3/4 bg-gray-100 flex flex-col">
-          <div className="flex-1 flex flex-col overflow-y-scroll p-4">
+        <div className="w-full lg:w-3/4 bg-gray-100">
+          <div className="flex flex-col h-full">
+            <div className="h-full flex flex-col overflow-y-scroll pr-4">
             {currentChat ? (
               <>
                 {messages.map((m, index) => (
@@ -245,7 +246,7 @@ const Chat: React.FC = () => {
                 ))}
                 <div className="flex items-center mt-auto">
                   <textarea
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none resize-none"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none ml-4 mb-5"
                     placeholder="Write a message..."
                     onChange={(e) => setNewMessage(e.target.value)}
                     value={newMessage}
@@ -263,6 +264,7 @@ const Chat: React.FC = () => {
                 Open a chat to start conversation..
               </div>
             )}
+             </div>
           </div>
         </div>
       </div>

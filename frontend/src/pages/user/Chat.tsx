@@ -23,7 +23,6 @@ const Chat: React.FC = () => {
   const socket = useSocket();
 
   useEffect(() => {
-    // socket? = io("ws://localhost:3000");
     socket?.on("getMessage", (data: any) => {
       setArrivalMessage({
         senderId: data.senderId,
@@ -31,21 +30,45 @@ const Chat: React.FC = () => {
         createdAt: Date.now(),
       });
     });
+    socket?.on("updateLastMessage", (data: any) => {
+      setConversations((prevConversations) => {
+        const updatedConversations = prevConversations.map((conversation) =>
+          conversation._id === data.conversationId
+            ? { ...conversation, lastMessage: data.lastMessage }
+            : conversation
+        );
+
+        updatedConversations.sort(
+          (a, b) =>
+            new Date(b.lastMessage.createdAt).getTime() -
+            new Date(a.lastMessage.createdAt).getTime()
+        );
+
+        return updatedConversations;
+      });
+    });
   }, []);
 
   useEffect(() => {
-    arrivalMessage &&
-      currentChat?.members.includes(arrivalMessage.senderId) &&
-      setMessages((prev) => [...prev, arrivalMessage]);
-
     if (arrivalMessage) {
-      setConversations((prevConversations) =>
-        prevConversations.map((conversation) =>
+      if (currentChat?.members.includes(arrivalMessage.senderId)) {
+        setMessages((prev) => [...prev, arrivalMessage]);
+      }
+      setConversations((prevConversations) => {
+        const updatedConversations = prevConversations.map((conversation) =>
           conversation._id === currentChat?._id
             ? { ...conversation, lastMessage: arrivalMessage }
             : conversation
-        )
-      );
+        );
+
+        updatedConversations.sort(
+          (a, b) =>
+            new Date(b.lastMessage.createdAt).getTime() -
+            new Date(a.lastMessage.createdAt).getTime()
+        );
+
+        return updatedConversations;
+      });
     }
   }, [arrivalMessage, currentChat]);
 
@@ -72,6 +95,12 @@ const Chat: React.FC = () => {
             const lastMessage = messages[messages.length - 1];
             return { ...conversation, lastMessage };
           })
+        );
+        
+        updatedConversations.sort(
+          (a, b) =>
+            new Date(b.lastMessage.createdAt).getTime() -
+            new Date(a.lastMessage.createdAt).getTime()
         );
 
         setConversations(updatedConversations);
@@ -112,7 +141,27 @@ const Chat: React.FC = () => {
       console.error("Error fetching receiver details:", error);
       // Handle error: Log or display error message
     }
+    const lastMessageResponse = await axiosJWT.get(
+      `${CHAT_API}/messages/${conversation._id}`
+    );
+    const lastMessageData = lastMessageResponse.data.messages.slice(-1)[0];
+    setConversations((prevConversations) => {
+      const updatedConversations = prevConversations.map((conv) =>
+        conv._id === conversation._id
+          ? { ...conv, lastMessage: lastMessageData }
+          : conv
+      );
+
+      updatedConversations.sort(
+        (a, b) =>
+          new Date(b.lastMessage.createdAt).getTime() -
+          new Date(a.lastMessage.createdAt).getTime()
+      );
+
+      return updatedConversations;
+    });
   };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const message = {
@@ -136,13 +185,21 @@ const Chat: React.FC = () => {
       const response = await axiosJWT.post(`${CHAT_API}/messages`, message);
       setMessages([...messages, response.data]);
       setNewMessage("");
-      setConversations((prevConversations) =>
-        prevConversations.map((conversation) =>
+      setConversations((prevConversations) => {
+        const updatedConversations = prevConversations.map((conversation) =>
           conversation._id === currentChat?._id
             ? { ...conversation, lastMessage: response.data }
             : conversation
-        )
-      );
+        );
+
+        updatedConversations.sort(
+          (a, b) =>
+            new Date(b.lastMessage.createdAt).getTime() -
+            new Date(a.lastMessage.createdAt).getTime()
+        );
+
+        return updatedConversations;
+      });
     } catch (error) {
       console.error("Error sending message:", error);
     }

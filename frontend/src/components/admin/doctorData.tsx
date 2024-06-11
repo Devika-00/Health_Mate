@@ -10,7 +10,7 @@ import { clearDoctor } from '../../redux/slices/DoctorSlice'; // Add this import
 
 const DoctorData: React.FC = () => {
   const { doctors, setDoctors } = useDoctors();
-  const dispatch = useDispatch(); // Initialize dispatch
+  const dispatch = useDispatch(); 
 
   const approvedDoctors = doctors.filter(doctor => doctor.isApproved);
   const [serialNumber] = useState<number>(1);

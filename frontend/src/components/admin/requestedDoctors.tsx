@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { DoctorInterface } from '../../types/DoctorInterface';
 import { useEffect, useState } from 'react';
 import { ADMIN_API } from '../../constants';
+import axiosJWT from '../../utils/axiosService';
 
 const RequestedDoctorData: React.FC = () => {
   
@@ -12,12 +13,9 @@ const RequestedDoctorData: React.FC = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const response = await fetch(`${ADMIN_API}/doctors`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch doctors');
-        }
-        const data = await response.json();
-        setDoctors(data.doctors);
+        const response = await axiosJWT(`${ADMIN_API}/doctors`);
+        
+        setDoctors(response.data.doctors);
       } catch (error) {
         console.error('Error fetching doctors:', error);
       }
