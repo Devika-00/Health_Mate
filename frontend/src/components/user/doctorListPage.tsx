@@ -81,10 +81,10 @@ const DoctorListingPage: React.FC = () => {
 
 
           const filteredDoctors = response.data.doctors.filter((doctor: any) =>
-            departmentNames.includes(doctor.department)
+            departmentNames.includes(doctor.department) &&
+           doctor.isApproved === true
           );
 
-          console.log(filteredDoctors);
 
           setDoctors(filteredDoctors);
           setTotalPages(Math.ceil(filteredDoctors.length / itemsPerPage));

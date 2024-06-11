@@ -93,7 +93,8 @@ const OnlineDoctors: React.FC = () => {
           (doctor: any) =>
             (doctor.consultationType === "online" ||
               doctor.consultationType === "both") &&
-            departmentNames.includes(doctor.department)
+            departmentNames.includes(doctor.department) &&
+            doctor.isApproved === true
         );
 
         setDoctors(filteredDoctors);

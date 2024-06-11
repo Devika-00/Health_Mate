@@ -93,7 +93,8 @@ const OfflineDoctors: React.FC = () => {
           (doctor: any) =>
             (doctor.consultationType === "offline" ||
               doctor.consultationType === "both") &&
-            departmentNames.includes(doctor.department)
+            departmentNames.includes(doctor.department) &&
+            doctor.isApproved === true
         );
 
         setDoctors(filteredDoctors);
