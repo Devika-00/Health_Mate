@@ -27,10 +27,11 @@ const io = new socket_io_1.Server(httpServer, {
 // Serve static files from the React app
 app.use(express_1.default.static(path_1.default.join(__dirname, "../../frontend/dist")));
 // Set up Content Security Policy (CSP)
+// Set up Content Security Policy (CSP)
 app.use(helmet_1.default.contentSecurityPolicy({
     directives: {
         defaultSrc: ["'self'"],
-        connectSrc: ["'self'", "https://api.cloudinary.com"],
+        connectSrc: ["'self'", "https://api.cloudinary.com", "https://res.cloudinary.com"],
         imgSrc: ["'self'", "data:", "https://res.cloudinary.com"], // Allow loading images from Cloudinary
         scriptSrc: ["'self'", "'unsafe-inline'"],
         styleSrc: ["'self'", "'unsafe-inline'"],

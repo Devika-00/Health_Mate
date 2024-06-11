@@ -26,17 +26,19 @@ const io = new Server(httpServer, {
 app.use(express.static(path.join(__dirname, "../../frontend/dist")));
 
 // Set up Content Security Policy (CSP)
+// Set up Content Security Policy (CSP)
 app.use(
   helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'"],
-      connectSrc: ["'self'", "https://api.cloudinary.com"],
+      connectSrc: ["'self'", "https://api.cloudinary.com", "https://res.cloudinary.com"],
       imgSrc: ["'self'", "data:", "https://res.cloudinary.com"], // Allow loading images from Cloudinary
       scriptSrc: ["'self'", "'unsafe-inline'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
     },
   })
 );
+
 
 socketConfig(io);
 expressConfig(app);
