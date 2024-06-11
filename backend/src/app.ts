@@ -1,4 +1,5 @@
-import express, {Application,NextFunction,Request,Response} from "express";
+import express, { Application, NextFunction, Request, Response } from "express";
+import helmet from "helmet";
 import expressConfig from "./frameworks/webserver/expressConfig";
 import startServer from "./frameworks/webserver/server";
 import connectDB from "./frameworks/database/mongodb/connection";
@@ -10,8 +11,7 @@ import { Server } from "socket.io";
 import socketConfig from "./frameworks/webserver/webSocket/socket";
 import path from "path";
 
-
-const app:Application = express();
+const app: Application = express();
 
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
@@ -22,8 +22,20 @@ const io = new Server(httpServer, {
   },
 });
 
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, "../../frontend/dist")));
+
+// Set up Content Security Policy (CSP)
 app.use(
-  express.static(path.join(__dirname, "../../frontend/dist"))
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      connectSrc: ["'self'", "https://api.cloudinary.com"],
+      imgSrc: ["'self'", "data:", "https://res.cloudinary.com"], // Allow loading images from Cloudinary
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+    },
+  })
 );
 
 socketConfig(io);
@@ -32,15 +44,17 @@ connectDB();
 routes(app);
 startServer(httpServer);
 
-
+// Catch-all route to serve index.html
 app.get("*", (req: Request, res: Response) => {
-  res.sendFile(
-    path.join(__dirname, "../../frontend/dist/index.html")
-  );
+  res.sendFile(path.join(__dirname, "../../frontend/dist/index.html"));
 });
 
-
+// Error handling middleware
 app.use(errorHandlingMiddleware);
-app.all("*",(req, res, next: NextFunction)=>{
-    next(new CustomError(`Not found : ${req.url}`, 404));
+
+// Catch-all route for 404 errors
+app.all("*", (req, res, next: NextFunction) => {
+  next(new CustomError(`Not found : ${req.url}`, 404));
 });
+
+export default app;
