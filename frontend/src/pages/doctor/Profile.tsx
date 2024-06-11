@@ -1,11 +1,24 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '../../components/doctor/Navbar/navbar';
 // import { BsChatSquareDots } from 'react-icons/bs'; 
 import { MdOutlineModeEdit } from "react-icons/md";
 import doctorProfile from "../../hooks/doctorProfile";
+import axios from 'axios';
+import { DOCTOR_API } from '../../constants';
 
 
 const Profile: React.FC = () => {
+
+  const [departments, setDepartments] = useState<
+    {
+      _id: string;
+      departmentName: string;
+      isListed: boolean;
+      createdAt: string;
+      updatedAt: string;
+    }[]
+  >([]);
+
   const {
     profile,
     formData,
@@ -14,6 +27,23 @@ const Profile: React.FC = () => {
     handleInputChange,
     handleSubmit,
   } = doctorProfile();
+
+  useEffect(() => {
+    const fetchDoctorDepartment = async () => {
+      try {
+        const response = await axios.get(`${DOCTOR_API}/departments`);
+        if (response.data.success) {
+          setDepartments(response.data.allDepartment);
+        } else {
+          throw new Error("Failed to fetch doctor details");
+        }
+      } catch (error) {
+        console.error("Error fetching doctor details:", error);
+      }
+    };
+
+    fetchDoctorDepartment();
+  }, []);
   
 
   let statusMessage = '';
@@ -56,20 +86,14 @@ const Profile: React.FC = () => {
         <input type="tel" id="phoneNumber" name='phoneNumber' value={formData?.phoneNumber ?? ""} onChange={handleInputChange} className="border text-gray-700 border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:ring focus:border-blue-500" />
       </div>
       <div className="mb-4">
-        <label htmlFor="department" className="block text-gray-700 font-semibold">Department:</label>
-        <select id="department" name='department' value={formData?.department ?? ""} onChange={handleInputChange} className="border text-gray-700 border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:ring focus:border-blue-500">
-          <option className='text-gray-700' value=""></option>
-          <option className='text-gray-700' value="Cardilogist">Cardiologist</option>
-          <option className='text-gray-700' value="Neurologist">Neurologist</option>
-          <option className='text-gray-700' value="Dermatologist">Dermatologist</option>
-          <option className='text-gray-700' value="Gynecologist">Gynecologist</option>
-          <option className='text-gray-700' value="Physician">Physician</option>
-          <option className='text-gray-700' value="Radiologist">Radiologist</option>
-          <option className='text-gray-700' value="Dentist">Dentist</option>
-          <option className='text-gray-700' value="psychiatrists">psychiatrists</option>
-          <option className='text-gray-700' value="Allergist">Allergist</option>
-        </select>
-      </div>
+              <label htmlFor="department" className="block text-gray-700 font-semibold">Department:</label>
+              <select id="department" name='department' value={formData?.department ?? ""} onChange={handleInputChange} className="border text-gray-700 border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:ring focus:border-blue-500">
+                <option className='text-gray-700' value=""></option>
+                {departments.filter(dept => dept.isListed).map((dept) => (
+                  <option className='text-gray-700' key={dept._id} value={dept.departmentName}>{dept.departmentName}</option>
+                ))}
+              </select>
+            </div>
       <div className="mb-4">
         <label htmlFor="description" className="block text-gray-700 font-semibold">Description:</label>
         <input
