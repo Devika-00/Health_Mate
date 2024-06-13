@@ -13,7 +13,7 @@ const expressConfig = (app) => {
     app.use(express_1.default.urlencoded({ extended: true }));
     app.use((0, morgan_1.default)("dev"));
     const corsConfig = {
-        origin: "https://healthmate.dpsdev.site",
+        origin: "https://dpsdev.site",
         credentials: true,
     };
     app.use((0, cors_1.default)(corsConfig));

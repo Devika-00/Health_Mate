@@ -9,7 +9,7 @@ const expressConfig = (app:Application)=>{
     app.use(express.urlencoded({extended:true}));
     app.use(morgan("dev"));
     const corsConfig = {
-        origin : "https://healthmate.dpsdev.site",
+        origin : "https://dpsdev.site",
         credentials: true,
 
     };

@@ -9,6 +9,7 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import socketConfig from "./frameworks/webserver/webSocket/socket";
 import path from "path";
+import helmet from "helmet";
 
 
 const app:Application = express();
@@ -25,6 +26,16 @@ const io = new Server(httpServer, {
 app.use(
   express.static(path.join(__dirname, "../../frontend/dist"))
 );
+
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      connectSrc: ["'self'",'https://*.zegocloud.com', 'https://res.cloudinary.com', 'https://api.cloudinary.com']  // Add your URL here
+      // Add other directives as needed
+    }
+  }
+}));
 
 socketConfig(io);
 expressConfig(app);
