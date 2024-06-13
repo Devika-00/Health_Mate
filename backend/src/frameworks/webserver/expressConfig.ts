@@ -1,7 +1,6 @@
 import express, {Application} from "express";
 import morgan from "morgan";
 import cors from "cors";
-import helmet from "helmet";
 import cookieParser from "cookie-parser";
 
 const expressConfig = (app:Application)=>{
@@ -16,7 +15,6 @@ const expressConfig = (app:Application)=>{
 
     app.use(cors(corsConfig));
     app.options("*",cors(corsConfig));
-    app.use(helmet()); // for more req security
     app.use(cookieParser());
   
 
