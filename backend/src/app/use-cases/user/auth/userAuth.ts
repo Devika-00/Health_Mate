@@ -31,6 +31,7 @@ export const userRegister = async (
         email,
         hashedPassword,
         authenticationMethod,
+        
     );
 
     //create a new User 
