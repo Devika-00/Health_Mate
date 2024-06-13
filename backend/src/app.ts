@@ -27,15 +27,6 @@ app.use(
   express.static(path.join(__dirname, "../../frontend/dist"))
 );
 
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      connectSrc: ["'self'",'https://*.zegocloud.com', 'https://res.cloudinary.com', 'https://api.cloudinary.com']  // Add your URL here
-      // Add other directives as needed
-    }
-  }
-}));
 
 socketConfig(io);
 expressConfig(app);
