@@ -112,6 +112,7 @@ export const MainRouter = () => {
                     <Route path="/doctor/patientList" element={<PatientListPage/>}/>
                     <Route path="/patient-details/:id" element={<SinglePagePatient/>} />
                     <Route path="/doctor/status/:doctorId" element={<DoctorStatus/>}/>
+                    <Route path ="/user/documents/:id" element={<DocumentListPage/>}/>
                     </Route>
                     <Route path="/doctor/chat" element={<DoctorChat/>}/>
                     </Route>
