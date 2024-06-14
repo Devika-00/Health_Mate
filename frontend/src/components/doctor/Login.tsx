@@ -8,8 +8,8 @@ import showToast from "../../utils/toaster";
 import axios from "axios";
 import { useAppDispatch } from "../../redux/store/Store";
 
-import { GoogleLogin } from "@react-oauth/google";
-import { jwtDecode } from "jwt-decode";
+// import { GoogleLogin } from "@react-oauth/google";
+// import { jwtDecode } from "jwt-decode";
 import { setDoctor } from "../../redux/slices/DoctorSlice";
 
 const Login: React.FC = () => {
@@ -51,30 +51,30 @@ const Login: React.FC = () => {
     },
   });
 
-  const handleGoogleSignIn = (doctor: {
-    doctorName: string;
-    email: string;
-    picture: string;
-    email_verified: boolean;
-  }) => {
-    axios
-      .post(DOCTOR_API + "/google_signIn", { doctor })
-      .then(({ data }) => {
-        const { message, user, accessToken } = data;
-        localStorage.setItem("access_token", accessToken);
-        showToast(message, "success");
+  // const handleGoogleSignIn = (doctor: {
+  //   doctorName: string;
+  //   email: string;
+  //   picture: string;
+  //   email_verified: boolean;
+  // }) => {
+  //   axios
+  //     .post(DOCTOR_API + "/google_signIn", { doctor })
+  //     .then(({ data }) => {
+  //       const { message, user, accessToken } = data;
+  //       localStorage.setItem("access_token", accessToken);
+  //       showToast(message, "success");
 
-        dispatch(
-          setDoctor({
-            isAuthenticated: true,
-            name: user.doctorName,
-            role: user.role,
-          })
-        );
-        navigate("/doctor");
-      })
-      .catch(({ response }) => showToast(response.data.message, "error"));
-  };
+  //       dispatch(
+  //         setDoctor({
+  //           isAuthenticated: true,
+  //           name: user.doctorName,
+  //           role: user.role,
+  //         })
+  //       );
+  //       navigate("/doctor");
+  //     })
+  //     .catch(({ response }) => showToast(response.data.message, "error"));
+  // };
 
   return (
     <div
@@ -130,7 +130,7 @@ const Login: React.FC = () => {
             Sign Up
           </Link>
         </p>
-        <div className="flex justify-center mt-3">
+        {/* <div className="flex justify-center mt-3">
           <GoogleLogin
             onSuccess={(credentialResponse: any) => {
               const data: {
@@ -145,7 +145,7 @@ const Login: React.FC = () => {
               showToast("Google Login Failed", "error");
             }}
           />
-        </div>
+        </div> */}
       </div>
     </div>
   );
