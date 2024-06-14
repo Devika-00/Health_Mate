@@ -4,7 +4,7 @@ interface FooterProps {
 
 const Footer = ({ style }: FooterProps) => {
   return (
-    <footer className={`bg-blue-950 text-white py-8 mt-auto w-full ${style}`}>
+    <footer className={`bg-blue-950 text-white mt-auto w-full ${style}`}>
       <div className="container mx-auto flex flex-col items-center text-center sm:text-left sm:flex-row sm:justify-between">
         <div className="mb-4 sm:mb-0">
           <p className="text-2xl font-bold mb-4">Health Mate</p>
