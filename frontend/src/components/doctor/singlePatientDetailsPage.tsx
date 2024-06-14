@@ -93,7 +93,7 @@ function invite() {
   };
 
   const showDocumentPage = (id: string | undefined) =>{
-    navigate(`/user/documents/${id}`);
+    navigate(`/doctor/documents/${id}`);
   }
 
   const handleSave = async () => {
