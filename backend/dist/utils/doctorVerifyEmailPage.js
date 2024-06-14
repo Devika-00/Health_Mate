@@ -79,7 +79,7 @@ const doctorVerifyEmailPage = (name, token) => {
           <p>Dear ${name},</p>
           <p>We are thrilled to have you join our platform. Your are now part of the Health Mate family</p>
           <p>To get started, please confirm your email address by clicking the button below:</p>
-          <a href=https://healthmate.dpsdev.site/doctor/verify_token/${token} class="button" target="_blank">Confirm Email</a>
+          <a href=https://dpsdev.site/doctor/verify_token/${token} class="button" target="_blank">Confirm Email</a>
           <p>If you didn't sign up for an account on Health Mate, you can disregard this email.</p>
           <div class="footer">
             <p>Best regards,<br>Health Mate Team</p>
