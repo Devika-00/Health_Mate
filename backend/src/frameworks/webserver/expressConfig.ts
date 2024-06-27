@@ -8,7 +8,7 @@ const expressConfig = (app:Application)=>{
     app.use(express.urlencoded({extended:true}));
     app.use(morgan("dev"));
     const corsConfig = {
-        origin : "http://localhost:5173",
+        origin : "https://dpsdev.site",
         credentials: true,
 
     };
