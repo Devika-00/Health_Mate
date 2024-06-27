@@ -463,25 +463,26 @@ const AppointmentOnlineBookingPage: React.FC = () => {
       <div className="flex flex-col md:flex-row justify-start mt-8">
         {existingPatientDetails ? (
           <>
-            <button
-              onClick={handleBookAppointment}
-              disabled={timeSlots.length === 0}
-              className={`bg-blue-950 text-white py-2 px-4 rounded-lg mb-4 md:mb-0 ${
-                timeSlots.length === 0 ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-            >
-              Online Payment
-            </button>
-            <button
-              onClick={handleWalletPayment}
-              disabled={timeSlots.length === 0}
-              className={`bg-blue-950 text-white py-2 px-4 rounded-lg md:ml-5 ${
-                timeSlots.length === 0 ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-            >
-              Wallet Payment
-            </button>
-          </>
+          <button
+            onClick={handleBookAppointment}
+            disabled={timeSlots.length === 0}
+            className={`bg-blue-950 text-white py-2 px-4 rounded-lg mb-4 md:mb-0 ${
+              timeSlots.length === 0 ? "opacity-50 cursor-not-allowed" : ""
+            } hover:bg-blue-800 hover:text-white focus:outline-none `}
+          >
+            Online Payment
+          </button>
+          <button
+            onClick={handleWalletPayment}
+            disabled={timeSlots.length === 0}
+            className={`bg-blue-950 text-white py-2 px-4 rounded-lg md:ml-5 ${
+              timeSlots.length === 0 ? "opacity-50 cursor-not-allowed" : ""
+            } hover:bg-blue-800 hover:text-white focus:outline-none `}
+          >
+            Wallet Payment
+          </button>
+        </>
+        
         ) : (
           <button
             onClick={handleNextStepBookAppointment}

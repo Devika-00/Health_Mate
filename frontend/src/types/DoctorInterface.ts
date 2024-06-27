@@ -15,5 +15,4 @@ export interface DoctorInterface {
     isBlocked?: boolean;
     cerificateImage?:string;
 
-
 }

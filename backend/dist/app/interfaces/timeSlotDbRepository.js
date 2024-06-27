@@ -12,7 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.timeSlotDbRepository = void 0;
 const timeSlotDbRepository = (repository) => {
     const addtimeSlot = (doctorId, startDate, endDate, slotTime) => __awaiter(void 0, void 0, void 0, function* () {
-        yield repository.addTimeSlots(doctorId, startDate, endDate, slotTime);
+        const timeslot = yield repository.addTimeSlots(doctorId, startDate, endDate, slotTime);
+        return timeslot;
     });
     const isTimeSlotExist = (doctorId, time, date) => __awaiter(void 0, void 0, void 0, function* () { return yield repository.getSlotByTime(doctorId, time); });
     const exsitingSlotAvailables = (doctorId, startDate, endDate) => __awaiter(void 0, void 0, void 0, function* () {

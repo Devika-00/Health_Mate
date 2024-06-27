@@ -196,6 +196,7 @@ const doctorController = (authServiceInterface, authServiceImpl, userDbRepositor
             const { doctorId, startDate, endDate, slotTime } = req.body;
             const data = { doctorId, startDate, endDate, slotTime };
             const response = yield (0, timeslot_1.addTimeSlot)(data, dbTimeSlotRepository);
+            console.log(response, "ooooooooo");
             res.status(httpStatus_1.HttpStatus.OK).json({
                 success: true,
                 message: "slots added successfully",

@@ -1,7 +1,7 @@
 import { TimeSlotEntityType } from "../../../../entities/timeSlotEntity";
 import TimeSlot from "../models/timeSlots";
 
-const transformSlotTime = (slotTime:any) => {
+const transformSlotTime:any = (slotTime:any) => {
   return Object.entries(slotTime).map(([day, times]) => ({
     day: parseInt(day, 10),
     //@ts-ignore

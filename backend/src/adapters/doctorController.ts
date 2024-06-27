@@ -319,7 +319,8 @@ const doctorController = (
         data,
         dbTimeSlotRepository
       );
-  
+  console.log(response,"ooooooooo")
+
       res.status(HttpStatus.OK).json({
         success: true,
         message: "slots added successfully",

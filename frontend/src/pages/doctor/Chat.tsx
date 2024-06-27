@@ -213,18 +213,23 @@ const Chat: React.FC = () => {
         <div className="w-full lg:w-1/4 bg-gray-200">
           <div className="p-4 h-full flex flex-col">
 
-            {conversations.map((conversation, index) => (
-              <div
-                key={index}
-                onClick={() => handleConversationClick(conversation)}
-                className="cursor-pointer hover:bg-gray-300 p-2 rounded-lg"
-              >
-                <Conversation
-                  conversation={conversation}
-                  lastMessage={conversation.lastMessage}
-                />
-              </div>
-            ))}
+          {conversations.length > 0 ? (
+          conversations.map((conversation, index) => (
+            <div
+              key={index}
+              onClick={() => handleConversationClick(conversation)}
+            >
+              <Conversation
+                conversation={conversation}
+                lastMessage={conversation.lastMessage}
+              />
+            </div>
+          ))
+        ) : (
+          <div className="flex justify-center items-center flex-grow">
+            <p className="text-lg text-blue-900 font-bold mb-60">Conversation list is empty!</p>
+          </div>
+        )}
           </div>
         </div>
 

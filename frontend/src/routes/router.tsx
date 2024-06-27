@@ -7,6 +7,7 @@ import ProtectedRoute, {
 import PublicRouteUser from "./PublicRoutes";
 import CommonLayout from "../components/user/commonLayout";
 import CommonLayoutDoctor from "../components/doctor/commonLayout";
+import LoadingPage from '../pages/Loading';
 
 
 
@@ -54,10 +55,11 @@ const Transaction = lazy(()=>import("../pages/user/walletTransation"));
 const DepartmentManagement = lazy(()=>import("../pages/admin/departmentPage"));
 
 
+
 export const MainRouter = () => {
     return (
         <>
-            <Suspense fallback={<h1>Loading</h1>}> 
+            <Suspense fallback={<LoadingPage />}>
                 <Routes>
                     {/* userRoutes */}
                     <Route element={<CommonLayout />}>

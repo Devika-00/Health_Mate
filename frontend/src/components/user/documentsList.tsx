@@ -1,7 +1,6 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AiOutlineFilePdf,
-
   AiOutlineClose,
 } from "react-icons/ai";
 import axiosJWT from "../../utils/axiosService";
@@ -62,49 +61,55 @@ const DocumentList = () => {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Documents</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {documents.map((document, index) => (
-          <div
-            key={index}
-            className="relative border rounded-lg shadow-lg overflow-hidden"
-          >
-            {user.role === "user" && (
-              <button
-                className="absolute top-2 right-2 text-red-600 hover:text-red-800"
-                onClick={() => openModal(document._id)}
-              >
-                <AiOutlineClose className="text-2xl" />
-              </button>
-            )}
-            <div className="p-4 bg-gray-200">
-              <h2 className="text-lg font-semibold mb-2">
-                {document.fileName}
-              </h2>
-              <div className="h-64 overflow-hidden">
-                {document.fileData.endsWith(".pdf") ? (
-                  <div className="flex justify-center items-center h-full">
-                    <AiOutlineFilePdf className="text-9xl text-red-600" />
-                  </div>
-                ) : (
-                  <img
-                    src={document.fileData}
-                    alt={document.fileName}
-                    className="w-full h-full object-cover"
-                  />
-                )}
+      {documents.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {documents.map((document, index) => (
+            <div
+              key={index}
+              className="relative border rounded-lg shadow-lg overflow-hidden"
+            >
+              {user.role === "user" && (
+                <button
+                  className="absolute top-2 right-2 text-red-600 hover:text-red-800"
+                  onClick={() => openModal(document._id)}
+                >
+                  <AiOutlineClose className="text-2xl" />
+                </button>
+              )}
+              <div className="p-4 bg-gray-200">
+                <h2 className="text-lg font-semibold mb-2">
+                  {document.fileName}
+                </h2>
+                <div className="h-64 overflow-hidden">
+                  {document.fileData.endsWith(".pdf") ? (
+                    <div className="flex justify-center items-center h-full">
+                      <AiOutlineFilePdf className="text-9xl text-red-600" />
+                    </div>
+                  ) : (
+                    <img
+                      src={document.fileData}
+                      alt={document.fileName}
+                      className="w-full h-full object-cover"
+                    />
+                  )}
+                </div>
+                <a
+                  href={document.fileData}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 block text-blue-500 hover:underline"
+                >
+                  View Document
+                </a>
               </div>
-              <a
-                href={document.fileData}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-4 block text-blue-500 hover:underline"
-              >
-                View Document
-              </a>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="flex justify-center items-center h-64">
+          <p className="text-lg text-gray-700">There is no documents uploaded</p>
+        </div>
+      )}
 
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75">

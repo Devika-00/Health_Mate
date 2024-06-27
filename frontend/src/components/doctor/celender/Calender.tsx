@@ -73,8 +73,8 @@ const DoctorCalendar: React.FC = () => {
         const response = await axiosJWT.post(`${DOCTOR_API}/getTimeSlots`, {
           doctorId: doctor.id,
         });
+        
 
-        console.log(response, "response");
         if (response) {
           setScheduledSlots(response.data.timeSlots);
         }
@@ -172,7 +172,11 @@ const DoctorCalendar: React.FC = () => {
       };
       const response = await axiosJWT.post(`${DOCTOR_API}/addSlot`, slotsData);
       if (response) {
+       
         showToast("Slots added successfully!", "success");
+
+        setScheduledSlots((prev) => [...prev, response.data.response]);
+
         setSelectedSlots([]);
         setSelectedEndDate(null);
         setSelectedStartDate(null);
